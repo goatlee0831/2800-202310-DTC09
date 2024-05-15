@@ -35,16 +35,6 @@ var mongoStore = MongoStore.create({
     }
 })
 
-app.use(session({
-    secret: node_session_secret,
-    resave: false,
-    saveUninitialized: true,
-    store: mongoStore,
-    cookie: {
-        maxAge: expirytime
-    }
-}))
-
 main().catch(err => console.log(err));
 
 async function main() {
@@ -63,3 +53,31 @@ const usersSchema = new mongoose.Schema({
 });
 
 const userModel = mongoose.model('DTC_09_users', usersSchema)
+
+// Middleware
+
+app.use(session({
+    secret: node_session_secret,
+    resave: true,
+    saveUninitialized: false,
+    store: mongoStore,
+    cookie: {
+        maxAge: expirytime
+    }
+}))
+
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static('public'))
+app.set('view engine', 'ejs');
+
+
+// functions for authentication and authorization
+
+
+
+
+// Routes
+
+app.get('/', (req, res) => {
+    res.render('index')
+})
