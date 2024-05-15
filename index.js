@@ -39,16 +39,16 @@ main().catch(err => console.log(err));
 
 async function main() {
     await mongoose.connect(`mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/?retryWrites=true&w=majority`);
-
-
 }
+
+// user database 
 
 const usersSchema = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
-    type: String,
-
+    usertype: String,
+    // user_address: String
 
 });
 
@@ -73,11 +73,34 @@ app.set('view engine', 'ejs');
 
 // functions for authentication and authorization
 
+// regular users
+function IsAuthenticated(req, res, next) {
+    if (req.session.authenticated) {
+        return next()
+    }
+    return false
+}
 
+// gofers
+function IsGofer(req, res, next) {
+    if (req.session.usertype === 'gofer') {
+        return next()
+    }
+    return false
+}
+
+// admins
+function IsAdmin(req, res, next) {
+    if (req.session.usertype === 'admin') {
+        return next()
+    }
+    return false
+}
 
 
 // Routes
 
 app.get('/', (req, res) => {
-    res.render('index')
+    // res.render('landing_page')
 })
+
