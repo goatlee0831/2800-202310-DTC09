@@ -1,5 +1,4 @@
-
-// Rewuired modules
+// Required modules
 
 require('dotenv').config()
 
@@ -11,9 +10,9 @@ const bcrypt = require('bcrypt');
 const ejs = require('ejs');
 const Joi = require("joi");
 
-
+const { MongoClient } = require('mongodb');
 const MongoStore = require('connect-mongo');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
 
 // global variables and secret keys
@@ -28,6 +27,13 @@ const node_session_secret = process.env.NODE_SESSION_SECRET
 const mongodb_database = process.env.MONGODB_DATABASE
 
 // MongoDB connection
+
+const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/?retryWrites=true&w=majority`;
+const database = new MongoClient(atlasurl);
+const userCollection = database.db(mongodb_database).collection('users');
+
+
+// Session store
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
     crypto: {
@@ -35,27 +41,8 @@ var mongoStore = MongoStore.create({
     }
 })
 
-main().catch(err => console.log(err));
-
-async function main() {
-    await mongoose.connect(`mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/?retryWrites=true&w=majority`);
-}
-
-// user database 
-
-const usersSchema = new mongoose.Schema({
-    username: String,
-    email: String,
-    password: String,
-    usertype: String,
-    // user_address: String
-
-});
-
-const userModel = mongoose.model('DTC_09_users', usersSchema)
 
 // Middleware
-
 app.use(session({
     secret: node_session_secret,
     resave: true,
@@ -78,7 +65,9 @@ function IsAuthenticated(req, res, next) {
     if (req.session.authenticated) {
         return next()
     }
-    return false
+    else {
+        res.redirect('/login')
+    }
 }
 
 // gofers
@@ -86,7 +75,9 @@ function IsGofer(req, res, next) {
     if (req.session.usertype === 'gofer') {
         return next()
     }
-    return false
+    else {
+        res.redirect('/login')
+    }
 }
 
 // admins
@@ -94,13 +85,33 @@ function IsAdmin(req, res, next) {
     if (req.session.usertype === 'admin') {
         return next()
     }
-    return false
+    else {
+        res.redirect('/login')
+    }
 }
 
 
 // Routes
 
+// landing page
 app.get('/', (req, res) => {
+    res.send('Hello World')
     // res.render('landing_page')
 })
 
+
+
+
+
+// login page
+app.get('/login', (req, res) => {
+    // res.render('login')
+})
+
+
+
+
+// Server
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`)
+})
