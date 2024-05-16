@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Members Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4; /* Light grey background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .signup-form {
+            background: #CAF0FF;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0 16px;
+            display: inline-block;
+            border: 2px solid #4D2F25;
+            border-radius: 4px;
+            box-sizing: border-box; 
+        }
+        button {
+            width: 100%;
+            background-color:#CAF0FF; 
+            color: #4D2F25;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: 2px solid #4D2F25;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #FFDEAD;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-form">
+        <h2>Members Sign Up</h2>
+        <form action="/submit-your-form-handler" method="POST">
+            <label for="fullname">First Name:</label>
+            <input type="text" id="fullname" name="fullname" required>
+
+            <label for="fullname">Last Name:</label>
+            <input type="text" id="fullname" name="fullname" required>
+
+            <label for="fullname">Username:</label>
+            <input type="text" id="fullname" name="fullname" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+</body>
+</html>
