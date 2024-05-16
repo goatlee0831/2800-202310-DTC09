@@ -43,6 +43,7 @@ var mongoStore = MongoStore.create({
 
 
 // Middleware
+
 app.use(session({
     secret: node_session_secret,
     resave: true,
@@ -95,18 +96,144 @@ function IsAdmin(req, res, next) {
 
 // landing page
 app.get('/', (req, res) => {
-    res.send('Hello World')
-    // res.render('landing_page')
+    res.render('index')
 })
 
+
+
+
+
+// signup
+app.get('/signup', (req, res) => {
+    res.render('signup')
+})
+
+app.post('/signup', async (req, res) => {
+    var email = req.body.email 
+    var secret_pin = req.body.secret_pin
+    var username = req.body.username
+    var password = req.body.password
+  
+
+
+    const schema = Joi.object(
+    {
+        username: Joi.string().min(3).max(20).required(),
+        email: Joi.string().min(3).max(20).required(),
+        secret_pin: Joi.string().min(3).max(20).required(),
+        password: Joi.string().min(6).max(20).required(),
+    })
+
+    const validation = schema.validate(req.body)
+
+    if (validation.error) {
+        console.log(validation.error)
+        res.redirect('/signup')
+        return
+    }
+
+    result = await userCollection.findOne({ 
+        username: username
+    })
+
+    const hashPassword = await bcrypt.hash(password, saltRounds)
+    const hashSecret_pin = await bcrypt.hash(secret_pin, saltRounds)
+
+
+    const user = {
+        username: username,
+        password: hashPassword,
+        usertype: 'user',
+        email: email,
+        secret_pin: hashSecret_pin
+    }
+
+    if (!result) {
+        userCollection.insertOne(user)
+        return res.redirect('/login')
+    }
+
+    else if (result) {
+        res.redirect('/signup', { message: 'User already exists' })
+    }
+
+
+
+})
 
 
 
 
 // login page
 app.get('/login', (req, res) => {
-    // res.render('login')
+    if (req.session.authenticated) {
+        res.redirect('/main')
+    }
+    else {
+        res.render('login')
+    }
 })
+
+app.post('/login', async (req, res) => {
+
+    var username = req.body.username
+    var password = req.body.password
+
+    const schema = Joi.object(
+        {
+            username: Joi.string().min(3).max(20).required(),
+            password: Joi.string().min(6).max(20).required(),
+        })
+
+    const validation = schema.validate(username, password)
+
+    if (validation.error) {
+        console.log(validation.error)
+        res.render('/login', { message: 'something wrong with username or password' })
+        return
+    }
+
+    result = await userCollection.findOne({ username: username })
+
+    if (!result) {
+        res.render('login', { message: 'This username does not exist' })
+    }
+
+    else if (result) {
+        const match = await bcrypt.compare(password, result.password)
+
+        if (match) {
+            req.session.authenticated = true
+            req.session.username = result.username
+            req.session.usertype = result.usertype
+            req.session.cookie.maxAge = expirytime
+            res.redirect('/main')
+        }
+
+        else {
+            res.render('login', { message: 'Incorrect password' })
+        }
+    }
+})
+
+app.get('/main', IsAuthenticated, (req, res) => {
+    if (req.session.authenticated) {
+        res.render('main', {
+            username: req.session.username
+        })
+      
+    }
+    else {
+        res.redirect('/login')
+    }
+})
+
+
+
+
+
+
+
 
 
 
