@@ -1,0 +1,130 @@
+body {
+    margin: 0;
+}
+
+.top {
+    background-color: #CAF0FF;
+    font-family: "Lilita One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: solid;
+    border-bottom-width: 0.2rem;
+    border-color: #78361F;
+    color: #78361F;
+}
+
+.company {
+    display: flex;
+    margin-left: 2rem;
+}
+
+h1 {
+    margin: 1rem 0 0 1rem;
+    color: #78361F;
+    font-size: 2.75rem;
+}
+
+.company img {
+    margin-top: 10px;
+    margin-bottom: none;
+    height: 50px;
+}
+
+.top-links{
+    height: 100%;
+    width: 50%;
+    display: flex;
+    flex-direction: row-reverse;
+    margin-right: 1em;
+}
+
+.top-links a {
+    color: #78361F;
+    text-decoration: none;
+    padding: 2.4em 1em 0.35em 1em;
+}
+
+.top-links a:hover {
+    background-color: #A8DEF4;
+}
+
+#menuBtn {
+    font-size: 3.5em;
+    pointer-events: none;
+}
+
+.dropdown {
+    display: none;
+}
+
+/* Tablet (portrait and landscape) ----------- */
+ 
+@media (max-width: 1000px) {
+    .top-links {
+        display: none;
+    }
+
+    .link {
+        background: none;
+        border: none;
+        text-decoration: none;
+        color: #8d4125;
+        font-family: inherit;
+        font-size: inherit;
+        cursor: pointer;
+        padding: 0 1em;
+    }
+      
+    .dropdown.active > .link, .link:hover {
+        color: #78361F;
+    }
+      
+    .dropdown {
+        position: relative;
+        display: block;
+    }
+      
+    .dropdown-menu {
+        position: absolute;
+        display: flex;
+        flex-direction: row-reverse;
+        width: 100svw;
+        right: 0;
+        top: calc(100% + .25rem);
+        background-color: #d6f3ff;
+        padding: .75rem;
+        opacity: 0;
+        border-bottom: solid;
+        border-bottom-width: 0.2rem;
+        border-color: #78361F;
+        pointer-events: none;
+        transform: translateY(-10px);
+        transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+    }
+      
+    .dropdown.active > .link + .dropdown-menu {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+      
+    .login-form > input {
+        margin-bottom: .5rem;
+    }
+}
+
+/* Tablet (portrait and landscape) ----------- */
+
+@media (max-width: 730px) {
+    .dropdown-menu {
+        flex-direction: column-reverse;
+        align-items: center;
+        padding: .5em 0;
+    }
+
+    .dropdown-menu .link {
+        margin: .5em;
+    }
+}
