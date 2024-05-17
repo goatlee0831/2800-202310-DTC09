@@ -128,7 +128,7 @@ app.post('/signup-handler', async (req, res) => {
     const schema = Joi.object(
     {
         username: Joi.string().min(3).max(20).required(),
-        email: Joi.string().min(3).max(20).required(),
+        email: Joi.string().min(3).max(30).required(),
         secret_pin: Joi.number().min(4).required(),
         password: Joi.string().min(4).max(20).required(),
         firstname: Joi.string().max(20).required(),
@@ -140,7 +140,7 @@ app.post('/signup-handler', async (req, res) => {
     if (validation.error) {
         var error = validation.error.details
         console.log(error)
-        res.render('/signup', {auth: req.session.authenticated, type: req.session.usertype})
+        res.render('/signup', {auth: req.session.authenticated, type: req.session.usertype , message: error[0].message})
         return
     }
 
