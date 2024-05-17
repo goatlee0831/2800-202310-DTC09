@@ -57,6 +57,7 @@ app.use(session({
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/css"));
+app.use(express.static(__dirname + "/frontend_js"));
 app.set('view engine', 'ejs');
 
 
@@ -100,7 +101,7 @@ function IsAdmin(req, res, next) {
 
 // landing page
 app.get('/', (req, res) => {
-    res.render('index')
+    res.render('index', {auth: req.session.authenticated, type: req.session.usertype})
 })
 
 

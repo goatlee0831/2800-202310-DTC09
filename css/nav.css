@@ -59,6 +59,89 @@ h1 {
     display: none;
 }
 
+#userLinks {
+    display: none;
+    flex-direction: row-reverse;
+}
+
+#userMobile a {
+    color:#78361F;
+    text-decoration: none;
+    padding: 0 10px;
+}
+
+#userLinks button {
+    padding: 0;
+    border: none;
+    background: #3c1c10;
+    outline: none;
+    font-family: "Lilita One", sans-serif;
+    font-size: 1rem;
+    color: #A8DEF4;
+    padding: 32px 10px 0 10px;
+}
+
+#goferLinks {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+#goferMobile a {
+    color:#78361F;
+    text-decoration: none;
+    padding: 0 10px;
+}
+
+#goferLinks button {
+    padding: 0;
+    border: none;
+    background: #3c1c10;
+    outline: none;
+    font-family: "Lilita One", sans-serif;
+    font-size: 1rem;
+    color: #A8DEF4;
+    padding: 32px 10px 0 10px;
+}
+
+#goferMobile {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#goferMobile button {
+    padding: 0;
+    border: #3c1c10;
+    background: #A8DEF4;
+    font-family: "Lilita One", sans-serif;
+    font-size: 1rem;
+    border: solid;
+    border-radius: 3px;
+    padding: 3px;
+    color: #78361F; 
+}
+
+#userMobile {
+    display: none;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#userMobile button {
+    padding: 0;
+    border: #3c1c10;
+    border-width: thick;
+    background: #A8DEF4;
+    font-family: "Lilita One", sans-serif;
+    font-size: 1rem;
+    border: solid;
+    border-radius: 3px;
+    padding: 3px;
+    color: #78361F;
+}
+
 /* Tablet (portrait and landscape) ----------- */
  
 @media (max-width: 1000px) {
@@ -115,7 +198,7 @@ h1 {
     }
 }
 
-/* Tablet (portrait and landscape) ----------- */
+/* Phone (portrait and landscape) ----------- */
 
 @media (max-width: 730px) {
     .dropdown-menu {
@@ -126,5 +209,43 @@ h1 {
 
     .dropdown-menu .link {
         margin: .5em;
+    }
+
+    #goferMobile {
+        flex-direction: column-reverse;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    #goferMobile a {
+        padding: 0.5em 0;
+    }
+
+    #goferMobile button {
+        outline: none;
+        border: none;
+        padding: 0.5em 0;
+        width: 100svw;
+        margin-top: 0.5em;
+        margin-bottom: -0.5em;
+    }
+
+    #userMobile {
+        flex-direction: column-reverse;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    #userMobile a {
+        padding: 0.5em 0;
+    }
+
+    #userMobile button {
+        outline: none;
+        border: none;
+        padding: 0.5em 0;
+        width: 100svw;
+        margin-top: 0.5em;
+        margin-bottom: -0.5em;
     }
 }
