@@ -214,7 +214,7 @@ app.post('/login-handler', async (req, res) => {
 
 
     if (!result) {
-        res.render('login', { message: 'This username does not exist' })
+        res.render('login', { message: 'This username does not exist', auth: req.session.authenticated, type: req.session.usertype })
     }
 
     else if (result) {
@@ -316,7 +316,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
         if (!user) {
             return res.status(404).send('User not found');
         }
-        res.render('profile', { member: user });
+        res.render('profile', { member: user , auth: req.session.authenticated, type: req.session.usertype });
     } catch (error) {
         console.error('Failed to fetch user:', error);
         res.status(500).send('Internal server error');
