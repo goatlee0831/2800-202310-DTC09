@@ -1,14 +1,7 @@
 <%- include('templates/header') %>
 
 <body>
-    <% if(type == 'gofer'){ %>
-        <%- include('templates/nav_gofer') %>
-    <% } else if(auth){ %>
-        <%- include('templates/nav_user') %>
-    <% } else{ %>  
-        <%- include('templates/nav_out') %>
-    <% } %>
-    
+    <%- include('templates/nav') %>
 
 
     <div class="split-container">

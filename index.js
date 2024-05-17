@@ -110,7 +110,7 @@ app.get('/', (req, res) => {
 
 // signup
 app.get('/signup', (req, res) => {
-    res.render('signup', { message: '' })
+    res.render('signup', {auth: req.session.authenticated, type: req.session.usertype})
 })
 
 app.post('/signup-handler', async (req, res) => {
@@ -140,7 +140,7 @@ app.post('/signup-handler', async (req, res) => {
     if (validation.error) {
         var error = validation.error.details
         console.log(error)
-        res.redirect('/signup', { message: error[0].message})
+        res.redirect('/signup', {auth: req.session.authenticated, type: req.session.usertype})
         return
     }
 
@@ -164,11 +164,11 @@ app.post('/signup-handler', async (req, res) => {
 
     if (!result) {
         userCollection.insertOne(user)
-        return res.redirect('/login')
+        return res.redirect('/login', {auth: req.session.authenticated, type: req.session.usertype})
     }
 
     else if (result) {
-        res.redirect('/signup', { message: 'User already exists' })
+        res.redirect('/signup', { message: 'User already exists', auth: req.session.authenticated, type: req.session.usertype })
     }
 
 
@@ -184,7 +184,7 @@ app.get('/login', (req, res) => {
         res.redirect('/main')
     }
     else {
-        res.render('login', { message: '' })
+        res.render('login', { message: '', auth: req.session.authenticated, type: req.session.usertype  })
     }
 })
 
@@ -205,7 +205,7 @@ app.post('/login-handler', async (req, res) => {
     if (validation.error) {
         var error = validation.error
         console.log(error)
-        return res.render('login', { message: "Invalid username or password" })
+        return res.render('login', { message: "Invalid username or password", auth: req.session.authenticated, type: req.session.usertype })
         
     }
 
@@ -229,7 +229,7 @@ app.post('/login-handler', async (req, res) => {
         }
 
         else {
-            res.render('login', { message: 'Incorrect password' })
+            res.render('login', { message: 'Incorrect password', auth: req.session.authenticated, type: req.session.usertype })
         }
     }
 })
@@ -238,7 +238,7 @@ app.post('/login-handler', async (req, res) => {
 // reset password
 
 app.get('/ResetPassword', (req, res) => {
-    res.render('resetpassword', { message: '' })
+    res.render('resetpassword', { message: '', auth: req.session.authenticated, type: req.session.usertype })
 })
 
 
@@ -268,7 +268,7 @@ app.post('/reset-password-handler', async (req, res) => {
     result = await userCollection.findOne({ username: username })
 
     if (!result) {
-        res.render('resetpassword', { message: 'This username does not exist' })
+        res.render('resetpassword', { message: 'This username does not exist', auth: req.session.authenticated, type: req.session.usertype })
     }
 
     else if (result) {
@@ -281,7 +281,7 @@ app.post('/reset-password-handler', async (req, res) => {
         }
 
         else {
-            res.render('resetpassword', { message: 'Incorrect secret pin' })
+            res.render('resetpassword', { message: 'Incorrect secret pin', auth: req.session.authenticated, type: req.session.usertype })
         }
     }
 
@@ -292,7 +292,7 @@ app.post('/reset-password-handler', async (req, res) => {
 app.get('/main', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('main', {
-            username: req.session.username
+            username: req.session.username, auth: req.session.authenticated, type: req.session.usertype
         })
       
     }

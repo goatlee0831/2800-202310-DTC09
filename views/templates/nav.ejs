@@ -1,0 +1,7 @@
+<% if(type == 'gofer'){ %>
+    <%- include('nav_gofer') %>
+<% } else if(auth){ %>
+    <%- include('nav_user') %>
+<% } else{ %>
+    <%- include('nav_out') %>
+<% } %>
