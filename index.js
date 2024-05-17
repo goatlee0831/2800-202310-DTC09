@@ -140,7 +140,7 @@ app.post('/signup-handler', async (req, res) => {
     if (validation.error) {
         var error = validation.error.details
         console.log(error)
-        res.redirect('/signup', {auth: req.session.authenticated, type: req.session.usertype})
+        res.render('/signup', {auth: req.session.authenticated, type: req.session.usertype})
         return
     }
 
