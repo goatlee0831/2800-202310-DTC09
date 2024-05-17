@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= member.name %> - Profile</title>
+</head>
+<body>
+    <header>
+        <h1>Profile of <%= member.name %></h1>
+    </header>
+    <div class="profile-container">
+        <img src="<%= member.profilePicture %>" alt="<%= member.name %>'s Profile Picture" style="width: 200px; height: auto; border-radius: 50%;">
+        <h2>Welcome, <%= member.username %>!</h2>
+        <p><strong>First Name:</strong> <%= member.firstname %></p>
+        <p><strong>Last Name:</strong> <%= member.lastname %></p>
+        <p><strong>Email:</strong> <%= member.email %></p>
+    </div>
+</body>
+</html>
