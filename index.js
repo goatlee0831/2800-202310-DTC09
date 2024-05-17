@@ -94,6 +94,9 @@ function IsAdmin(req, res, next) {
 
 // Routes
 
+
+
+
 // landing page
 app.get('/', (req, res) => {
     res.render('index')
@@ -114,7 +117,10 @@ app.post('/signup-handler', async (req, res) => {
     var secret_pin = req.body.secret_pin
     var username = req.body.username
     var password = req.body.password
+    var firstname = req.body.firstname
+    var lastname = req.body.lastname
   
+
 
 
     const schema = Joi.object(
@@ -123,6 +129,8 @@ app.post('/signup-handler', async (req, res) => {
         email: Joi.string().min(3).max(20).required(),
         secret_pin: Joi.number().min(4).required(),
         password: Joi.string().min(4).max(20).required(),
+        firstname: Joi.string().max(20).required(),
+        lastname: Joi.string().max(20).required()
     })
 
     const validation = schema.validate(req.body)
@@ -147,7 +155,9 @@ app.post('/signup-handler', async (req, res) => {
         password: hashPassword,
         usertype: 'user',
         email: email,
-        secret_pin: hashSecret_pin
+        secret_pin: hashSecret_pin,
+        firstname: firstname,
+        lastname: lastname
     }
 
     if (!result) {
@@ -188,7 +198,7 @@ app.post('/login-handler', async (req, res) => {
         })
 
     const validation = schema.validate({username, password})
-    console.log(validation)
+
 
     if (validation.error) {
         var error = validation.error
@@ -222,6 +232,61 @@ app.post('/login-handler', async (req, res) => {
     }
 })
 
+
+// reset password
+
+app.get('/ResetPassword', (req, res) => {
+    res.render('resetpassword', { message: '' })
+})
+
+
+app.post('/reset-password-handler', async (req, res) => {
+
+    var username = req.body.username
+    var password = req.body.password
+    var secret_pin = req.body.secret_pin
+
+    const schema = Joi.object(
+        {
+            username: Joi.string().min(3).max(20).required(),
+            password: Joi.string().min(4).max(20).required(),
+            secret_pin: Joi.number().min(4).required()
+        })
+
+    const validation = schema.validate({username, password, secret_pin})
+ 
+
+    if (validation.error) {
+        var error = validation.error.details
+        console.log(error)
+        return res.render('resetpassword', { message: error[0].message })
+        
+    }
+
+    result = await userCollection.findOne({ username: username })
+
+    if (!result) {
+        res.render('resetpassword', { message: 'This username does not exist' })
+    }
+
+    else if (result) {
+        const match = await bcrypt.compare(secret_pin, result.secret_pin)
+
+        if (match) {
+            const hashPassword = await bcrypt.hash(password, saltRounds)
+            userCollection.updateOne({ username: username }, { $set: { password: hashPassword } })
+            res.redirect('/login')
+        }
+
+        else {
+            res.render('resetpassword', { message: 'Incorrect secret pin' })
+        }
+    }
+
+})
+
+// main page
+
 app.get('/main', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('main', {
@@ -233,6 +298,8 @@ app.get('/main', IsAuthenticated, (req, res) => {
         res.redirect('/login')
     }
 })
+
+// logout
 
 app.get('/logout', (req, res) => {
     req.session.destroy()
