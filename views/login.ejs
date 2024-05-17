@@ -1,0 +1,30 @@
+<%- include('templates/header') %>
+
+    <div class="login-form">
+        <h2>Members Login</h2>
+        <form action="/login-handler" method="POST">
+
+    
+            <label for="username">Username:</label>
+            <input type="text" id="fullname" name="username" required>
+
+        
+    
+
+    
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+    
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+
+    <div>
+        <%= message %>
+    </div>
+
+
+
+    <%- include('templates/footer') %>

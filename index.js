@@ -105,10 +105,11 @@ app.get('/', (req, res) => {
 
 // signup
 app.get('/signup', (req, res) => {
-    res.render('signup')
+    res.render('signup', { message: '' })
 })
 
-app.post('/signup', async (req, res) => {
+app.post('/signup-handler', async (req, res) => {
+    
     var email = req.body.email 
     var secret_pin = req.body.secret_pin
     var username = req.body.username
@@ -120,15 +121,16 @@ app.post('/signup', async (req, res) => {
     {
         username: Joi.string().min(3).max(20).required(),
         email: Joi.string().min(3).max(20).required(),
-        secret_pin: Joi.string().min(3).max(20).required(),
-        password: Joi.string().min(6).max(20).required(),
+        secret_pin: Joi.number().min(4).required(),
+        password: Joi.string().min(4).max(20).required(),
     })
 
     const validation = schema.validate(req.body)
 
     if (validation.error) {
-        console.log(validation.error)
-        res.redirect('/signup')
+        var error = validation.error.details
+        console.log(error)
+        res.redirect('/signup', { message: error[0].message})
         return
     }
 
@@ -170,11 +172,11 @@ app.get('/login', (req, res) => {
         res.redirect('/main')
     }
     else {
-        res.render('login')
+        res.render('login', { message: '' })
     }
 })
 
-app.post('/login', async (req, res) => {
+app.post('/login-handler', async (req, res) => {
 
     var username = req.body.username
     var password = req.body.password
@@ -182,18 +184,22 @@ app.post('/login', async (req, res) => {
     const schema = Joi.object(
         {
             username: Joi.string().min(3).max(20).required(),
-            password: Joi.string().min(6).max(20).required(),
+            password: Joi.string().min(4).max(20).required(),
         })
 
-    const validation = schema.validate(username, password)
+    const validation = schema.validate({username, password})
+    console.log(validation)
 
     if (validation.error) {
-        console.log(validation.error)
-        res.render('/login', { message: 'something wrong with username or password' })
-        return
+        var error = validation.error
+        console.log(error)
+        return res.render('login', { message: "Invalid username or password" })
+        
     }
 
+
     result = await userCollection.findOne({ username: username })
+
 
     if (!result) {
         res.render('login', { message: 'This username does not exist' })
@@ -207,7 +213,7 @@ app.post('/login', async (req, res) => {
             req.session.username = result.username
             req.session.usertype = result.usertype
             req.session.cookie.maxAge = expirytime
-            res.redirect('/main')
+            res.redirect('main')
         }
 
         else {
@@ -228,6 +234,10 @@ app.get('/main', IsAuthenticated, (req, res) => {
     }
 })
 
+app.get('/logout', (req, res) => {
+    req.session.destroy()
+    res.redirect('/login')
+})
 
 
 
