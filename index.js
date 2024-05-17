@@ -110,7 +110,7 @@ app.get('/', (req, res) => {
 
 // signup
 app.get('/signup', (req, res) => {
-    res.render('signup', {auth: req.session.authenticated, type: req.session.usertype})
+    res.render('signup', {message: '', auth: req.session.authenticated, type: req.session.usertype})
 })
 
 app.post('/signup-handler', async (req, res) => {
@@ -164,11 +164,11 @@ app.post('/signup-handler', async (req, res) => {
 
     if (!result) {
         userCollection.insertOne(user)
-        return res.redirect('/login', {auth: req.session.authenticated, type: req.session.usertype})
+        return res.redirect('/login')
     }
 
     else if (result) {
-        res.redirect('/signup', { message: 'User already exists', auth: req.session.authenticated, type: req.session.usertype })
+        res.render('/signup', { message: 'User already exists', auth: req.session.authenticated, type: req.session.usertype })
     }
 
 
@@ -262,7 +262,6 @@ app.post('/reset-password-handler', async (req, res) => {
         var error = validation.error.details
         console.log(error)
         return res.render('resetpassword', { message: error[0].message })
-        
     }
 
     result = await userCollection.findOne({ username: username })
