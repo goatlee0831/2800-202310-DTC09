@@ -308,7 +308,20 @@ app.get('/logout', (req, res) => {
 })
 
 
-
+// display profile page
+app.get('/profile', IsAuthenticated, async (req, res) => {
+    try {
+        const username = req.session.username; // username is stored in session
+        const user = await userCollection.findOne({ username: username });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        res.render('profile', { member: user });
+    } catch (error) {
+        console.error('Failed to fetch user:', error);
+        res.status(500).send('Internal server error');
+    }
+});
 
 
 
