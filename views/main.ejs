@@ -7,31 +7,29 @@
     <h2><%= username %></h2>
 </header>
 
-<div class="ContainerLists">
-
+<div class="columnContainer" >
     <!-- Urgent Tasks -->
-    <h1>Urgent Tasks</h1>
-    <div id="UrgentTasksCardContainer"></div>
+    <div id="UrgentTasksCardContainer">
+        <h1>Urgent Tasks</h1>
+    </div>
     
     <!-- Tasks in Progress -->
-    <h1>Tasks in Progress</h1>
-    <div id="InProgressTasksCardContainer"></div>
+    <div id="InProgressTasksCardContainer">
+        <h1>Tasks in Progress</h1>
+    </div>
     
     <!-- Recommended Tasks -->
-    <h1>Recommended Tasks</h1>
-    <div id="RecommendedTasksCardContainer"></div>
+    <div id="RecommendedTasksCardContainer">
+        <h1>Recommended Tasks</h1>
+    </div>
     
 </div>
-
-
 
 <div>
     <button>
         <a href="/logout">Logout</a>
     </button>
 </div>
-
-
 
 <script>
     const UrgentCardContainer = document.getElementById('UrgentTasksCardContainer');
@@ -54,13 +52,35 @@
         return card;
     }
 
-    // Example usage
-    const card1 = createCard('Urgent Task 1', 'LOTS OF THINGS TO DO!');
-    const card2 = createCard('Urgent Task 2', 'LOTS OF MORE THINGS TO DO!');
+// Urgent Cards
+const UrgentCard1 = createCard('Urgent Task 1', 'LOTS OF THINGS TO DO!');
+const UrgentCard2 = createCard('Urgent Task 2', 'LOTS OF MORE THINGS TO DO!');
+const UrgentCard3 = createCard('Urgent Task 3', 'EVEN MORE THINGS TO DO!');
 
-    // Adding the cards to the container
-    UrgentCardContainer.appendChild(card1);
-    UrgentCardContainer.appendChild(card2); 
+// In Progress Cards
+const InProgressCard1 = createCard('In Progress Task 1', 'SOME THINGS TO DO!');
+const InProgressCard2 = createCard('In Progress Task 2', 'SOME MORE THINGS TO DO!');
+const InProgressCard3 = createCard('In Progress Task 3', 'EVEN MORE THINGS TO DO!');
+
+// Recommended Cards
+const RecommendedCard1 = createCard('Recommended Task 1', 'SOME THINGS TO DO!');
+const RecommendedCard2 = createCard('Recommended Task 2', 'SOME MORE THINGS TO DO!');
+const RecommendedCard3 = createCard('Recommended Task 3', 'EVEN MORE THINGS TO DO!');
+
+// Adding the Urgent cards to the container
+UrgentCardContainer.appendChild(UrgentCard1);
+UrgentCardContainer.appendChild(UrgentCard2);
+UrgentCardContainer.appendChild(UrgentCard3);
+
+// Adding the In Progress cards to the container
+InProgressCardContainer.appendChild(InProgressCard1);
+InProgressCardContainer.appendChild(InProgressCard2);
+InProgressCardContainer.appendChild(InProgressCard3);
+
+// Adding the Recommended cards to the container
+RecommendedCardContainer.appendChild(RecommendedCard1);
+RecommendedCardContainer.appendChild(RecommendedCard2);
+RecommendedCardContainer.appendChild(RecommendedCard3);
 </script>
 
 <%- include('templates/footer') %>
