@@ -7,9 +7,9 @@ const app = express()
 const port = process.env.PORT || 3000
 var session = require('express-session')
 const bcrypt = require('bcrypt');
-const ejs = require('ejs');
 const Joi = require("joi");
 
+const ejs = require('ejs');
 const { MongoClient } = require('mongodb');
 const MongoStore = require('connect-mongo');
 // const mongoose = require('mongoose');
@@ -128,7 +128,7 @@ app.post('/signup-handler', async (req, res) => {
     const schema = Joi.object(
     {
         username: Joi.string().min(3).max(20).required(),
-        email: Joi.string().min(3).max(20).required(),
+        email: Joi.string().min(3).max(30).required(),
         secret_pin: Joi.number().min(4).required(),
         password: Joi.string().min(4).max(20).required(),
         firstname: Joi.string().max(20).required(),
