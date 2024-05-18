@@ -1,40 +1,26 @@
 <%- include('templates/header') %>
 <%- include('templates/nav') %>
+<main>
 
 <header >
     <h1>Welcome!</h1>
-    <h2><%= username %></h2>
+    <h2><%=username%></h2>
 </header>
 
-<!-- Urgent Tasks -->
-<div>
+<div class="ContainerLists">
+
+    <!-- Urgent Tasks -->
     <h1>Urgent Tasks</h1>
+    <div id="UrgentTasksCardContainer"></div>
     
-    <!-- Lists of Urgent Tasks -->
-    <div>
-
-
-    </div>
-</div>
-
-<!-- Tasks in Progress -->
-<div>
+    <!-- Tasks in Progress -->
     <h1>Tasks in Progress</h1>
-
-    <!-- Lists of Tasks in Progress -->
-    <div>
-
-    </div>
-</div>
-
-<!-- Recommended Tasks -->
-<div>
+    <div id="InProgressTasksCardContainer"></div>
+    
+    <!-- Recommended Tasks -->
     <h1>Recommended Tasks</h1>
-
-    <!-- Lists of Recommended Tasks -->
-    <div>
-
-    </div>
+    <div id="RecommendedTasksCardContainer"></div>
+    
 </div>
 
 
@@ -45,4 +31,7 @@
 
 
 
+<script src="../scripts/main.js"></script>
+
+</main>
 <%- include('templates/footer') %>
