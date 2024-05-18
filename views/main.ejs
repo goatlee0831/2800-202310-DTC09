@@ -2,9 +2,15 @@
 <%- include('templates/nav') %>
 <main>
 
-<header >
-    <h1>Welcome!</h1>
-    <h2><%= username %></h2>
+<header>
+    <div>
+        <h1>Welcome <%= username %>!</h1>
+    </div>
+    <div>
+        <button>
+            <a href="/logout">Logout</a>
+        </button>
+    </div>
 </header>
 
 <div class="columnContainer" >
@@ -23,12 +29,6 @@
         <h1>Recommended Tasks</h1>
     </div>
     
-</div>
-
-<div>
-    <button>
-        <a href="/logout">Logout</a>
-    </button>
 </div>
 
 <script>
