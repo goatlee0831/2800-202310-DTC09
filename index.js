@@ -55,7 +55,9 @@ app.use(session({
 }))
 
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static('public'))
+app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/css"));
+app.use(express.static(__dirname + "/frontend_js"));
 app.set('view engine', 'ejs');
 
 
@@ -94,9 +96,12 @@ function IsAdmin(req, res, next) {
 
 // Routes
 
+
+
+
 // landing page
 app.get('/', (req, res) => {
-    res.render('index')
+    res.render('index', {auth: req.session.authenticated, type: req.session.usertype})
 })
 
 
@@ -105,30 +110,37 @@ app.get('/', (req, res) => {
 
 // signup
 app.get('/signup', (req, res) => {
-    res.render('signup')
+    res.render('signup', {message: '', auth: req.session.authenticated, type: req.session.usertype})
 })
 
-app.post('/signup', async (req, res) => {
+app.post('/signup-handler', async (req, res) => {
+    
     var email = req.body.email 
     var secret_pin = req.body.secret_pin
     var username = req.body.username
     var password = req.body.password
+    var firstname = req.body.firstname
+    var lastname = req.body.lastname
   
+
 
 
     const schema = Joi.object(
     {
         username: Joi.string().min(3).max(20).required(),
         email: Joi.string().min(3).max(20).required(),
-        secret_pin: Joi.string().min(3).max(20).required(),
-        password: Joi.string().min(6).max(20).required(),
+        secret_pin: Joi.number().min(4).required(),
+        password: Joi.string().min(4).max(20).required(),
+        firstname: Joi.string().max(20).required(),
+        lastname: Joi.string().max(20).required()
     })
 
     const validation = schema.validate(req.body)
 
     if (validation.error) {
-        console.log(validation.error)
-        res.redirect('/signup')
+        var error = validation.error.details
+        console.log(error)
+        res.render('/signup', {auth: req.session.authenticated, type: req.session.usertype, message: error[0].message})
         return
     }
 
@@ -145,7 +157,9 @@ app.post('/signup', async (req, res) => {
         password: hashPassword,
         usertype: 'user',
         email: email,
-        secret_pin: hashSecret_pin
+        secret_pin: hashSecret_pin,
+        firstname: firstname,
+        lastname: lastname
     }
 
     if (!result) {
@@ -154,7 +168,7 @@ app.post('/signup', async (req, res) => {
     }
 
     else if (result) {
-        res.redirect('/signup', { message: 'User already exists' })
+        res.render('/signup', { message: 'User already exists', auth: req.session.authenticated, type: req.session.usertype })
     }
 
 
@@ -170,11 +184,11 @@ app.get('/login', (req, res) => {
         res.redirect('/main')
     }
     else {
-        res.render('login')
+        res.render('login', { message: '', auth: req.session.authenticated, type: req.session.usertype  })
     }
 })
 
-app.post('/login', async (req, res) => {
+app.post('/login-handler', async (req, res) => {
 
     var username = req.body.username
     var password = req.body.password
@@ -182,18 +196,22 @@ app.post('/login', async (req, res) => {
     const schema = Joi.object(
         {
             username: Joi.string().min(3).max(20).required(),
-            password: Joi.string().min(6).max(20).required(),
+            password: Joi.string().min(4).max(20).required(),
         })
 
-    const validation = schema.validate(username, password)
+    const validation = schema.validate({username, password})
+
 
     if (validation.error) {
-        console.log(validation.error)
-        res.render('/login', { message: 'something wrong with username or password' })
-        return
+        var error = validation.error
+        console.log(error)
+        return res.render('login', { message: "Invalid username or password", auth: req.session.authenticated, type: req.session.usertype })
+        
     }
 
+
     result = await userCollection.findOne({ username: username })
+
 
     if (!result) {
         res.render('login', { message: 'This username does not exist' })
@@ -207,19 +225,73 @@ app.post('/login', async (req, res) => {
             req.session.username = result.username
             req.session.usertype = result.usertype
             req.session.cookie.maxAge = expirytime
-            res.redirect('/main')
+            res.redirect('main')
         }
 
         else {
-            res.render('login', { message: 'Incorrect password' })
+            res.render('login', { message: 'Incorrect password', auth: req.session.authenticated, type: req.session.usertype })
         }
     }
 })
 
+
+// reset password
+
+app.get('/ResetPassword', (req, res) => {
+    res.render('resetpassword', { message: '', auth: req.session.authenticated, type: req.session.usertype })
+})
+
+
+app.post('/reset-password-handler', async (req, res) => {
+
+    var username = req.body.username
+    var password = req.body.password
+    var secret_pin = req.body.secret_pin
+
+    const schema = Joi.object(
+        {
+            username: Joi.string().min(3).max(20).required(),
+            password: Joi.string().min(4).max(20).required(),
+            secret_pin: Joi.number().min(4).required()
+        })
+
+    const validation = schema.validate({username, password, secret_pin})
+ 
+
+    if (validation.error) {
+        var error = validation.error.details
+        console.log(error)
+        return res.render('resetpassword', { message: error[0].message })
+    }
+
+    result = await userCollection.findOne({ username: username })
+
+    if (!result) {
+        res.render('resetpassword', { message: 'This username does not exist', auth: req.session.authenticated, type: req.session.usertype })
+    }
+
+    else if (result) {
+        const match = await bcrypt.compare(secret_pin, result.secret_pin)
+
+        if (match) {
+            const hashPassword = await bcrypt.hash(password, saltRounds)
+            userCollection.updateOne({ username: username }, { $set: { password: hashPassword } })
+            res.redirect('/login')
+        }
+
+        else {
+            res.render('resetpassword', { message: 'Incorrect secret pin', auth: req.session.authenticated, type: req.session.usertype })
+        }
+    }
+
+})
+
+// main page
+
 app.get('/main', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('main', {
-            username: req.session.username
+            username: req.session.username, auth: req.session.authenticated, type: req.session.usertype
         })
       
     }
@@ -228,9 +300,28 @@ app.get('/main', IsAuthenticated, (req, res) => {
     }
 })
 
+// logout
+
+app.get('/logout', (req, res) => {
+    req.session.destroy()
+    res.redirect('/login')
+})
 
 
-
+// display profile page
+app.get('/profile', IsAuthenticated, async (req, res) => {
+    try {
+        const username = req.session.username; // username is stored in session
+        const user = await userCollection.findOne({ username: username });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        res.render('profile', { member: user });
+    } catch (error) {
+        console.error('Failed to fetch user:', error);
+        res.status(500).send('Internal server error');
+    }
+});
 
 
 

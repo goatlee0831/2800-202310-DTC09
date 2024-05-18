@@ -1,0 +1,158 @@
+ body {
+     font-family: Arial, sans-serif;
+     margin: 0;
+     /* Remove default margin */
+     display: flex;
+     /* Flexbox for the main layout */
+     flex-direction: column;
+     /* Stack content vertically */
+     height: 100vh;
+     /* Full viewport height */
+ }
+
+ button {
+    outline: none;
+    border: none;
+    background-color: transparent;
+ }
+
+ /* Navbar styles */
+ .navbar {
+     background-color: #333;
+     color: white;
+     padding: 10px 0;
+     text-align: center;
+     width: 100%;
+     /* Full width */
+     box-sizing: border-box;
+     /* Include padding in width */
+ }
+
+ /* Navbar links */
+ .navbar a {
+     color: white;
+     padding: 14px 20px;
+     text-decoration: none;
+     display: inline-block;
+ }
+
+ /* Flex container for split sections */
+ .split-container {
+     display: flex;
+     flex-grow: 1;
+     /* Take available space */
+     overflow: auto;
+     /* Handles overflow */
+ }
+
+ /* Left and right sections */
+ .welcome-section,
+ .buttons-section {
+     flex: 1;
+     display: flex;
+     align-items: center;
+     /* Center content vertically */
+     justify-content: center;
+     /* Center content horizontally */
+     text-align: center;
+ }
+
+ .welcome-section {
+     background-color: #FFDEAD;
+ }
+
+ .buttons-section {
+     background-color: white;
+     flex-direction: column;
+     /* Stack buttons vertically */
+     gap: 20px;
+     /* Space between buttons */
+ }
+
+ /* Button styling */
+ .button {
+     padding: 10px 20px;
+     color: black;
+     border: 5px solid #4D2F25;
+     background-color: #CAF0FF;
+     width: 80%;
+     /* Fixed width for alignment */
+     cursor: pointer;
+ }
+
+ /* New section under the split-container */
+ .info-section {
+     display: flex;
+     background-color: lightblue;
+     padding: 20px;
+     text-align: left;
+ }
+
+ .info-title {
+     flex: 1;
+ }
+
+ .info-text {
+     flex: 2;
+ }
+
+ .image-placeholder {
+     flex: 1;
+     background-color: #f0f0f0;
+     border: dashed 2px #ccc;
+ }
+
+ /* Hover effect for buttons */
+ .members-button:hover,
+ .gofers-button:hover {
+     opacity: 0.8;
+ }
+
+ .ai-section {
+     display: flex;
+     align-items: center;
+     /* Align items vertically in the center */
+     justify-content: space-around;
+     /* Distribute space evenly around the items */
+     padding: 20px;
+     background-color: #F3F3F3;
+     flex-direction: row-reverse;
+     /* Reverse the order of flex items */
+ }
+
+ .ai-title,
+ .ai-text {
+     flex: 1;
+     /* Each child takes equal space */
+     padding: 10px;
+     /* Add some padding around text */
+     text-align: center;
+     /* Center the text */
+ }
+
+ /* Media Query for smaller screens */
+ @media (max-width: 768px) {
+     .split-container {
+         flex-direction: column;
+         /* Stack vertically */
+     }
+
+     .info-section {
+         flex-direction: column;
+         /* Stack children vertically */
+     }
+
+     .info-title,
+     .info-text {
+         flex: none;
+         width: 100%;
+         /* Full width */
+         text-align: center;
+         /* Center text for better readability */
+     }
+
+     .info-title {
+         margin-bottom: 20px;
+         /* Space between title and text */
+     }
+ }

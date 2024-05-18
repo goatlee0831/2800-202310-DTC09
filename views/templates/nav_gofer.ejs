@@ -1,0 +1,66 @@
+<nav class="top">
+    <div class="company">
+      <img src="images/gofer-hello.png">
+      <h1>Gofer</h1>
+    </div>
+    <div class="top-links">
+      <div id="userLinks">
+        <button onclick="activateGofer()">
+          Gofer&nbsp;Mode
+        </button>
+        <a href="/logout">Log&nbsp;Out</a>
+        <a href="/profile">Profile</a>
+        <a href="/history">History</a>
+        <a href="/progress">In&nbsp;Progress</a>
+        <a href="/recommend">Recomended&nbsp;Tasks</a>
+        <a href="/main">Home</a>
+      </div>
+
+      <div id="goferLinks">
+        <button onclick="activateUser()">
+          Task&nbsp;Mode
+        </button>
+        <a href="/logout">Log&nbsp;Out</a>
+        <a href="/profile">Profile</a>
+        <a href="/complete">Completed&nbsp;Jobs</a>
+        <a href="/jobs">My&nbsp;Jobs</a>
+        <a href="find">Jobs&nbsp;Board</a>
+        <a href="/main">Home</a>
+      </div>
+    </div>
+
+    <div class="dropdown" data-dropdown>
+        <div class="dropdown" data-dropdown>
+            <button class="link" data-dropdown-button>
+            <i id="menuBtn" class="material-icons">
+                menu
+            </i>
+            </button>
+            <div class="dropdown-menu">
+                <div id="userMobile">
+                    <button onclick="activateGofer()">
+                        Gofer&nbsp;Mode
+                    </button>
+                    <a href="/logout" class="links">Log&nbsp;Out</a>
+                    <a href="/profile" class="links">Profile</a>
+                    <a href="/history" class="links">History</a>
+                    <a href="/progress" class="links">In&nbsp;Progress</a>
+                    <a href="/recomend" class="links">Recomended&nbsp;Tasks</a>
+                    <a href="/main" class="links">Home</a>
+                </div>
+        
+                <div id="goferMobile">
+                    <button onclick="activateUser()">
+                        Task&nbsp;Mode
+                    </button>
+                    <a href="/logout" class="links">Log&nbsp;Out</a>
+                    <a href="/profile" class="links">Profile</a>
+                    <a href="/complete" class="links">Completed&nbsp;Jobs</a>
+                    <a href="/jobs" class="links">My&nbsp;Jobs</a>
+                    <a href="/find" class="links">Jobs&nbsp;Board</a>
+                    <a href="/main" class="links">Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
