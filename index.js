@@ -287,7 +287,6 @@ app.post('/reset-password-handler', async (req, res) => {
 })
 
 // main page
-
 app.get('/main', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('main', {
@@ -314,7 +313,6 @@ app.get('/urgentTask', IsAuthenticated, (req, res) => {
 })
 
 // logout
-
 app.get('/logout', (req, res) => {
     req.session.destroy()
     res.redirect('/login')
