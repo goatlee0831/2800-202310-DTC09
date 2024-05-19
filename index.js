@@ -324,8 +324,8 @@ app.get('/logout', (req, res) => {
 // display profile page
 app.get('/profile', IsAuthenticated, async (req, res) => {
     try {
-        const username = req.session.username; // username is stored in session
-        const user = await userCollection.findOne({ username: username });
+        const { username } = req.session; // username is stored in session
+        const user = await userCollection.findOne({ username });
         if (!user) {
             return res.status(404).send('User not found');
         }
