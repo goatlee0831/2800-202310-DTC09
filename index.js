@@ -354,6 +354,20 @@ app.get('/acceptedTask', IsAuthenticated, (req, res) => {
     }
 })
 
+// Completed Tasks Page
+app.get('/completedTask', IsAuthenticated, (req, res) => {
+    if (req.session.authenticated) {
+        res.render('completedTask', {
+            username: req.session.username, 
+            auth: req.session.authenticated, 
+            type: req.session.usertype
+        })
+    }
+    else {
+        res.redirect('/login')
+    }
+})
+
 // logout
 app.get('/logout', (req, res) => {
     req.session.destroy()
