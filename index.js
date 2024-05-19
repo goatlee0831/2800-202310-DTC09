@@ -326,6 +326,20 @@ app.get('/pendingTask', IsAuthenticated, (req, res) => {
     }
 })
 
+// Tasks Page
+app.get('/tasks', IsAuthenticated, (req, res) => {
+    if (req.session.authenticated) {
+        res.render('tasks', {
+            username: req.session.username, 
+            auth: req.session.authenticated, 
+            type: req.session.usertype
+        })
+    }
+    else {
+        res.redirect('/login')
+    }
+})
+
 // logout
 app.get('/logout', (req, res) => {
     req.session.destroy()
