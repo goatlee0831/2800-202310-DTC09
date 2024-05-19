@@ -1,0 +1,40 @@
+<%- include('templates/header') %>
+<%- include('templates/nav') %>
+
+<main>
+    <header style="text-align: center;">
+        <h1>Recommended Tasks</h1>
+    </header>
+
+    <div class="columnContainer">
+        <div id="RecommendedTasks"></div>
+    </div>
+</main>
+
+<script>
+    const RecommendedTasks = document.getElementById('RecommendedTasks');
+
+    function createCard(title, content) {
+        const card = document.createElement('div');
+        card.classList.add('card');
+
+        const cardTitle = document.createElement('h2');
+        cardTitle.textContent = title;
+
+        const cardContent = document.createElement('p');
+        cardContent.textContent = content;
+
+        card.appendChild(cardTitle);
+        card.appendChild(cardContent);
+
+        return card;
+    }
+
+    const RecommendedCard1 = createCard('Recommended Task 1', 'LOTS OF THINGS TO DO!');
+    const RecommendedCard2 = createCard('Recommended Task 2', 'LOTS OF MORE THINGS TO DO!');
+    const RecommendedCard3 = createCard('Recommended Task 3', 'EVEN MORE THINGS TO DO!');
+
+    RecommendedTasks.appendChild(RecommendedCard1);
+    RecommendedTasks.appendChild(RecommendedCard2);
+    RecommendedTasks.appendChild(RecommendedCard3);
+</script>

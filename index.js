@@ -368,6 +368,20 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
     }
 })
 
+// Recommended Tasks Page
+app.get('/recommendedTask', IsAuthenticated, (req, res) => {
+    if (req.session.authenticated) {
+        res.render('recommendedTask', {
+            username: req.session.username, 
+            auth: req.session.authenticated, 
+            type: req.session.usertype
+        })
+    }
+    else {
+        res.redirect('/login')
+    }
+})
+
 // logout
 app.get('/logout', (req, res) => {
     req.session.destroy()
