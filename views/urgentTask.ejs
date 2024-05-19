@@ -1,0 +1,44 @@
+<%- include('templates/header') %>
+<%- include('templates/nav') %>
+
+<main>
+    <header style="text-align: center;">
+        <h1>Urgent Tasks</h1>
+    </header>
+
+    <div class="columnContainer">
+        <div id="UrgentTasks">
+
+        </div>
+    </div>
+</main>
+
+<script>
+    const UrgentTasks = document.getElementById('UrgentTasks');
+
+    function createCard(title, content) {
+        const card = document.createElement('div');
+        card.classList.add('card');
+
+        const cardTitle = document.createElement('h2');
+        cardTitle.textContent = title;
+
+        const cardContent = document.createElement('p');
+        cardContent.textContent = content;
+
+        card.appendChild(cardTitle);
+        card.appendChild(cardContent);
+
+        return card;
+    }
+
+    const UrgentCard1 = createCard('Urgent Task 1', 'LOTS OF THINGS TO DO!');
+    const UrgentCard2 = createCard('Urgent Task 2', 'LOTS OF MORE THINGS TO DO!');
+    const UrgentCard3 = createCard('Urgent Task 3', 'EVEN MORE THINGS TO DO!');
+
+    UrgentTasks.appendChild(UrgentCard1);
+    UrgentTasks.appendChild(UrgentCard2);
+    UrgentTasks.appendChild(UrgentCard3);
+</script>
+
+<%- include('templates/footer') %>
