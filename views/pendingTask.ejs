@@ -1,0 +1,42 @@
+<%- include('templates/header') %>
+<%- include('templates/nav') %>
+<main>
+
+<header style="text-align: center;">
+    <h1>Pending Tasks</h1>
+</header>
+
+<div class="columnContainer">
+    <div id="PendingTasks"></div>
+</div>
+
+</main>
+
+<script>
+    const PendingTasks = document.getElementById('PendingTasks');
+
+    function createCard(title, content) {
+        const card = document.createElement('div');
+        card.classList.add('card');
+
+        const cardTitle = document.createElement('h2');
+        cardTitle.textContent = title;
+
+        const cardContent = document.createElement('p');
+        cardContent.textContent = content;
+
+        card.appendChild(cardTitle);
+        card.appendChild(cardContent);
+
+        return card;
+    }
+
+    const PendingCard1 = createCard('Pending Task 1', 'LOTS OF THINGS TO DO!');
+    const PendingCard2 = createCard('Pending Task 2', 'LOTS OF MORE THINGS TO DO!');
+    const PendingCard3 = createCard('Pending Task 3', 'EVEN MORE THINGS TO DO!');
+
+    PendingTasks.appendChild(PendingCard1);
+    PendingTasks.appendChild(PendingCard2);
+    PendingTasks.appendChild(PendingCard3);
+</script>
+<%- include('templates/footer') %>
