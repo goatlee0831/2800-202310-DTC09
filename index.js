@@ -293,7 +293,20 @@ app.get('/main', IsAuthenticated, (req, res) => {
         res.render('main', {
             username: req.session.username, auth: req.session.authenticated, type: req.session.usertype
         })
-      
+    }
+    else {
+        res.redirect('/login')
+    }
+})
+
+// Urgent Tasks Page
+app.get('/urgentTask', IsAuthenticated, (req, res) => {
+    if (req.session.authenticated) {
+        res.render('urgentTask', {
+            username: req.session.username, 
+            auth: req.session.authenticated, 
+            type: req.session.usertype
+        })
     }
     else {
         res.redirect('/login')
