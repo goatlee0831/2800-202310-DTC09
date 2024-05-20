@@ -1,0 +1,42 @@
+<%- include('header') %>
+<%- include('nav_bar') %>
+<style> .listing {
+    display: flex;
+    flex-direction: column;
+    background-color: lightcoral;
+    width: 300px;
+    margin :auto;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: solid saddlebrown 2px;
+    overflow: hidden;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: small;
+    
+}
+
+.listing .topRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background-color: darkgreen;
+    padding: 9px;
+    color: seashell;
+}
+
+.listing .bottomRow {
+    display: flex;
+    flex-direction: column;
+    background-color: lightpink;
+    padding: 9px;
+    
+}
+
+</style>
+
+<section id="jobListings">
+    <% job.forEach((job) => { %>
+        <%- include('templates/jobListing', {job: job})%>
+    <% }) %>
+</section>

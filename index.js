@@ -2,6 +2,8 @@
 
 require('dotenv').config()
 
+const path = require('path');
+
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
@@ -28,9 +30,12 @@ const mongodb_database = process.env.MONGODB_DATABASE
 
 // MongoDB connection
 
-const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/?retryWrites=true&w=majority`;
+const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/project`;
 const database = new MongoClient(atlasurl);
 const userCollection = database.db(mongodb_database).collection('users');
+const jobCollection = database.db(mongodb_database).collection('jobs');
+const goferCollection = database.db(mongodb_database).collection('gofer');
+
 
 
 // Session store
@@ -106,8 +111,6 @@ app.get('/', (req, res) => {
 
 
 
-
-
 // signup
 app.get('/signup', (req, res) => {
     res.render('signup', {message: '', auth: req.session.authenticated, type: req.session.usertype})
@@ -121,9 +124,8 @@ app.post('/signup-handler', async (req, res) => {
     var password = req.body.password
     var firstname = req.body.firstname
     var lastname = req.body.lastname
-  
-
-
+    var usertype = req.body.usertype
+    console.log(`The usertype is ${usertype}`)
 
     const schema = Joi.object(
     {
@@ -132,7 +134,8 @@ app.post('/signup-handler', async (req, res) => {
         secret_pin: Joi.number().min(4).required(),
         password: Joi.string().min(4).max(20).required(),
         firstname: Joi.string().max(20).required(),
-        lastname: Joi.string().max(20).required()
+        lastname: Joi.string().max(20).required(),
+        usertype: Joi.string().required()
     })
 
     const validation = schema.validate(req.body)
@@ -140,46 +143,58 @@ app.post('/signup-handler', async (req, res) => {
     if (validation.error) {
         var error = validation.error.details
         console.log(error)
+        res.redirect('/signup', {message: error[0].message})
         res.render('/signup', {auth: req.session.authenticated, type: req.session.usertype, message: error[0].message})
         return
     }
 
+    if (usertype == 'user')
     result = await userCollection.findOne({ 
+        username: username
+    })
+    else result = await goferCollection.findOne({
         username: username
     })
 
     const hashPassword = await bcrypt.hash(password, saltRounds)
     const hashSecret_pin = await bcrypt.hash(secret_pin, saltRounds)
 
-
+   
     const user = {
         username: username,
         password: hashPassword,
-        usertype: 'user',
+        
         email: email,
         secret_pin: hashSecret_pin,
         firstname: firstname,
-        lastname: lastname
-    }
+        lastname: lastname,
+        usertype : usertype
+    } 
+    
 
     if (!result) {
-        userCollection.insertOne(user)
+        (usertype == 'user') ? userCollection.insertOne(user)
+        : goferCollection.insertOne(user);
+        console.log(`Inserted user ${user}`);
         return res.redirect('/login')
     }
 
     else if (result) {
         res.render('/signup', { message: 'User already exists', auth: req.session.authenticated, type: req.session.usertype })
+
+       return res.render('signup', { message: 'User already exists' })
     }
-
-
 
 })
 
 
-
-
 // login page
 app.get('/login', (req, res) => {
+    (req.session.authenticated) ? (req.session.usertype) == 'gofer' ? res.redirect('/goferHome')
+    : res.redirect('/main')
+
+    : res.render('login', { message: '' })
+    
     if (req.session.authenticated) {
         res.redirect('/main')
     }
@@ -192,6 +207,7 @@ app.post('/login-handler', async (req, res) => {
 
     var username = req.body.username
     var password = req.body.password
+    var usertype = req.body.usertype
 
     const schema = Joi.object(
         {
@@ -209,9 +225,9 @@ app.post('/login-handler', async (req, res) => {
         
     }
 
-
-    result = await userCollection.findOne({ username: username })
-
+    (usertype == 'user') ? result = await userCollection.findOne({ username: username })
+    : result = await goferCollection.findOne({ username: username })
+    console.log(`login result is ${result}`)
 
     if (!result) {
         res.render('login', { message: 'This username does not exist' })
@@ -278,7 +294,6 @@ app.post('/reset-password-handler', async (req, res) => {
             userCollection.updateOne({ username: username }, { $set: { password: hashPassword } })
             res.redirect('/login')
         }
-
         else {
             res.render('resetpassword', { message: 'Incorrect secret pin', auth: req.session.authenticated, type: req.session.usertype })
         }
@@ -288,7 +303,7 @@ app.post('/reset-password-handler', async (req, res) => {
 
 // main page
 app.get('/main', IsAuthenticated, (req, res) => {
-    if (req.session.authenticated) {
+    if (req.session.authenticated && req.session.usertype == 'user') {
         res.render('main', {
             username: req.session.username, auth: req.session.authenticated, type: req.session.usertype
         })
@@ -388,6 +403,9 @@ app.get('/logout', (req, res) => {
     res.redirect('/login')
 })
 
+// --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
+
+app.get('/goferHome',  IsGofer, async (req, res) => {
 
 // display profile page
 app.get('/profile', IsAuthenticated, async (req, res) => {
@@ -403,11 +421,25 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
         res.status(500).send('Internal server error');
     }
 });
+    const jobs = await jobCollection.find().toArray()
+    console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
+    res.render('goferDashboard.ejs', {job: jobs});
+
+})
 
 
+app.get('/jobListings', IsGofer, async (req, res) => {
 
+    const jobs = await jobCollection.find().toArray()
+    console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
+    res.render('jobListings', {job: jobs});
+})
 
+// This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
+app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/')]);
 
+// Serving static files 
+app.use(express.static(__dirname + "/public"));
 
 
 // Server
