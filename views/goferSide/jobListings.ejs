@@ -33,7 +33,34 @@
     
 }
 
+/* :modal {
+    display: flex;
+    flex-direction: column;
+    background-color: lightcoral;
+    width: 300px;
+  
+    border-radius: 10px;
+    border: solid saddlebrown 2px;
+    overflow: hidden;
 
+} */
+
+:modal.listing.topRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background-color: darkgreen;
+    padding: 9px;
+    color: seashell;
+}
+
+:modal .listing .bottomRow {
+    display: flex;
+    flex-direction: column;
+    background-color: lightpink;
+    padding: 9px;
+    
+}
 
 </style>
 
@@ -43,11 +70,14 @@
     <% }) %>
 </section>
 <script>
-    var showListing = document.querySelector('.listing')
+    var showListing = document.querySelectorAll('.listing')
 
-    var popup = document.querySelector('.listingpopup')
-    
-    showListing.addEventListener('click', () =>
-    {console.log('Got clicked');
-    popup.showModal()})
+    var popups = document.querySelectorAll('.listingpopup')
+    var i = 0;
+    showListing.forEach((listing) => {
+    let eachpopup = popups[i];
+    i++;
+    listing.addEventListener('click', () =>
+    eachpopup.showModal())
+    });
 </script>
