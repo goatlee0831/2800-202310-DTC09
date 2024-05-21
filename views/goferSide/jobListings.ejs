@@ -33,10 +33,21 @@
     
 }
 
+
+
 </style>
 
 <section id="jobListings">
     <% job.forEach((job) => { %>
-        <%- include('templates/jobListing', {job: job})%>
+        <%- include('jobListing', {job: job})%>
     <% }) %>
 </section>
+<script>
+    var showListing = document.querySelector('.listing')
+
+    var popup = document.querySelector('.listingpopup')
+    
+    showListing.addEventListener('click', () =>
+    {console.log('Got clicked');
+    popup.showModal()})
+</script>

@@ -406,8 +406,7 @@ app.get('/logout', (req, res) => {
 // --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
 
 app.get('/goferHome',  IsGofer, async (req, res) => {
-
-// display profile page
+    console.log(req.session.username)// display profile page
 app.get('/profile', IsAuthenticated, async (req, res) => {
     try {
         const { username } = req.session; // username is stored in session
@@ -423,7 +422,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 });
     const jobs = await jobCollection.find().toArray()
     console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
-    res.render('goferDashboard.ejs', {job: jobs});
+    res.render('goferDashboard.ejs', {job: jobs, firstname : req.session.username});
 
 })
 
