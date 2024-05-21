@@ -4,6 +4,8 @@ require('dotenv').config()
 
 const path = require('path');
 
+const path = require('path');
+
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
@@ -406,20 +408,7 @@ app.get('/logout', (req, res) => {
 // --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
 
 app.get('/goferHome',  IsGofer, async (req, res) => {
-    console.log(req.session.username)// display profile page
-app.get('/profile', IsAuthenticated, async (req, res) => {
-    try {
-        const { username } = req.session; // username is stored in session
-        const user = await userCollection.findOne({ username });
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-        res.render('profile', { member: user });
-    } catch (error) {
-        console.error('Failed to fetch user:', error);
-        res.status(500).send('Internal server error');
-    }
-});
+    console.log(req.session.username)
     const jobs = await jobCollection.find().toArray()
     console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
     res.render('goferDashboard.ejs', {job: jobs, firstname : req.session.username});
