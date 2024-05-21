@@ -168,7 +168,7 @@ app.post('/signup-handler', async (req, res) => {
     }
 
     else if (result) {
-        res.render('/signup', { message: 'User already exists', auth: req.session.authenticated, type: req.session.usertype })
+        res.render('signup', { message: 'User already exists', auth: req.session.authenticated, type: req.session.usertype })
     }
 
 
