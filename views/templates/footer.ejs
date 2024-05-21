@@ -1,2 +1,11 @@
+    <footer>
+        <% if(type == 'gofer'){ %>
+            <%- include('footer_gofer') %>
+        <% } else if(auth){ %>
+            <%- include('footer_user') %>
+        <% } else{ %>
+            <%- include('footer_out') %>
+        <% } %>
+    </footer>
 </body>
 </html>
