@@ -64,6 +64,8 @@ app.set('view engine', 'ejs');
 app.use('/', (req, res, next) => {
     app.locals.auth = req.session.authenticated
     app.locals.type = req.session.usertype
+    app.locals.username = req.session.username
+
     next()
 
 })
@@ -191,7 +193,7 @@ app.get('/login', (req, res) => {
         res.redirect('/main')
     }
     else {
-        res.render('login', { message: '', auth: req.session.authenticated, type: req.session.usertype })
+        res.render('login', { message: ''})
     }
 })
 
@@ -212,7 +214,7 @@ app.post('/login-handler', async (req, res) => {
     if (validation.error) {
         var error = validation.error
         console.log(error)
-        return res.render('login', { message: "Invalid username or password", auth: req.session.authenticated, type: req.session.usertype })
+        return res.render('login', { message: "Invalid username or password"})
 
     }
 
@@ -304,10 +306,8 @@ app.get('/main', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('main',
             {
-                username: req.session.username,
-                auth: req.session.authenticated,
-                type: req.session.usertype,
-                mode: mode
+               
+ 
             })
     }
     else {
