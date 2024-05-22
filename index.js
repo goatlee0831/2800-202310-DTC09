@@ -8,6 +8,7 @@ const port = process.env.PORT || 3000
 var session = require('express-session')
 const bcrypt = require('bcrypt');
 const Joi = require("joi");
+const url = require('url');
 
 const ejs = require('ejs');
 const { MongoClient } = require('mongodb');
@@ -60,6 +61,16 @@ app.use(express.static(__dirname + "/css"));
 app.use(express.static(__dirname + "/frontend_js"));
 app.set('view engine', 'ejs');
 
+app.use('/', (req, res, next) => {
+    app.locals.auth = req.session.authenticated
+    app.locals.type = req.session.usertype
+    next()
+
+})
+
+
+
+
 
 // functions for authentication and authorization
 
@@ -99,48 +110,48 @@ function IsAdmin(req, res, next) {
 
 // landing page
 app.get('/', (req, res) => {
-    res.render('index', {auth: req.session.authenticated, type: req.session.usertype})
+    res.render('index', { auth: req.session.authenticated, type: req.session.usertype })
 })
 
 
 
 // signup
 app.get('/signup', (req, res) => {
-    res.render('signup', {message: '', auth: req.session.authenticated, type: req.session.usertype})
+    res.render('signup', { message: '', auth: req.session.authenticated, type: req.session.usertype })
 })
 
 app.post('/signup-handler', async (req, res) => {
-    
-    var email = req.body.email 
+
+    var email = req.body.email
     var secret_pin = req.body.secret_pin
     var username = req.body.username
     var password = req.body.password
     var firstname = req.body.firstname
     var lastname = req.body.lastname
-  
+
 
 
 
     const schema = Joi.object(
-    {
-        username: Joi.string().min(3).max(20).required(),
-        email: Joi.string().min(3).max(30).required(),
-        secret_pin: Joi.number().min(4).required(),
-        password: Joi.string().min(4).max(20).required(),
-        firstname: Joi.string().max(20).required(),
-        lastname: Joi.string().max(20).required()
-    })
+        {
+            username: Joi.string().min(3).max(20).required(),
+            email: Joi.string().min(3).max(30).required(),
+            secret_pin: Joi.number().min(4).required(),
+            password: Joi.string().min(4).max(20).required(),
+            firstname: Joi.string().max(20).required(),
+            lastname: Joi.string().max(20).required()
+        })
 
     const validation = schema.validate(req.body)
 
     if (validation.error) {
         var error = validation.error.details
         console.log(error)
-        res.render('/signup', {auth: req.session.authenticated, type: req.session.usertype, message: error[0].message})
+        res.render('/signup', { auth: req.session.authenticated, type: req.session.usertype, message: error[0].message })
         return
     }
 
-    result = await userCollection.findOne({ 
+    result = await userCollection.findOne({
         username: username
     })
 
@@ -180,7 +191,7 @@ app.get('/login', (req, res) => {
         res.redirect('/main')
     }
     else {
-        res.render('login', { message: '', auth: req.session.authenticated, type: req.session.usertype  })
+        res.render('login', { message: '', auth: req.session.authenticated, type: req.session.usertype })
     }
 })
 
@@ -195,14 +206,14 @@ app.post('/login-handler', async (req, res) => {
             password: Joi.string().min(4).max(20).required(),
         })
 
-    const validation = schema.validate({username, password})
+    const validation = schema.validate({ username, password })
 
 
     if (validation.error) {
         var error = validation.error
         console.log(error)
         return res.render('login', { message: "Invalid username or password", auth: req.session.authenticated, type: req.session.usertype })
-        
+
     }
 
 
@@ -221,7 +232,7 @@ app.post('/login-handler', async (req, res) => {
             req.session.username = result.username
             req.session.usertype = result.usertype
             req.session.cookie.maxAge = expirytime
-            res.redirect('main')
+            res.redirect(`/main?mode=${req.session.usertype}`)
         }
 
         else {
@@ -251,8 +262,8 @@ app.post('/reset-password-handler', async (req, res) => {
             secret_pin: Joi.number().min(4).required()
         })
 
-    const validation = schema.validate({username, password, secret_pin})
- 
+    const validation = schema.validate({ username, password, secret_pin })
+
 
     if (validation.error) {
         var error = validation.error.details
@@ -284,10 +295,20 @@ app.post('/reset-password-handler', async (req, res) => {
 
 // main page
 app.get('/main', IsAuthenticated, (req, res) => {
+
+    console.log("main page")
+    let mode = req.query.mode
+
+
+
     if (req.session.authenticated) {
-        res.render('main', {
-            username: req.session.username, auth: req.session.authenticated, type: req.session.usertype
-        })
+        res.render('main',
+            {
+                username: req.session.username,
+                auth: req.session.authenticated,
+                type: req.session.usertype,
+                mode: mode
+            })
     }
     else {
         res.redirect('/login')
@@ -299,8 +320,8 @@ app.get('/main', IsAuthenticated, (req, res) => {
 app.get('/urgentTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('urgentTask', {
-            username: req.session.username, 
-            auth: req.session.authenticated, 
+            username: req.session.username,
+            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
@@ -313,8 +334,8 @@ app.get('/urgentTask', IsAuthenticated, (req, res) => {
 app.get('/pendingTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('pendingTask', {
-            username: req.session.username, 
-            auth: req.session.authenticated, 
+            username: req.session.username,
+            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
@@ -327,8 +348,8 @@ app.get('/pendingTask', IsAuthenticated, (req, res) => {
 app.get('/tasks', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('tasks', {
-            username: req.session.username, 
-            auth: req.session.authenticated, 
+            username: req.session.username,
+            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
@@ -341,8 +362,8 @@ app.get('/tasks', IsAuthenticated, (req, res) => {
 app.get('/acceptedTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('acceptedTask', {
-            username: req.session.username, 
-            auth: req.session.authenticated, 
+            username: req.session.username,
+            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
@@ -355,8 +376,8 @@ app.get('/acceptedTask', IsAuthenticated, (req, res) => {
 app.get('/completedTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('completedTask', {
-            username: req.session.username, 
-            auth: req.session.authenticated, 
+            username: req.session.username,
+            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
@@ -369,8 +390,8 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
 app.get('/recommendedTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('recommendedTask', {
-            username: req.session.username, 
-            auth: req.session.authenticated, 
+            username: req.session.username,
+            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
@@ -394,7 +415,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
         if (!user) {
             return res.status(404).send('User not found');
         }
-        res.render('profile', { member: user , auth: req.session.authenticated, type: req.session.usertype });
+        res.render('profile', { member: user});
     } catch (error) {
         console.error('Failed to fetch user:', error);
         res.status(500).send('Internal server error');
