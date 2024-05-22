@@ -97,14 +97,10 @@ function IsAdmin(req, res, next) {
 // Routes
 
 
-
-
 // landing page
 app.get('/', (req, res) => {
     res.render('index', {auth: req.session.authenticated, type: req.session.usertype})
 })
-
-
 
 
 
@@ -296,6 +292,7 @@ app.get('/main', IsAuthenticated, (req, res) => {
     else {
         res.redirect('/login')
     }
+    // console.log(req.session)
 })
 
 // Urgent Tasks Page
