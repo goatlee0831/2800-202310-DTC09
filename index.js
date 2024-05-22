@@ -4,7 +4,6 @@ require('dotenv').config()
 
 const path = require('path');
 
-const path = require('path');
 
 const express = require('express')
 const app = express()
@@ -36,13 +35,13 @@ const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_ho
 const database = new MongoClient(atlasurl);
 const userCollection = database.db(mongodb_database).collection('users');
 const jobCollection = database.db(mongodb_database).collection('jobs');
-const goferCollection = database.db(mongodb_database).collection('gofer');
+const goferCollection = database.db(mongodb_database).collection('gofers');
 
 
 
 // Session store
 var mongoStore = MongoStore.create({
-    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
+    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/DTC_09_Gofer_db`,
     crypto: {
         secret: mongodb_session_secret
     }
@@ -194,7 +193,6 @@ app.post('/signup-handler', async (req, res) => {
 app.get('/login', (req, res) => {
     (req.session.authenticated) ? (req.session.usertype) == 'gofer' ? res.redirect('/goferHome')
     : res.redirect('/main')
-
     : res.render('login', { message: '' })
     
     if (req.session.authenticated) {
@@ -243,7 +241,8 @@ app.post('/login-handler', async (req, res) => {
             req.session.username = result.username
             req.session.usertype = result.usertype
             req.session.cookie.maxAge = expirytime
-            res.redirect('main')
+            req.session.usertype == 'gofer' ? res.redirect('/goferHome')
+            : res.redirect('main')
         }
 
         else {
@@ -411,7 +410,7 @@ app.get('/goferHome',  IsGofer, async (req, res) => {
     console.log(req.session.username)
     const jobs = await jobCollection.find().toArray()
     console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
-    res.render('goferDashboard.ejs', {job: jobs, firstname : req.session.username});
+    res.render('goferDashboard.ejs', {job: jobs, firstname : req.session.username, type: 'gofer'});
 
 })
 
@@ -424,7 +423,7 @@ app.get('/jobListings', IsGofer, async (req, res) => {
 })
 
 // This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
-app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/')]);
+app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/'), path.join(__dirname, 'views/templates/')]);
 
 // Serving static files 
 app.use(express.static(__dirname + "/public"));
