@@ -423,11 +423,30 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 });
 
 
+app.get('/find', IsAuthenticated, IsGofer, async (req, res) => {
+    res.render('findjobs')
+
+})
+
+app.get('/complete', IsAuthenticated, IsGofer, async (req, res) => {
+    res.render('completedjobs')
+
+})
+
+app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
+    res.render('myjobs')
+
+})
 
 
 
 
 
+
+
+app.get('*', (req, res) => {
+    res.send('404 page not found')
+})  
 // Server
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
