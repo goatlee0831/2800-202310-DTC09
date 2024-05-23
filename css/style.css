@@ -1,216 +1,238 @@
 body {
-     font-family: Arial, sans-serif;
-     margin: 0;
-     /* Remove default margin */
-     display: flex;
-     /* Flexbox for the main layout */
-     flex-direction: column;
-     /* Stack content vertically */
-     height: 100vh;
-     /* Full viewport height */
- }
-
-button {
-    outline: none;
-    border: none;
-    background-color: transparent;
- }
-
- /* Navbar styles */
- .navbar {
-     background-color: #333;
-     color: white;
-     padding: 10px 0;
-     text-align: center;
-     width: 100%;
-     /* Full width */
-     box-sizing: border-box;
-     /* Include padding in width */
- }
-
- /* Navbar links */
- .navbar a {
-     color: white;
-     padding: 14px 20px;
-     text-decoration: none;
-     display: inline-block;
- }
-
- /* Flex container for split sections */
- .split-container {
-     display: flex;
-     flex-grow: 1;
-     /* Take available space */
-     overflow: auto;
-     /* Handles overflow */
- }
-
- /* Left and right sections */
- .welcome-section,
- .buttons-section {
-     flex: 1;
-     display: flex;
-     align-items: center;
-     /* Center content vertically */
-     justify-content: center;
-     /* Center content horizontally */
-     text-align: center;
- }
-
- .welcome-section {
-     background-color: #FFDEAD;
- }
-
- .buttons-section {
-     background-color: white;
-     flex-direction: column;
-     /* Stack buttons vertically */
-     gap: 20px;
-     /* Space between buttons */
- }
-
- /* Button styling */
- .button {
-     padding: 10px 20px;
-     color: black;
-     border: 5px solid #4D2F25;
-     background-color: #CAF0FF;
-     width: 80%;
-     /* Fixed width for alignment */
-     cursor: pointer;
- }
-
- /* New section under the split-container */
- .info-section {
-     display: flex;
-     background-color: lightblue;
-     padding: 20px;
-     text-align: left;
- }
-
- .info-title {
-     flex: 1;
- }
-
- .info-text {
-     flex: 2;
- }
-
- .image-placeholder {
-     flex: 1;
-     background-color: #f0f0f0;
-     border: dashed 2px #ccc;
- }
-
- /* Hover effect for buttons */
- .members-button:hover,
- .gofers-button:hover {
-     opacity: 0.8;
- }
-
- .ai-section {
-     display: flex;
-     align-items: center;
-     /* Align items vertically in the center */
-     justify-content: space-around;
-     /* Distribute space evenly around the items */
-     padding: 20px;
-     background-color: #F3F3F3;
-     flex-direction: row-reverse;
-     /* Reverse the order of flex items */
- }
-
- .ai-title,
- .ai-text {
-     flex: 1;
-     /* Each child takes equal space */
-     padding: 10px;
-     /* Add some padding around text */
-     text-align: center;
-     /* Center the text */
- }
-
-.card{
-        border: 1px solid #ddd;
-        padding: 20px;
-        margin: 10px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.createTaskForm{
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    margin: 0;
+    color: #4D2F25;
 }
 
-.createTaskButton{
-    margin-top: 5px;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+h1 {
+    font-size: 2.75rem;
 }
 
-.columnContainer{
+h2 {
+    font-size: 1.9rem;
+}
+
+h3 {
+    font-size: 1.25rem;
+}
+
+h2, h3, h4, h5 {
+    font-weight: 700;
+    color: #78361F;
+    font-family: "Lilita One", sans-serif;
+    line-height: 1.25em;
+}
+
+p {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #4D2F25;
+}
+
+/* New Styles ----------- */
+
+input[type="password"], input[type="text"], input[type="email"] {
+    width: 80%;
+    border: 5px solid;
+    padding: 2px;
+    font-size: 1.1em;
+    font-weight: 700;
+    border-radius: 0.5em;
+    border-color: #4D2F25;
+    color: #78361F;
+    background-color: #CAF0FF;
+    margin: 2.5% auto;
+    outline: #4D2F25;
+    font-family: "Lilita One", sans-serif;
+}
+
+.lightBtn {
+    width: 80%;
+    border: 5px solid;
+    padding: 2px;
+    font-size: 1.1em;
+    font-weight: 700;
+    border-radius: 0.5em;
+    border-color: #78361F;
+    color: #78361F;
+    background-color: #CAF0FF;
+    margin: 2.5% auto;
+    text-decoration: none;
+    text-align: center;
+    font-family: "Lilita One", sans-serif;
+}
+
+.darkBtn {
+    width: 80%;
+    border: 5px solid;
+    padding: 2px;
+    font-size: 1.1em;
+    font-weight: 700;
+    border-radius: 0.5em;
+    border-color: #4D2F25;
+    color: #fdfdfd;
+    background-color: #4D2F25;
+    margin: 2.5% auto;
+    font-family: "Lilita One", sans-serif;
+}
+
+.card1 {
+    width: 100%;
+    background-color: #FFDEAD;
     display: flex;
+}
+
+.card2 {
+    width: 100%;
+    background-color: #CAF0FF;
+    display: flex;
+}
+
+.card3 {
+    width: 100%;
+    background-color: #F3F3F3;
+    display: flex;
+}
+
+.card4 {
+    width: 100%;
+    background-color: #fdfdfd;
+    display: flex;
+}
+
+.card5 {
+    width: 100%;
+    background-color: #4D2F25;
+    display: flex;
+    color: #fdfdfd;
+}
+
+.right {
+    width: 40%;
+    display: flex;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+    text-align: justify;
+    padding-right: 2.5%;
+}
+
+.left {
+    width: 60%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 5%;
+}
+
+.column {
     flex-direction: column;
 }
-.columnContainer h2{
-    color: black;
-    margin-bottom: 10px;
+
+.left img {
+    width: 40%;
 }
 
-.columnContainer p{
-    color: gray;
+.inv {
+    flex-direction: row-reverse;
 }
 
-#UrgentTasksCardContainer{
-    background-color: red;
-    border: 1px solid gray;
-    margin: 10px;
-    border-radius: 25px;
+.inv .left {
+    width: 40%;
+    flex-direction: row-reverse;
+    text-align: right;
 }
 
-#InProgressTasksCardContainer{
-    background-color: yellow;
-    border: 1px solid gray;
-    margin: 10px;
-    border-radius: 25px;
+.inv .right {
+    width: 60%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 5%;
 }
 
-#RecommendedTasksCardContainer{
-    background-color: green;
-    border: 1px solid gray;
-    margin: 10px;
-    border-radius: 25px;
+.w {
+    background-color: #fdfdfd;
 }
 
- /* Media Query for smaller screens */
- @media (max-width: 768px) {
-     .split-container {
-         flex-direction: column;
-         /* Stack vertically */
-     }
+form {
+    width: 87.5%;
+    margin-left: 12.5%;
+    margin-top: 2.5%;
+}
 
-     .info-section {
-         flex-direction: column;
-         /* Stack children vertically */
-     }
+/* Tablet (portrait and landscape) ----------- */
+ 
+@media (max-width: 1000px) {
 
-     .info-title,
-     .info-text {
-         flex: none;
-         width: 100%;
-         /* Full width */
-         text-align: center;
-         /* Center text for better readability */
-     }
+}
 
-     .info-title {
-         margin-bottom: 20px;
-         /* Space between title and text */
-     }
- }
+/* Phone (portrait and landscape) ----------- */
+
+@media (max-width: 730px) {
+    h2 {
+        line-height: 1;
+    }
+    .card1 {
+        flex-direction: column;
+    }
+    
+    .card2 {
+        flex-direction: column;
+    }
+    
+    .card3 {
+        flex-direction: column;
+    }
+    
+    .card4 {
+        flex-direction: column;
+    }
+    
+    .card5 {
+        flex-direction: column;
+    }
+
+    .right {
+        width: 90%;
+        padding: 5%;
+    }
+    
+    .above {
+        z-index: 2;
+    }
+
+    .left {
+        width: 90%;
+        padding: 2.5% 2.5;
+        justify-content: space-between;
+    }
+
+    .login {
+        height: 40svw;
+        display: flex;
+        align-items: center;
+        align-content: flex-start;
+        justify-content: flex-start;
+        text-align: center;
+        padding: 0;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .login h2 {
+        margin-top: 20px;
+    }
+
+    .left img {
+        width: 30svw;
+    }
+
+    .inv .left {
+        width: 90%;
+    }
+
+    .inv .right {
+        width: 90%;
+    }
+}
