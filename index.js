@@ -12,9 +12,11 @@ var session = require('express-session')
 const bcrypt = require('bcrypt');
 const ejs = require('ejs');
 const Joi = require("joi");
+const bodyParser = require('body-parser');
 
 const { MongoClient } = require('mongodb');
 const MongoStore = require('connect-mongo');
+const { error } = require('console');
 // const mongoose = require('mongoose');
 
 
@@ -66,6 +68,7 @@ app.use(express.static(__dirname + "/css"));
 app.use(express.static(__dirname + "/frontend_js"));
 app.set('view engine', 'ejs');
 
+app.use(bodyParser.json());
 
 // functions for authentication and authorization
 
@@ -82,6 +85,7 @@ function IsAuthenticated(req, res, next) {
 // gofers
 function IsGofer(req, res, next) {
     if (req.session.usertype === 'gofer') {
+        
         return next()
     }
     else {
@@ -174,8 +178,9 @@ app.post('/signup-handler', async (req, res) => {
     
 
     if (!result) {
-        (usertype == 'user') ? userCollection.insertOne(user)
-        : goferCollection.insertOne(user);
+        if (usertype == 'user') userCollection.insertOne(user)
+        else {user.savedjobs = [] ; goferCollection.insertOne(user)};
+
         console.log(`Inserted user ${user}`);
         return res.redirect('/login')
     }
@@ -418,12 +423,56 @@ app.get('/goferHome',  IsGofer, async (req, res) => {
 app.get('/jobListings', IsGofer, async (req, res) => {
 
     const jobs = await jobCollection.find().toArray()
-    console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
-    res.render('jobListings', {job: jobs});
+    let user = req.session.username
+    
+    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: {savedjobs: 1 }});
+    let savedjobs = querysavedjobs.savedjobs
+
+    res.render('jobListings', {jobs: jobs, savedjobs: savedjobs} );
+    
 })
 
+app.post('/saveremoveacceptjob', async (req,res) => {
+
+    let user = req.session.username
+    var jobid = req.body.jobid
+    if (req.body.saveJob) {
+        try {
+        await goferCollection.updateOne({username: user}, {$push : {savedjobs: jobid}})
+        console.log(`Saved job ID ${jobid}`)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    if (req.body.removeJob)
+        {
+            try {
+                await goferCollection.updateOne({username: user}, {$pull : {savedjobs: jobid}})
+                console.log(`removed job ID ${jobid}`)
+               }
+               catch (err) {
+                   console.log(err)
+               }
+        }
+    res.redirect('/jobListings');
+})
+
+// app.post('/removejob', async (req,res) => {
+//     var jobid = req.body.removeJob
+//     let user = req.session.username
+//     try {
+// 	 await goferCollection.updateOne({username: user}, {$pull : {savedjobs: jobid}})
+//      console.log(`removed job ID $ jobid}`)
+//     }
+//     catch (err) {
+//         console.log(err)
+//     }
+
+// })
+
 // This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
-app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/'), path.join(__dirname, 'views/templates/')]);
+app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/')]);
 
 // Serving static files 
 app.use(express.static(__dirname + "/public"));
