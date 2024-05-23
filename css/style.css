@@ -193,6 +193,10 @@ form {
         flex-direction: column;
     }
 
+    .card5 h1, .card5 h2, .card5 h3, .card5 h4, .card5 h5 {
+        color: #fdfdfd
+    }
+
     .right {
         width: 90%;
         padding: 5%;
