@@ -4,29 +4,24 @@
 
 <header>
     <div>
-        <h1>Welcome <%= username %>!</h1>
-    </div>
-    <div>
-        <!-- <button>
-            <a href="/logout">Logout</a>
-        </button> -->
+        <h2>Welcome <%= username %>!</h2>
     </div>
 </header>
 
 <div class="columnContainer" >
     <!-- Urgent Tasks -->
     <div id="UrgentTasksCardContainer">
-        <h1>Urgent Tasks</h1>
+        <h3>Urgent Tasks</h3>
     </div>
     
     <!-- Tasks in Progress -->
     <div id="InProgressTasksCardContainer">
-        <h1>Tasks in Progress</h1>
+        <h3>Tasks in Progress</h3>
     </div>
     
     <!-- Recommended Tasks -->
     <div id="RecommendedTasksCardContainer">
-        <h1>Recommended Tasks</h1>
+        <h3>Recommended Tasks</h3>
     </div>
 </div>
 
@@ -37,9 +32,9 @@
 
     function createCard(title, content) {
         const card = document.createElement('div');
-        card.classList.add('card');
+        card.classList.add('card3');
 
-        const cardTitle = document.createElement('h2');
+        const cardTitle = document.createElement('h4');
         cardTitle.textContent = title;
 
         const cardContent = document.createElement('p');
