@@ -478,7 +478,7 @@ app.get('/recomend', IsAuthenticated, async (req, res) => {
 
 app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) => {
     const username = req.session.username 
-    
+
     const user = await userCollection.findOne({ username });
     var taskID = req.params.selectedtask
     // console.log(taskID)
@@ -495,7 +495,7 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
 
 
   
-    res.render('PendingTasks', { task: task })
+    return res.render('pendingTask', { task: task })
 
     
 
@@ -508,7 +508,7 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
 
 
 app.get('/pending', IsAuthenticated, async (req, res) => {
-    res.render('PendingTasks')
+    res.render('pendingTask')
 
 })
 
@@ -547,59 +547,4 @@ app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })
 
-
-
-async function findatask() {
-    
-    // tasks = await tasksCollection.findOne({ _id: ObjectID('66504e85ff7d650db57c1f6d')})
-    // console.log(tasks)
-
-    // Assuming you have a collection named 'tasks' and an ObjectId you want to search for
-    var objectId = new ObjectId('66504e85ff7d650db57c1f6d'); // Replace with your actual ObjectId
-    var task = await tasksCollection.findOne({ _id: objectId });
-    console.log(task);
-
-
-}
-
-// findatask()
-
-
-
-async function updateTasks1() {
-    console.log("updating tasks")
-    tasks = await tasksCollection.find({}).toArray()
-    for (let i = 0; i < tasks.length; i++) {
-
-        if (tasks[i].id === null || tasks[i].id === undefined) {
-            tasksCollection.updateOne({ id: null }, { $set: { id: i } })
-        }}
-    
-}
-
-// updateTasks1()
-
-
-async function removeID() {
-    console.log("deleting tasks")
-    tasks = await tasksCollection.find({}).toArray()
-    for (let i = 0; i < tasks.length; i++) {
-        if (tasks[i].id === 1) {
-            tasksCollection.updateOne({ id: i }, { $set: { id: undefined } })
-        }
-    }
-
-    
-}
-// removeID()
-
-// async function updateTasks() {
-//     console.log("updating tasks")
-//     tasks = await tasksCollection.find({}).toArray()
-//     console.log(tasks)
-
-    
-// }
-
-// updateTasks()
 
