@@ -1,0 +1,42 @@
+<%- include('templates/header') %>
+<%- include('templates/nav') %>
+
+<main>
+    <header style="text-align: center;">
+        <h1>Completed Tasks</h1>
+    </header>
+
+    <div class="columnContainer">
+        <div id="CompletedTasks"></div>
+    </div>
+</main>
+
+<script>
+    const CompletedTasks = document.getElementById('CompletedTasks');
+
+    function createCard(title, content) {
+        const card = document.createElement('div');
+        card.classList.add('card');
+
+        const cardTitle = document.createElement('h2');
+        cardTitle.textContent = title;
+
+        const cardContent = document.createElement('p');
+        cardContent.textContent = content;
+
+        card.appendChild(cardTitle);
+        card.appendChild(cardContent);
+
+        return card;
+    }
+
+    const CompletedCard1 = createCard('Completed Task 1', 'LOTS OF THINGS TO DO!');
+    const CompletedCard2 = createCard('Completed Task 2', 'LOTS OF MORE THINGS TO DO!');
+    const CompletedCard3 = createCard('Completed Task 3', 'EVEN MORE THINGS TO DO!');
+
+    CompletedTasks.appendChild(CompletedCard1);
+    CompletedTasks.appendChild(CompletedCard2);
+    CompletedTasks.appendChild(CompletedCard3);
+</script>
+
+<%- include('templates/footer') %>

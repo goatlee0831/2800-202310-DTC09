@@ -1,0 +1,86 @@
+footer {
+    width: 100%;
+    background-color: #CAF0FF;
+    border-top: 4px;
+    border-style: solid;
+    border-color: #78361F;
+    color: #78361F;
+    font-family: "Lilita One", sans-serif;
+}
+
+#footer-comment {
+    text-align: center;
+    font-size: large;
+    padding: 0.8em;
+}
+
+#footer-content {
+    display: flex;
+}
+
+#footer-left {
+    width: 30%;
+    padding: 0 5% 5% 5%;
+}
+
+#footer-left img {
+    width: 90%;
+}
+
+#footer-right {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+#footer-right div {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+#footer-right div h3 {
+    color: #78361F;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+#footer-right div a {
+    margin-top: 0.3em;
+    text-decoration: none;
+    color: #78361F;
+}
+
+/* Tablet (portrait and landscape) ----------- */
+ 
+@media (max-width: 1000px) {
+    #footer-content {
+        flex-direction: column-reverse;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #footer-left {
+        padding: 5%;
+    }
+}
+
+/* Phone (portrait and landscape) ----------- */
+
+@media (max-width: 730px) {
+    #footer-comment {
+        padding-bottom: 0;
+    }
+    #footer-right {
+        flex-direction: column-reverse;
+    }
+
+    #footer-right div {
+        margin-top: 2em;
+    }
+
+    #footer-right div a {
+        margin-top: 1em;
+    }
+    
+}

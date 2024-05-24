@@ -1,48 +1,84 @@
 <%- include('templates/header') %>
 <%- include('templates/nav') %>
+<main>
 
-<header >
-    <h1>Welcome!</h1>
-    <h2><%= username %></h2>
+<header>
+    <div>
+        <h2>Welcome <%= username %>!</h2>
+    </div>
 </header>
 
-<!-- Urgent Tasks -->
-<div>
-    <h1>Urgent Tasks</h1>
+<div class="columnContainer" >
+    <!-- Urgent Tasks -->
+    <div id="UrgentTasksCardContainer">
+        <h3>Urgent Tasks</h3>
+    </div>
     
-    <!-- Lists of Urgent Tasks -->
-    <div>
-
-
+    <!-- Tasks in Progress -->
+    <div id="InProgressTasksCardContainer">
+        <h3>Tasks in Progress</h3>
+    </div>
+    
+    <!-- Recommended Tasks -->
+    <div id="RecommendedTasksCardContainer">
+        <h3>Recommended Tasks</h3>
     </div>
 </div>
 
-<!-- Tasks in Progress -->
-<div>
-    <h1>Tasks in Progress</h1>
+<script>
+    const UrgentCardContainer = document.getElementById('UrgentTasksCardContainer');
+    const InProgressCardContainer = document.getElementById('InProgressTasksCardContainer');
+    const RecommendedCardContainer = document.getElementById('RecommendedTasksCardContainer');
 
-    <!-- Lists of Tasks in Progress -->
-    <div>
+    function createCard(title, content) {
+        const card = document.createElement('div');
+        card.classList.add('card3');
 
-    </div>
-</div>
+        const cardTitle = document.createElement('h4');
+        cardTitle.textContent = title;
 
-<!-- Recommended Tasks -->
-<div>
-    <h1>Recommended Tasks</h1>
+        const cardContent = document.createElement('p');
+        cardContent.textContent = content;
 
-    <!-- Lists of Recommended Tasks -->
-    <div>
+        card.appendChild(cardTitle);
+        card.appendChild(cardContent);
 
-    </div>
-</div>
+        return card;
+    }
+
+// Urgent Cards
+const UrgentCard1 = createCard('Urgent Task 1', 'LOTS OF THINGS TO DO!');
+const UrgentCard2 = createCard('Urgent Task 2', 'LOTS OF MORE THINGS TO DO!');
+const UrgentCard3 = createCard('Urgent Task 3', 'EVEN MORE THINGS TO DO!');
+
+// In Progress Cards
+const InProgressCard1 = createCard('In Progress Task 1', 'SOME THINGS TO DO!');
+const InProgressCard2 = createCard('In Progress Task 2', 'SOME MORE THINGS TO DO!');
+const InProgressCard3 = createCard('In Progress Task 3', 'EVEN MORE THINGS TO DO!');
+
+// Recommended Cards
+const RecommendedCard1 = createCard('Recommended Task 1', 'SOME THINGS TO DO!');
+const RecommendedCard2 = createCard('Recommended Task 2', 'SOME MORE THINGS TO DO!');
+const RecommendedCard3 = createCard('Recommended Task 3', 'EVEN MORE THINGS TO DO!');
+
+// Adding the Urgent cards to the container
+UrgentCardContainer.appendChild(UrgentCard1);
+UrgentCardContainer.appendChild(UrgentCard2);
+UrgentCardContainer.appendChild(UrgentCard3);
+
+// Adding the In Progress cards to the container
+InProgressCardContainer.appendChild(InProgressCard1);
+InProgressCardContainer.appendChild(InProgressCard2);
+InProgressCardContainer.appendChild(InProgressCard3);
+
+// Adding the Recommended cards to the container
+RecommendedCardContainer.appendChild(RecommendedCard1);
+RecommendedCardContainer.appendChild(RecommendedCard2);
+RecommendedCardContainer.appendChild(RecommendedCard3);
 
 
 
-<div>
-    <a href="/logout">Logout</a>
-</div>
-
-
+</script>
+</main>
 
 <%- include('templates/footer') %>
