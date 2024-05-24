@@ -486,14 +486,16 @@ app.get('/accept-task-handler/:selectedtask', async (req, res) => {
         return res.status(404).redirect('/login');
     }
 
-    let task = await tasksCollection.find({ _id: selectedtask }).toArray();
+    let task = await tasksCollection.find({ title: selectedtask }).toArray();
     console.log(task)
 
     if (!task) {
         return res.send('Task not found');
     }
+    else {
+        res.render('PendingTasks', { task: task[0] })
 
-
+    }
 
 })
 
