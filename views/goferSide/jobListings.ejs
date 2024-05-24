@@ -34,17 +34,6 @@
 
             }
 
-            /* :modal {
-    display: flex;
-    flex-direction: column;
-    background-color: lightcoral;
-    width: 300px;
-  
-    border-radius: 10px;
-    border: solid saddlebrown 2px;
-    overflow: hidden;
-
-} */
 
             :modal.listing.topRow {
                 display: flex;
@@ -58,7 +47,7 @@
             :modal .listing .bottomRow {
                 display: flex;
                 flex-direction: column;
-                background-color: lightpink;
+                background-color: rgb(236, 218, 221);
                 padding: 9px;
 
             }
@@ -70,7 +59,7 @@
         </style>
 
         <section id="jobListings">
-           
+            <h1 style="text-align: center;">Jobs Near you </h1>
             <% jobs.forEach((job)=> { %>
                 <%- include('jobListing', {job: job, savedjobs:savedjobs})%>
                     <% }) %>

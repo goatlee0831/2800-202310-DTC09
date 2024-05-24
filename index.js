@@ -14,10 +14,12 @@ const ejs = require('ejs');
 const Joi = require("joi");
 const bodyParser = require('body-parser');
 
-const { MongoClient } = require('mongodb');
+// const ObjectId = require('mongodb').ObjectId; //for querying an array of document ID's
+const { MongoClient, ObjectId } = require('mongodb');
 const MongoStore = require('connect-mongo');
 const { error } = require('console');
-// const mongoose = require('mongoose');
+const { isObjectIdOrHexString } = require('mongoose');
+const mongoose = require('mongoose');
 
 
 // global variables and secret keys
@@ -432,6 +434,32 @@ app.get('/jobListings', IsGofer, async (req, res) => {
     
 })
 
+
+app.get('/savedJobs', IsGofer, async (req, res) => {
+
+    const jobs = await jobCollection.find().toArray()
+    let user = req.session.username
+    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: {savedjobs: 1 }});
+    
+    let savedjobs = querysavedjobs.savedjobs
+   
+    const objectIds = [];
+    savedjobs.forEach(stringID => {
+        const objectId = mongoose.Types.ObjectId.createFromHexString(stringID);
+        objectIds.push(objectId);
+    });
+    
+    const query = { _id: { $in: objectIds } };
+    
+    const savedJobs = await jobCollection.find(query).toArray();
+    
+    
+    res.render('savedJobs', {savedjobs: savedJobs} );
+    
+})
+
+
+
 app.post('/saveremoveacceptjob', async (req,res) => {
 
     let user = req.session.username
@@ -455,21 +483,11 @@ app.post('/saveremoveacceptjob', async (req,res) => {
                    console.log(err)
                }
         }
-    res.redirect('/jobListings');
+     res.redirect('/jobListings');
+     return
+   
 })
 
-// app.post('/removejob', async (req,res) => {
-//     var jobid = req.body.removeJob
-//     let user = req.session.username
-//     try {
-// 	 await goferCollection.updateOne({username: user}, {$pull : {savedjobs: jobid}})
-//      console.log(`removed job ID $ jobid}`)
-//     }
-//     catch (err) {
-//         console.log(err)
-//     }
-
-// })
 
 // This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
 app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/')]);
