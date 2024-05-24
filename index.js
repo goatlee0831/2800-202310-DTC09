@@ -2,18 +2,26 @@
 
 require('dotenv').config()
 
+const path = require('path');
+
+
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
 var session = require('express-session')
 const bcrypt = require('bcrypt');
 const Joi = require("joi");
+const bodyParser = require('body-parser');
 const url = require('url');
 
+// const ObjectId = require('mongodb').ObjectId; //for querying an array of document ID's
+const { MongoClient, ObjectId } = require('mongodb');
 const ejs = require('ejs');
 const { MongoClient } = require('mongodb');
 const MongoStore = require('connect-mongo');
-// const mongoose = require('mongoose');
+const { error } = require('console');
+const { isObjectIdOrHexString } = require('mongoose');
+const mongoose = require('mongoose');
 
 
 // global variables and secret keys
@@ -29,14 +37,17 @@ const mongodb_database = process.env.MONGODB_DATABASE
 
 // MongoDB connection
 
-const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/?retryWrites=true&w=majority`;
+const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/project`;
 const database = new MongoClient(atlasurl);
 const userCollection = database.db(mongodb_database).collection('users');
+const jobCollection = database.db(mongodb_database).collection('jobs');
+const goferCollection = database.db(mongodb_database).collection('gofers');
+
 
 
 // Session store
 var mongoStore = MongoStore.create({
-    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
+    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/DTC_09_Gofer_db`,
     crypto: {
         secret: mongodb_session_secret
     }
@@ -73,6 +84,34 @@ app.use('/', (req, res, next) => {
 
 
 
+app.use(bodyParser.json());
+
+app.use('/', (req, res, next) => {
+    app.locals.auth = req.session.authenticated
+    app.locals.type = req.session.usertype
+    app.locals.username = req.session.username
+
+    next()
+
+})
+
+
+
+
+
+
+app.use('/', (req, res, next) => {
+    app.locals.auth = req.session.authenticated
+    app.locals.type = req.session.usertype
+    app.locals.username = req.session.username
+
+    next()
+
+})
+
+
+
+
 
 
 // functions for authentication and authorization
@@ -90,6 +129,7 @@ function IsAuthenticated(req, res, next) {
 // gofers
 function IsGofer(req, res, next) {
     if (req.session.usertype === 'gofer') {
+        
         return next()
     }
     else {
@@ -114,8 +154,13 @@ function IsAdmin(req, res, next) {
 // landing page
 app.get('/', (req, res) => {
     res.render('index', { auth: req.session.authenticated, type: req.session.usertype })
+    res.render('index', { auth: req.session.authenticated, type: req.session.usertype })
 })
 
+// about page and easter egg
+app.get('/about', (req, res) => {
+    res.render('about', { auth: req.session.authenticated, type: req.session.usertype })
+})
 // about page and easter egg
 app.get('/about', (req, res) => {
     res.render('about', { auth: req.session.authenticated, type: req.session.usertype })
@@ -125,9 +170,12 @@ app.get('/about', (req, res) => {
 // signup
 app.get('/signup', (req, res) => {
     res.render('signup', { message: '', auth: req.session.authenticated, type: req.session.usertype })
+    res.render('signup', { message: '', auth: req.session.authenticated, type: req.session.usertype })
 })
 
 app.post('/signup-handler', async (req, res) => {
+
+    var email = req.body.email
 
     var email = req.body.email
     var secret_pin = req.body.secret_pin
@@ -155,29 +203,38 @@ app.post('/signup-handler', async (req, res) => {
         var error = validation.error.details
         console.log(error)
         res.render('/signup', { auth: req.session.authenticated, type: req.session.usertype, message: error[0].message })
+        res.render('/signup', { auth: req.session.authenticated, type: req.session.usertype, message: error[0].message })
         return
     }
 
     result = await userCollection.findOne({
         username: username
     })
+    else result = await goferCollection.findOne({
+        username: username
+    })
 
     const hashPassword = await bcrypt.hash(password, saltRounds)
     const hashSecret_pin = await bcrypt.hash(secret_pin, saltRounds)
 
-
+   
     const user = {
         username: username,
         password: hashPassword,
-        usertype: 'user',
+        
         email: email,
         secret_pin: hashSecret_pin,
         firstname: firstname,
-        lastname: lastname
-    }
+        lastname: lastname,
+        usertype : usertype
+    } 
+    
 
     if (!result) {
-        userCollection.insertOne(user)
+        if (usertype == 'user') userCollection.insertOne(user)
+        else {user.savedjobs = [] ; goferCollection.insertOne(user)};
+
+        console.log(`Inserted user ${user}`);
         return res.redirect('/login')
     }
 
@@ -185,11 +242,7 @@ app.post('/signup-handler', async (req, res) => {
         res.render('signup', { message: 'User already exists', auth: req.session.authenticated, type: req.session.usertype })
     }
 
-
-
 })
-
-
 
 
 // login page
@@ -206,6 +259,7 @@ app.post('/login-handler', async (req, res) => {
 
     var username = req.body.username
     var password = req.body.password
+    var usertype = req.body.usertype
 
     const schema = Joi.object(
         {
@@ -213,6 +267,7 @@ app.post('/login-handler', async (req, res) => {
             password: Joi.string().min(4).max(20).required(),
         })
 
+    const validation = schema.validate({ username, password })
     const validation = schema.validate({ username, password })
 
 
@@ -228,6 +283,7 @@ app.post('/login-handler', async (req, res) => {
 
 
     if (!result) {
+        res.render('login', { message: 'This username does not exist', auth: req.session.authenticated, type: req.session.usertype })
         res.render('login', { message: 'This username does not exist', auth: req.session.authenticated, type: req.session.usertype })
     }
 
@@ -271,6 +327,8 @@ app.post('/reset-password-handler', async (req, res) => {
 
     const validation = schema.validate({ username, password, secret_pin })
 
+    const validation = schema.validate({ username, password, secret_pin })
+
 
     if (validation.error) {
         var error = validation.error.details
@@ -292,7 +350,6 @@ app.post('/reset-password-handler', async (req, res) => {
             userCollection.updateOne({ username: username }, { $set: { password: hashPassword } })
             res.redirect('/login')
         }
-
         else {
             res.render('resetpassword', { message: 'Incorrect secret pin', auth: req.session.authenticated, type: req.session.usertype })
         }
@@ -319,12 +376,15 @@ app.get('/main', IsAuthenticated, (req, res) => {
         res.redirect('/login')
     }
     // console.log(req.session)
+    // console.log(req.session)
 })
 
 // Urgent Tasks Page
 app.get('/urgentTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('urgentTask', {
+            username: req.session.username,
+            auth: req.session.authenticated,
             username: req.session.username,
             auth: req.session.authenticated,
             type: req.session.usertype
@@ -341,6 +401,8 @@ app.get('/pendingTask', IsAuthenticated, (req, res) => {
         res.render('pendingTask', {
             username: req.session.username,
             auth: req.session.authenticated,
+            username: req.session.username,
+            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
@@ -353,6 +415,8 @@ app.get('/pendingTask', IsAuthenticated, (req, res) => {
 app.get('/tasks', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('tasks', {
+            username: req.session.username,
+            auth: req.session.authenticated,
             username: req.session.username,
             auth: req.session.authenticated,
             type: req.session.usertype
@@ -369,6 +433,8 @@ app.get('/acceptedTask', IsAuthenticated, (req, res) => {
         res.render('acceptedTask', {
             username: req.session.username,
             auth: req.session.authenticated,
+            username: req.session.username,
+            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
@@ -383,11 +449,14 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
         res.render('completedTask', {
             username: req.session.username,
             auth: req.session.authenticated,
+            username: req.session.username,
+            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
     else {
         res.redirect('/login')
+        return
     }
 })
 
@@ -397,11 +466,14 @@ app.get('/recommendedTask', IsAuthenticated, (req, res) => {
         res.render('recommendedTask', {
             username: req.session.username,
             auth: req.session.authenticated,
+            username: req.session.username,
+            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
     else {
         res.redirect('/login')
+        return
     }
 })
 
@@ -472,11 +544,28 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
             return res.status(404).send('User not found');
         }
         res.render('profile', { member: user});
+        res.render('profile', { member: user});
     } catch (error) {
         console.error('Failed to fetch user:', error);
         res.status(500).send('Internal server error');
     }
 });
+
+
+app.get('/find', IsAuthenticated, IsGofer, async (req, res) => {
+    res.render('findjobs')
+
+})
+
+app.get('/complete', IsAuthenticated, IsGofer, async (req, res) => {
+    res.render('completedjobs')
+
+})
+
+app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
+    res.render('myjobs')
+
+})
 
 
 app.get('/find', IsAuthenticated, IsGofer, async (req, res) => {
