@@ -7,20 +7,24 @@
 
         <div id="RecomendedTaskCards">
             <% tasks.forEach(task => { %>
-                <% if (task.username == username && task.status == "open")  { %>
                 <div class="card">
                     <h3><%= task.title %></h3>
                     <p><%= task.description %></p>
                     <p><%= task.Date %></p>
-                    <p><%= task.status %></p>
-                    <p><%= task.skills %></p>
                     <p><%= task.location %></p>
                     <p><%= task.offer %></p>
+                    <a onclick="bang()" href="/accept-task-handler/<%= task._id %>">Accept Task</a>
                 </div> 
                 
-                <% }}) %>
+                <% }) %>
                 
-        </div> 
+            </div> 
+            
+            <script>
+                function bang(){
+                    console.log("button clicked");
+                }
+                </script>
     
 
 

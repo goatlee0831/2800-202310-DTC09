@@ -13,6 +13,7 @@ const url = require('url');
 const ejs = require('ejs');
 const { MongoClient } = require('mongodb');
 const MongoStore = require('connect-mongo');
+const { get } = require('http')
 // const mongoose = require('mongoose');
 
 
@@ -441,51 +442,72 @@ app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
 })
 
 app.get('/recomend', IsAuthenticated, async (req, res) => {
-        const username = req.session.username // username is stored in session
-        const user = await userCollection.findOne({ username });
-       
-   
-        if (!user) {
-            return res.status(404).redirect('/login');
+    const username = req.session.username // username is stored in session
+    const user = await userCollection.findOne({ username });
+
+    if (!user) {
+        return res.status(404).redirect('/login');
+    }
+
+
+    async function getTasks() {
+        const tasksAll = await tasksCollection.find({}).toArray();
+        fiveRandomTasks = []
+
+        for (let i = 0; i < 5; i++) {
+            fiveRandomTasks.push(Math.floor(Math.random() * tasksAll.length))
+            // console.log(fiveRandomTasks)
         }
 
-        const tasks = await tasksCollection.find({}).toArray();
-    
-        console.log(tasks)
-        
+        let tasks = []
+        for (let i = 0; i < tasksAll.length; i++) {
+            if (i === fiveRandomTasks[0] || i === fiveRandomTasks[1] || i === fiveRandomTasks[2] || i === fiveRandomTasks[3] || i === fiveRandomTasks[4]) {
+                tasks.push(tasksAll[i])
+            }
+        }
+        return tasks
+    }
+
+    await getTasks().then((tasks) => {
+
+        // console.log(" tasks:",tasks)
         res.render('recomendTasks', { tasks: tasks });
-        
-    });
+    })
+
+});
+
+app.get('/accept-task-handler/:selectedtask', async (req, res) => {
+    const username = req.session.username // username is stored in session
+    const user = await userCollection.findOne({ username });
+    var selectedtask = req.params.selectedtask
+    console.log(selectedtask)   
+   
+    if (!user) {
+        return res.status(404).redirect('/login');
+    }
+
+    let task = await tasksCollection.find({ _id: selectedtask }).toArray();
+    console.log(task)
+
+    if (!task) {
+        return res.send('Task not found');
+    }
 
 
-
-
-    // console.log(user)
-
-    // insertOne = await tasksCollection.insertOne({
-
-    //     username: "abhi",
-    //     title: "Driving ",
-    //     description: "Need a driver for the day to tour vancouver",
-    //     offer: "180",
-    //     location: "Vancouver",
-    //     skills: [
-    //         "drivin",
-    //         "senior assist"
-    //     ],
-    //     date: "2054-05-15",
-    //     goferID: null,
-    //     status: "open",
-    //     completed: false
-    // })
-
-
-
-
-app.get('/progress', IsAuthenticated, async (req, res) => {
-    res.render('TasksInProgress')
 
 })
+
+
+
+
+
+
+
+app.get('/pending', IsAuthenticated, async (req, res) => {
+    res.render('Pending Tasks')
+
+})
+
 
 
 
@@ -502,8 +524,8 @@ app.get('/history', IsAuthenticated, async (req, res) => {
 
     console.log(tasks)
 
-   
-    res.render('history',{ tasks: tasks })
+
+    res.render('history', { tasks: tasks })
 
 })
 
