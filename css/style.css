@@ -214,3 +214,21 @@ button {
          /* Space between title and text */
      }
  }
+
+
+ /* Create Task form */
+ #createTaskForm{
+     display: flex;
+     flex-direction: column;
+     height: 500px;
+ }
+
+ .form-text{
+    width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+ }
