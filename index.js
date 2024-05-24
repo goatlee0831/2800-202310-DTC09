@@ -215,7 +215,6 @@ app.post('/signup-handler', async (req, res) => {
     }
 
     else if (result) {
-        res.render('/signup', { message: 'User already exists', auth: req.session.authenticated, type: req.session.usertype })
 
        return res.render('signup', { message: 'User already exists' })
     }
@@ -229,12 +228,6 @@ app.get('/login', (req, res) => {
     : res.redirect('/main')
     : res.render('login', { message: '' })
     
-    if (req.session.authenticated) {
-        res.redirect('/main')
-    }
-    else {
-        res.render('login', { message: ''})
-    }
 })
 
 app.post('/login-handler', async (req, res) => {
@@ -424,6 +417,7 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
     }
     else {
         res.redirect('/login')
+        return
     }
 })
 
@@ -438,6 +432,7 @@ app.get('/recommendedTask', IsAuthenticated, (req, res) => {
     }
     else {
         res.redirect('/login')
+        return
     }
 })
 
@@ -446,101 +441,6 @@ app.get('/logout', (req, res) => {
     req.session.destroy()
     res.redirect('/login')
 })
-
-// --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
-
-app.get('/goferHome',  IsGofer, async (req, res) => {
-    console.log(req.session.username)
-    const jobs = await jobCollection.find().toArray()
-    console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
-    res.render('goferDashboard.ejs', {job: jobs, firstname : req.session.username, type: 'gofer'});
-
-})
-
-
-app.get('/jobListings', IsGofer, async (req, res) => {
-
-    const jobs = await jobCollection.find().toArray()
-    let user = req.session.username
-    
-    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: {savedjobs: 1 }});
-    let savedjobs = querysavedjobs.savedjobs
-
-    res.render('jobListings', {jobs: jobs, savedjobs: savedjobs} );
-    
-})
-
-
-app.get('/savedJobs', IsGofer, async (req, res) => {
-
-    const jobs = await jobCollection.find().toArray()
-    let user = req.session.username
-    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: {savedjobs: 1 }});
-    
-    let savedjobs = querysavedjobs.savedjobs
-   
-    const objectIds = [];
-    savedjobs.forEach(stringID => {
-        const objectId = mongoose.Types.ObjectId.createFromHexString(stringID);
-        objectIds.push(objectId);
-    });
-    
-    const query = { _id: { $in: objectIds } };
-    
-    const savedJobs = await jobCollection.find(query).toArray();
-    
-    
-    res.render('savedJobs', {savedjobs: savedJobs} );
-    
-})
-
-
-
-app.post('/saveremoveacceptjob', async (req,res) => {
-
-    let user = req.session.username
-    var jobid = req.body.jobid
-    if (req.body.saveJob) {
-        try {
-        await goferCollection.updateOne({username: user}, {$push : {savedjobs: jobid}})
-        console.log(`Saved job ID ${jobid}`)
-        }
-        catch (err) {
-            console.log(err)
-        }
-    }
-    if (req.body.removeJob)
-        {
-            try {
-                await goferCollection.updateOne({username: user}, {$pull : {savedjobs: jobid}})
-                console.log(`removed job ID ${jobid}`)
-               }
-               catch (err) {
-                   console.log(err)
-               }
-        }
-     res.redirect('/jobListings');
-     return
-   
-})
-
-
-// This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
-app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/')]);
-
-// Serving static files 
-app.use(express.static(__dirname + "/public"));
-// Display Create Task Form
-app.get('/createTask', IsAuthenticated, (req, res) => {
-    res.render('createTask', {
-        username: req.session.username,
-        auth: req.session.authenticated,
-        type: req.session.usertype,
-        message: ''
-    });
-});
-
-// Handle Create Task Form Submission
 app.post('/createTask', IsAuthenticated, async (req, res) => {
     const { title, description, dueDate } = req.body;
 
@@ -598,10 +498,102 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 });
 
 
-app.get('/find', IsAuthenticated, IsGofer, async (req, res) => {
-    res.render('findjobs')
+// --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
+
+app.get('/goferHome',  IsGofer, async (req, res) => {
+    console.log(req.session.username)
+    const jobs = await jobCollection.find().toArray()
+    console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
+    res.render('goferDashboard.ejs', {job: jobs, firstname : req.session.username, type: 'gofer'});
 
 })
+
+
+app.get('/jobListings', IsGofer, async (req, res) => {
+
+    const jobs = await jobCollection.find().toArray()
+    let user = req.session.username
+    
+    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: {savedjobs: 1 }});
+    let savedjobs = querysavedjobs.savedjobs
+
+    res.render('jobListings', {jobs: jobs, savedjobs: savedjobs} );
+    
+})
+
+
+app.get('/savedJobs', IsGofer, async (req, res) => {
+
+    const jobs = await jobCollection.find().toArray()
+    let user = req.session.username
+    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: {savedjobs: 1 }});
+    
+    let savedjobs = querysavedjobs.savedjobs
+   
+    const objectIds = [];
+    savedjobs.forEach(stringID => {
+        const objectId = mongoose.Types.ObjectId.createFromHexString(stringID);
+        objectIds.push(objectId);
+    });
+    
+    const query = { _id: { $in: objectIds } };
+    
+    const savedJobs = await jobCollection.find(query).toArray();
+    
+    
+    return res.render('savedJobs', {savedjobs: savedJobs} );
+    
+})
+
+
+
+app.post('/saveremoveacceptjob', async (req,res) => {
+
+    let user = req.session.username
+    var jobid = req.body.jobid
+    if (req.body.saveJob) {
+        try {
+        await goferCollection.updateOne({username: user}, {$push : {savedjobs: jobid}})
+        console.log(`Saved job ID ${jobid}`)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    if (req.body.removeJob)
+        {
+            try {
+                await goferCollection.updateOne({username: user}, {$pull : {savedjobs: jobid}})
+                console.log(`removed job ID ${jobid}`)
+               }
+               catch (err) {
+                   console.log(err)
+               }
+        }
+     res.redirect('/jobListings');
+     return
+   
+})
+
+
+// This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
+app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/')]);
+
+// Serving static files 
+app.use(express.static(__dirname + "/public"));
+// Display Create Task Form
+app.get('/createTask', IsAuthenticated, (req, res) => {
+    res.render('createTask', {
+        username: req.session.username,
+        auth: req.session.authenticated,
+        type: req.session.usertype,
+        message: ''
+    });
+});
+
+// Handle Create Task Form Submission
+
+
 
 app.get('/complete', IsAuthenticated, IsGofer, async (req, res) => {
     res.render('completedjobs')
