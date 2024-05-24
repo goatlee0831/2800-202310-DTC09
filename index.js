@@ -406,6 +406,57 @@ app.get('/logout', (req, res) => {
     res.redirect('/login')
 })
 
+// Display Create Task Form
+app.get('/createTask', IsAuthenticated, (req, res) => {
+    res.render('createTask', {
+        username: req.session.username,
+        auth: req.session.authenticated,
+        type: req.session.usertype,
+        message: ''
+    });
+});
+
+// Handle Create Task Form Submission
+app.post('/createTask', IsAuthenticated, async (req, res) => {
+    const { title, description, dueDate } = req.body;
+
+    const schema = Joi.object({
+        title: Joi.string().min(3).max(100).required(),
+        description: Joi.string().min(3).max(1000).required(),
+        dueDate: Joi.date().required()
+    });
+
+    const validation = schema.validate({ title, description, dueDate });
+
+    if (validation.error) {
+        return res.render('createTask', {
+            username: req.session.username,
+            auth: req.session.authenticated,
+            type: req.session.usertype,
+            message: validation.error.details[0].message
+        });
+    }
+
+    const task = {
+        title,
+        description,
+        dueDate,
+        createdBy: req.session.username
+    };
+
+    try {
+        await database.db(mongodb_database).collection('tasks').insertOne(task);
+        res.redirect('/tasks');
+    } catch (error) {
+        console.error('Error creating task:', error);
+        res.render('createTask', {
+            username: req.session.username,
+            auth: req.session.authenticated,
+            type: req.session.usertype,
+            message: 'Failed to create task. Please try again later.'
+        });
+    }
+});
 
 // display profile page
 app.get('/profile', IsAuthenticated, async (req, res) => {
