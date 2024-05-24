@@ -1,0 +1,31 @@
+<%- include('templates/header') %>
+    <%- include('templates/nav') %>
+
+  
+        <h2>Recomended Tasks</h2>
+
+
+        <div id="RecomendedTaskCards">
+            <% tasks.forEach(task => { %>
+                <% if (task.username == username && task.status == "open")  { %>
+                <div class="card">
+                    <h3><%= task.title %></h3>
+                    <p><%= task.description %></p>
+                    <p><%= task.Date %></p>
+                    <p><%= task.status %></p>
+                    <p><%= task.skills %></p>
+                    <p><%= task.location %></p>
+                    <p><%= task.offer %></p>
+                </div> 
+                
+                <% }}) %>
+                
+        </div> 
+    
+
+
+
+    
+
+
+    <%- include('templates/footer') %>

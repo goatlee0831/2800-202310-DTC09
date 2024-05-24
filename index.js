@@ -32,6 +32,8 @@ const mongodb_database = process.env.MONGODB_DATABASE
 const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/?retryWrites=true&w=majority`;
 const database = new MongoClient(atlasurl);
 const userCollection = database.db(mongodb_database).collection('users');
+const tasksCollection = database.db(mongodb_database).collection('tasks');
+const jobssCollection = database.db(mongodb_database).collection('jobs');
 
 
 // Session store
@@ -193,7 +195,7 @@ app.get('/login', (req, res) => {
         res.redirect('/main')
     }
     else {
-        res.render('login', { message: ''})
+        res.render('login', { message: '' })
     }
 })
 
@@ -214,7 +216,7 @@ app.post('/login-handler', async (req, res) => {
     if (validation.error) {
         var error = validation.error
         console.log(error)
-        return res.render('login', { message: "Invalid username or password"})
+        return res.render('login', { message: "Invalid username or password" })
 
     }
 
@@ -306,8 +308,8 @@ app.get('/main', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('main',
             {
-               
- 
+
+
             })
     }
     else {
@@ -415,7 +417,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
         if (!user) {
             return res.status(404).send('User not found');
         }
-        res.render('profile', { member: user});
+        res.render('profile', { member: user });
     } catch (error) {
         console.error('Failed to fetch user:', error);
         res.status(500).send('Internal server error');
@@ -438,6 +440,73 @@ app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
 
 })
 
+app.get('/recomend', IsAuthenticated, async (req, res) => {
+        const username = req.session.username // username is stored in session
+        const user = await userCollection.findOne({ username });
+       
+   
+        if (!user) {
+            return res.status(404).redirect('/login');
+        }
+
+        const tasks = await tasksCollection.find({}).toArray();
+    
+        console.log(tasks)
+        
+        res.render('recomendTasks', { tasks: tasks });
+        
+    });
+
+
+
+
+    // console.log(user)
+
+    // insertOne = await tasksCollection.insertOne({
+
+    //     username: "abhi",
+    //     title: "Driving ",
+    //     description: "Need a driver for the day to tour vancouver",
+    //     offer: "180",
+    //     location: "Vancouver",
+    //     skills: [
+    //         "drivin",
+    //         "senior assist"
+    //     ],
+    //     date: "2054-05-15",
+    //     goferID: null,
+    //     status: "open",
+    //     completed: false
+    // })
+
+
+
+
+app.get('/progress', IsAuthenticated, async (req, res) => {
+    res.render('TasksInProgress')
+
+})
+
+
+
+app.get('/history', IsAuthenticated, async (req, res) => {
+    const username = req.session.username // username is stored in session
+    const user = await userCollection.findOne({ username });
+
+
+    if (!user) {
+        return res.status(404).redirect('/login');
+    }
+
+    const tasks = await tasksCollection.find({}).toArray();
+
+    console.log(tasks)
+
+   
+    res.render('history',{ tasks: tasks })
+
+})
+
 
 
 
@@ -446,7 +515,7 @@ app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
 
 app.get('*', (req, res) => {
     res.send('404 page not found')
-})  
+})
 // Server
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
