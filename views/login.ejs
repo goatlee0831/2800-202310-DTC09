@@ -6,32 +6,20 @@
         <form action="/login-handler" method="POST">
 
     
-            <label for="username">Username:</label>
+            <label for="username"><h3>Username:</h3></label>
             <input type="text" id="fullname" name="username" required>
 
         
     
 
     
-            <label for="password">Password:</label>
+            <label for="password"><h3>Password:</h3></label>
             <input type="password" id="password" name="password" required>
-
-            <div>
-                <input type="radio" id="user" name="usertype" value="user" checked />
-                <label for="User">User</label>
-                <input type="radio" id="gofer" name="usertype" value="gofer" />
-                <label for="Gofer">Gofer</label>
-            </div>
-
-    
-            <button type="submit">Login</button>
+            <p><a href="/ResetPassword">Forgot Password?</a></p>
+            <br>
+            <button type="submit" class="darkBtn">Login</button>
         </form>
     </div>
-
-    <div>
-        <a href="/ResetPassword">Forgot Password?</a>
-    </div>
-
 
     <div>
         <%= message %>

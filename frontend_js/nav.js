@@ -14,16 +14,21 @@ document.addEventListener("click", e => {
   })
 })
 
-function activateUser() {
+function activateUser(mode) {
+  mode = 'user';
   document.getElementById('goferLinks').style.display = 'none';
   document.getElementById('userLinks').style.display = 'flex';
   document.getElementById('goferMobile').style.display = 'none';
   document.getElementById('userMobile').style.display = 'flex';
+  console.log('mode: ' + mode);
+
 }
 
-function activateGofer() {
+function activateGofer(mode) {
+  mode = 'gofer';
   document.getElementById('userLinks').style.display = 'none';
   document.getElementById('goferLinks').style.display = 'flex';
   document.getElementById('userMobile').style.display = 'none';
   document.getElementById('goferMobile').style.display = 'flex';
+  console.log('mode: ' + mode);
 } 

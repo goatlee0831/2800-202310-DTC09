@@ -1,0 +1,139 @@
+<%- include('templates/header') %>
+<%- include('templates/nav') %>
+
+<div class="card1">
+    <div class="left">
+        <div>
+            <h2>Abhi</h2>
+            <h3>Product Owner</h3>
+        </div>
+        <img onclick="abhi()" id="abhi" src="images/Abhi.png">
+    </div>
+    <div class="right">
+        <p></p>
+    </div>
+</div>
+<div class="card2 inv">
+    <div class="left">
+        <div>
+            <h2>Annyn</h2>
+            <h3>Interface Designer</h3>
+        </div>
+        <img onclick="annyn()" id="annyn" src="images/Annyn.png">
+    </div>
+    <div class="right">
+        
+    </div>
+</div>
+<div class="card3">
+    <div class="left">
+        <div>
+            <h2>Omar</h2>
+            <h3>Progress Tracker</h3>
+        </div>
+        <img onclick="omar()" id="omar" src="images/Omar.png">
+    </div>
+    <div class="right">
+        
+    </div>
+</div>
+<div class="card4 inv">
+    <div class="left">
+        <div>
+            <h2>Rahul</h2>
+            <h3>Creative Director</h3>
+        </div>
+        <img onclick="rahul()" id="rahul" src="images/Rahul.png">
+    </div>
+    <div class="right">
+        
+    </div>
+</div>
+<div class="card5">
+    <div class="left">
+        <div>
+            <h2>Sam</h2>
+            <h3>Team Whip</h3>
+        </div>
+        <img onclick="sam()" id="sam" src="images/Sam.png">
+    </div>
+    <div class="right">
+        
+    </div>
+</div>
+<div class="card1">
+    <img id="teamlight" src="images/teamphoto.png">
+    <img id="teamdark" src="images/alireza.png">
+</div>
+<script>
+    let checkAbs = false;
+    let checkAns = false;
+    let checkOms = false;
+    let checkRas = false;
+    let checkSas = false;
+
+    function abhi() {
+        if(!checkAbs){
+            checkAbs = true;
+        } else {
+            checkAbs = false;
+        }
+        console.log('checkAbs is ' + checkAbs)
+        easterEgg();
+    };
+
+    function annyn() {
+        if(!checkAns){
+            checkAns = true;
+        } else {
+            checkAns = false;
+        }
+        console.log('checkAns is ' + checkAns)
+        easterEgg();
+    };
+
+    function omar() {
+        if(!checkOms){
+            checkOms = true;
+        } else {
+            checkOms = false;
+        }
+        console.log('checkOms is ' + checkOms)
+        easterEgg();
+    };
+
+    function rahul() {
+        if(!checkRas){
+            checkRas = true;
+        } else {
+            checkRas = false;
+        }
+        console.log('checkRas is ' + checkRas)
+        easterEgg();
+    };
+
+    function sam() {
+        if(!checkSas){
+            checkSas = true;
+        } else {
+            checkSas = false;
+        }
+        console.log('checkSas is ' + checkSas)
+        easterEgg();
+    };
+
+    function easterEgg(){
+        if(checkAbs && checkAns && checkOms && checkRas && checkSas){
+            document.getElementById('teamlight').style.display = "none";
+            document.getElementById('teamdark').style.display = "block";
+        } else {
+            document.getElementById('teamdark').style.display = "none";
+            document.getElementById('teamlight').style.display = "block";
+        }
+    }
+
+    easterEgg();
+
+</script>
+
+<%- include('templates/footer') %>
