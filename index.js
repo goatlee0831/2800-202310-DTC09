@@ -17,8 +17,9 @@ const url = require('url');
 // const ObjectId = require('mongodb').ObjectId; //for querying an array of document ID's
 const { MongoClient, ObjectId } = require('mongodb');
 const ejs = require('ejs');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const MongoStore = require('connect-mongo');
+const { get } = require('http')
 const { error } = require('console');
 const { isObjectIdOrHexString } = require('mongoose');
 const mongoose = require('mongoose');
@@ -40,6 +41,8 @@ const mongodb_database = process.env.MONGODB_DATABASE
 const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/project`;
 const database = new MongoClient(atlasurl);
 const userCollection = database.db(mongodb_database).collection('users');
+const tasksCollection = database.db(mongodb_database).collection('tasks');
+const jobssCollection = database.db(mongodb_database).collection('jobs');
 const jobCollection = database.db(mongodb_database).collection('jobs');
 const goferCollection = database.db(mongodb_database).collection('gofers');
 
@@ -203,14 +206,11 @@ app.post('/signup-handler', async (req, res) => {
         var error = validation.error.details
         console.log(error)
         res.render('/signup', { auth: req.session.authenticated, type: req.session.usertype, message: error[0].message })
-        res.render('/signup', { auth: req.session.authenticated, type: req.session.usertype, message: error[0].message })
+  
         return
     }
 
     result = await userCollection.findOne({
-        username: username
-    })
-    else result = await goferCollection.findOne({
         username: username
     })
 
@@ -251,7 +251,7 @@ app.get('/login', (req, res) => {
         res.redirect('/main')
     }
     else {
-        res.render('login', { message: ''})
+        res.render('login', { message: '' })
     }
 })
 
@@ -268,13 +268,13 @@ app.post('/login-handler', async (req, res) => {
         })
 
     const validation = schema.validate({ username, password })
-    const validation = schema.validate({ username, password })
+
 
 
     if (validation.error) {
         var error = validation.error
         console.log(error)
-        return res.render('login', { message: "Invalid username or password"})
+        return res.render('login', { message: "Invalid username or password" })
 
     }
 
@@ -284,7 +284,7 @@ app.post('/login-handler', async (req, res) => {
 
     if (!result) {
         res.render('login', { message: 'This username does not exist', auth: req.session.authenticated, type: req.session.usertype })
-        res.render('login', { message: 'This username does not exist', auth: req.session.authenticated, type: req.session.usertype })
+ 
     }
 
     else if (result) {
@@ -327,8 +327,6 @@ app.post('/reset-password-handler', async (req, res) => {
 
     const validation = schema.validate({ username, password, secret_pin })
 
-    const validation = schema.validate({ username, password, secret_pin })
-
 
     if (validation.error) {
         var error = validation.error.details
@@ -368,8 +366,8 @@ app.get('/main', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('main',
             {
-               
- 
+
+
             })
     }
     else {
@@ -449,33 +447,27 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
         res.render('completedTask', {
             username: req.session.username,
             auth: req.session.authenticated,
-            username: req.session.username,
-            auth: req.session.authenticated,
             type: req.session.usertype
         })
     }
     else {
         res.redirect('/login')
-        return
     }
 })
 
 // Recommended Tasks Page
-app.get('/recommendedTask', IsAuthenticated, (req, res) => {
-    if (req.session.authenticated) {
-        res.render('recommendedTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
-    }
-    else {
-        res.redirect('/login')
-        return
-    }
-})
+// app.get('/recommendedTask', IsAuthenticated, (req, res) => {
+//     if (req.session.authenticated) {
+//         res.render('recommendedTask', {
+//             username: req.session.username,
+//             auth: req.session.authenticated,
+//             type: req.session.usertype
+//         })
+//     }
+//     else {
+//         res.redirect('/login')
+//     }
+// })
 
 // logout
 app.get('/logout', (req, res) => {
@@ -545,6 +537,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
         }
         res.render('profile', { member: user});
         res.render('profile', { member: user});
+        res.render('profile', { member: user });
     } catch (error) {
         console.error('Failed to fetch user:', error);
         res.status(500).send('Internal server error');
@@ -567,19 +560,95 @@ app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
 
 })
 
+app.get('/recomend', IsAuthenticated, async (req, res) => {
+    const username = req.session.username // username is stored in session
+    const user = await userCollection.findOne({ username });
 
-app.get('/find', IsAuthenticated, IsGofer, async (req, res) => {
-    res.render('findjobs')
+    if (!user) {
+        return res.status(404).redirect('/login');
+    }
+
+
+    async function getTasks() {
+        const tasksAll = await tasksCollection.find({}).toArray();
+        fiveRandomTasks = []
+
+        for (let i = 0; i < 5; i++) {
+            fiveRandomTasks.push(Math.floor(Math.random() * tasksAll.length))
+            // console.log(fiveRandomTasks)
+        }
+
+        let tasks = []
+        for (let i = 0; i < tasksAll.length; i++) {
+            if (i === fiveRandomTasks[0] || i === fiveRandomTasks[1] || i === fiveRandomTasks[2] || i === fiveRandomTasks[3] || i === fiveRandomTasks[4]) {
+                tasks.push(tasksAll[i])
+            }
+        }
+        return tasks
+    }
+
+    await getTasks().then((tasks) => {
+
+        // console.log(" tasks:",tasks)
+        res.render('recomendTasks', { tasks: tasks });
+    })
+
+});
+
+app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) => {
+    const username = req.session.username 
+
+    const user = await userCollection.findOne({ username });
+    var taskID = req.params.selectedtask
+    // console.log(taskID)
+    // console.log(typeof taskID)
+
+    // let objectId = new ObjectId(`${taskID}`) 
+    // console.log(objectId)
+    // console.log(taskID)
+   
+
+
+    let task = await tasksCollection.findOne({ id: parseInt(taskID) })
+    console.log(task)
+
+
+  
+    return res.render('pendingTask', { task: task })
+
+    
 
 })
 
-app.get('/complete', IsAuthenticated, IsGofer, async (req, res) => {
-    res.render('completedjobs')
+
+
+
+
+
+
+app.get('/pending', IsAuthenticated, async (req, res) => {
+    res.render('pendingTask')
 
 })
 
-app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
-    res.render('myjobs')
+
+
+
+app.get('/history', IsAuthenticated, async (req, res) => {
+    const username = req.session.username // username is stored in session
+    const user = await userCollection.findOne({ username });
+
+
+    if (!user) {
+        return res.status(404).redirect('/login');
+    }
+
+    const tasks = await tasksCollection.find({}).toArray();
+
+    console.log(tasks)
+
+
+    res.render('history', { tasks: tasks })
 
 })
 
@@ -591,8 +660,10 @@ app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
 
 app.get('*', (req, res) => {
     res.send('404 page not found')
-})  
+})
 // Server
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })
+
+
