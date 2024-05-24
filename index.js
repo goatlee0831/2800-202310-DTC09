@@ -17,11 +17,10 @@ const url = require('url');
 // const ObjectId = require('mongodb').ObjectId; //for querying an array of document ID's
 const { MongoClient, ObjectId } = require('mongodb');
 const ejs = require('ejs');
-const { MongoClient, ObjectId } = require('mongodb');
 const MongoStore = require('connect-mongo');
 const { get } = require('http')
 const { error } = require('console');
-const { isObjectIdOrHexString } = require('mongoose');
+// const { isObjectIdOrHexString } = require('mongoose');
 const mongoose = require('mongoose');
 
 
@@ -38,19 +37,19 @@ const mongodb_database = process.env.MONGODB_DATABASE
 
 // MongoDB connection
 
-const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/project`;
+const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/?retryWrites=true&w=majority`;
 const database = new MongoClient(atlasurl);
 const userCollection = database.db(mongodb_database).collection('users');
 const tasksCollection = database.db(mongodb_database).collection('tasks');
-const jobssCollection = database.db(mongodb_database).collection('jobs');
-const jobCollection = database.db(mongodb_database).collection('jobs');
+const jobsCollection = database.db(mongodb_database).collection('jobs');
+
 const goferCollection = database.db(mongodb_database).collection('gofers');
 
 
 
 // Session store
 var mongoStore = MongoStore.create({
-    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/DTC_09_Gofer_db`,
+    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
     crypto: {
         secret: mongodb_session_secret
     }
@@ -83,38 +82,6 @@ app.use('/', (req, res, next) => {
     next()
 
 })
-
-
-
-
-app.use(bodyParser.json());
-
-app.use('/', (req, res, next) => {
-    app.locals.auth = req.session.authenticated
-    app.locals.type = req.session.usertype
-    app.locals.username = req.session.username
-
-    next()
-
-})
-
-
-
-
-
-
-app.use('/', (req, res, next) => {
-    app.locals.auth = req.session.authenticated
-    app.locals.type = req.session.usertype
-    app.locals.username = req.session.username
-
-    next()
-
-})
-
-
-
-
 
 
 // functions for authentication and authorization
@@ -157,7 +124,7 @@ function IsAdmin(req, res, next) {
 // landing page
 app.get('/', (req, res) => {
     res.render('index', { auth: req.session.authenticated, type: req.session.usertype })
-    res.render('index', { auth: req.session.authenticated, type: req.session.usertype })
+
 })
 
 // about page and easter egg
@@ -173,7 +140,7 @@ app.get('/about', (req, res) => {
 // signup
 app.get('/signup', (req, res) => {
     res.render('signup', { message: '', auth: req.session.authenticated, type: req.session.usertype })
-    res.render('signup', { message: '', auth: req.session.authenticated, type: req.session.usertype })
+    
 })
 
 app.post('/signup-handler', async (req, res) => {
@@ -364,11 +331,7 @@ app.get('/main', IsAuthenticated, (req, res) => {
 
 
     if (req.session.authenticated) {
-        res.render('main',
-            {
-
-
-            })
+        res.render('main')
     }
     else {
         res.redirect('/login')
@@ -380,13 +343,7 @@ app.get('/main', IsAuthenticated, (req, res) => {
 // Urgent Tasks Page
 app.get('/urgentTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
-        res.render('urgentTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
+        res.render('urgentTask')
     }
     else {
         res.redirect('/login')
@@ -396,13 +353,7 @@ app.get('/urgentTask', IsAuthenticated, (req, res) => {
 // Pending Tasks Page
 app.get('/pendingTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
-        res.render('pendingTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
+        res.render('pendingTask')
     }
     else {
         res.redirect('/login')
@@ -455,19 +406,7 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
     }
 })
 
-// Recommended Tasks Page
-// app.get('/recommendedTask', IsAuthenticated, (req, res) => {
-//     if (req.session.authenticated) {
-//         res.render('recommendedTask', {
-//             username: req.session.username,
-//             auth: req.session.authenticated,
-//             type: req.session.usertype
-//         })
-//     }
-//     else {
-//         res.redirect('/login')
-//     }
-// })
+
 
 // logout
 app.get('/logout', (req, res) => {
@@ -536,8 +475,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
             return res.status(404).send('User not found');
         }
         res.render('profile', { member: user});
-        res.render('profile', { member: user});
-        res.render('profile', { member: user });
+
     } catch (error) {
         console.error('Failed to fetch user:', error);
         res.status(500).send('Internal server error');
@@ -611,25 +549,11 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
 
     let task = await tasksCollection.findOne({ id: parseInt(taskID) })
     console.log(task)
-
-
   
     return res.render('pendingTask', { task: task })
 
-    
-
 })
 
-
-
-
-
-
-
-app.get('/pending', IsAuthenticated, async (req, res) => {
-    res.render('pendingTask')
-
-})
 
 
 
