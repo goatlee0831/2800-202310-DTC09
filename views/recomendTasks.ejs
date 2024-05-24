@@ -13,7 +13,8 @@
                     <p><%= task.Date %></p>
                     <p><%= task.location %></p>
                     <p><%= task.offer %></p>
-                    <a onclick="bang()" href="/accept-task-handler/<%= task.title %>">Accept Task</a>
+                    <p><%= task.id %></p>
+                    <a onclick="bang()" href="/AcceptTaskHandler/<%= task.id %>">Accept Task</a>
                 </div> 
                 
                 <% }) %>

@@ -17,7 +17,7 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "joi": "^17.13.1",
-    "mongodb": "^6.6.1",
+    "mongodb": "^6.6.2",
     "mongoose": "^8.3.3",
     "url": "^0.11.3"
   }

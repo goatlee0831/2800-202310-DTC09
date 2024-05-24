@@ -11,7 +11,7 @@ const Joi = require("joi");
 const url = require('url');
 
 const ejs = require('ejs');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const MongoStore = require('connect-mongo');
 const { get } = require('http')
 // const mongoose = require('mongoose');
@@ -390,18 +390,18 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
 })
 
 // Recommended Tasks Page
-app.get('/recommendedTask', IsAuthenticated, (req, res) => {
-    if (req.session.authenticated) {
-        res.render('recommendedTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
-    }
-    else {
-        res.redirect('/login')
-    }
-})
+// app.get('/recommendedTask', IsAuthenticated, (req, res) => {
+//     if (req.session.authenticated) {
+//         res.render('recommendedTask', {
+//             username: req.session.username,
+//             auth: req.session.authenticated,
+//             type: req.session.usertype
+//         })
+//     }
+//     else {
+//         res.redirect('/login')
+//     }
+// })
 
 // logout
 app.get('/logout', (req, res) => {
@@ -476,26 +476,28 @@ app.get('/recomend', IsAuthenticated, async (req, res) => {
 
 });
 
-app.get('/accept-task-handler/:selectedtask', async (req, res) => {
-    const username = req.session.username // username is stored in session
+app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) => {
+    const username = req.session.username 
+    
     const user = await userCollection.findOne({ username });
-    var selectedtask = req.params.selectedtask
-    console.log(selectedtask)   
-   
-    if (!user) {
-        return res.status(404).redirect('/login');
-    }
+    var taskID = req.params.selectedtask
+    // console.log(taskID)
+    // console.log(typeof taskID)
 
-    let task = await tasksCollection.find({ title: selectedtask }).toArray();
+    // let objectId = new ObjectId(`${taskID}`) 
+    // console.log(objectId)
+    // console.log(taskID)
+   
+
+
+    let task = await tasksCollection.findOne({ id: parseInt(taskID) })
     console.log(task)
 
-    if (!task) {
-        return res.send('Task not found');
-    }
-    else {
-        res.render('PendingTasks', { task: task[0] })
 
-    }
+  
+    res.render('PendingTasks', { task: task })
+
+    
 
 })
 
@@ -506,7 +508,7 @@ app.get('/accept-task-handler/:selectedtask', async (req, res) => {
 
 
 app.get('/pending', IsAuthenticated, async (req, res) => {
-    res.render('Pending Tasks')
+    res.render('PendingTasks')
 
 })
 
@@ -544,3 +546,60 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })
+
+
+
+async function findatask() {
+    
+    // tasks = await tasksCollection.findOne({ _id: ObjectID('66504e85ff7d650db57c1f6d')})
+    // console.log(tasks)
+
+    // Assuming you have a collection named 'tasks' and an ObjectId you want to search for
+    var objectId = new ObjectId('66504e85ff7d650db57c1f6d'); // Replace with your actual ObjectId
+    var task = await tasksCollection.findOne({ _id: objectId });
+    console.log(task);
+
+
+}
+
+// findatask()
+
+
+
+async function updateTasks1() {
+    console.log("updating tasks")
+    tasks = await tasksCollection.find({}).toArray()
+    for (let i = 0; i < tasks.length; i++) {
+
+        if (tasks[i].id === null || tasks[i].id === undefined) {
+            tasksCollection.updateOne({ id: null }, { $set: { id: i } })
+        }}
+    
+}
+
+// updateTasks1()
+
+
+async function removeID() {
+    console.log("deleting tasks")
+    tasks = await tasksCollection.find({}).toArray()
+    for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === 1) {
+            tasksCollection.updateOne({ id: i }, { $set: { id: undefined } })
+        }
+    }
+
+    
+}
+// removeID()
+
+// async function updateTasks() {
+//     console.log("updating tasks")
+//     tasks = await tasksCollection.find({}).toArray()
+//     console.log(tasks)
+
+    
+// }
+
+// updateTasks()
+
