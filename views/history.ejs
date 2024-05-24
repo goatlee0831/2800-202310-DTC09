@@ -1,26 +1,23 @@
 <%- include('templates/header') %>
-    <%- include('templates/nav') %>
+<%- include('templates/nav') %>
 
 
-        <h2>Tasks History</h2>
+    <h2>Tasks History</h2>
 
-        <div id="HistoryTaskCards">       
-            <% tasks.forEach(task => { %>
-                <% if (task.username == username && task.status == "closed")  { %>
-                <div class="card">
-                    <h3><%= task.title %></h3>
-                    <p><%= task.description %></p>
-                    <p><%= task.Date %></p>
-                    <p><%= task.status %></p>
-                    <p><%= task.goferID %></p>
-  
-                </div> 
-                
-            <% }}) %>
-                
-        </div> 
-       
+    <div id="HistoryTaskCards">       
+        <% tasks.forEach(task => { %>
+            <% if (task.username == username && task.status == "closed")  { %>
+            <div class="card">
+                <h3><%= task.title %></h3>
+                <p><%= task.description %></p>
+                <p><%= task.Date %></p>
+                <p><%= task.status %></p>
+                <p><%= task.goferID %></p>
 
+            </div> 
+            
+        <% }}) %>
+            
+    </div> 
 
-
-        <%- include('templates/footer') %>
+<%- include('templates/footer') %>
