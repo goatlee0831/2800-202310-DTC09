@@ -201,10 +201,6 @@ form {
         width: 90%;
         padding: 5%;
     }
-    
-    .above {
-        z-index: 2;
-    }
 
     .left {
         width: 90%;
@@ -213,7 +209,6 @@ form {
     }
 
     .login {
-        height: 40svw;
         display: flex;
         align-items: center;
         align-content: flex-start;
