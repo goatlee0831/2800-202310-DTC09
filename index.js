@@ -74,6 +74,7 @@ app.use('/', (req, res, next) => {
 
 
 
+
 // functions for authentication and authorization
 
 // regular users
@@ -115,6 +116,10 @@ app.get('/', (req, res) => {
     res.render('index', { auth: req.session.authenticated, type: req.session.usertype })
 })
 
+// about page and easter egg
+app.get('/about', (req, res) => {
+    res.render('about', { auth: req.session.authenticated, type: req.session.usertype })
+})
 
 
 // signup
