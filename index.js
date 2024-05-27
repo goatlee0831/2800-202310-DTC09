@@ -12,15 +12,12 @@ var session = require('express-session')
 const bcrypt = require('bcrypt');
 const Joi = require("joi");
 const bodyParser = require('body-parser');
-const url = require('url');
 
 // const ObjectId = require('mongodb').ObjectId; //for querying an array of document ID's
 const { MongoClient, ObjectId } = require('mongodb');
-const ejs = require('ejs');
 const MongoStore = require('connect-mongo');
-const { get } = require('http')
 const { error } = require('console');
-// const { isObjectIdOrHexString } = require('mongoose');
+const { isObjectIdOrHexString } = require('mongoose');
 const mongoose = require('mongoose');
 
 
@@ -37,19 +34,17 @@ const mongodb_database = process.env.MONGODB_DATABASE
 
 // MongoDB connection
 
-const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/?retryWrites=true&w=majority`;
+const atlasurl = `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/project`;
 const database = new MongoClient(atlasurl);
 const userCollection = database.db(mongodb_database).collection('users');
-const tasksCollection = database.db(mongodb_database).collection('tasks');
-const jobsCollection = database.db(mongodb_database).collection('jobs');
-
+const jobCollection = database.db(mongodb_database).collection('jobs');
 const goferCollection = database.db(mongodb_database).collection('gofers');
 
 
 
 // Session store
 var mongoStore = MongoStore.create({
-    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
+    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/DTC_09_Gofer_db`,
     crypto: {
         secret: mongodb_session_secret
     }
@@ -82,6 +77,25 @@ app.use('/', (req, res, next) => {
     next()
 
 })
+
+
+
+
+app.use(bodyParser.json());
+
+app.use('/', (req, res, next) => {
+    app.locals.auth = req.session.authenticated
+    app.locals.type = req.session.usertype
+    app.locals.username = req.session.username
+
+    next()
+
+})
+
+
+
+
+
 
 
 // functions for authentication and authorization
@@ -124,13 +138,8 @@ function IsAdmin(req, res, next) {
 // landing page
 app.get('/', (req, res) => {
     res.render('index', { auth: req.session.authenticated, type: req.session.usertype })
-
 })
 
-// about page and easter egg
-app.get('/about', (req, res) => {
-    res.render('about', { auth: req.session.authenticated, type: req.session.usertype })
-})
 // about page and easter egg
 app.get('/about', (req, res) => {
     res.render('about', { auth: req.session.authenticated, type: req.session.usertype })
@@ -140,12 +149,9 @@ app.get('/about', (req, res) => {
 // signup
 app.get('/signup', (req, res) => {
     res.render('signup', { message: '', auth: req.session.authenticated, type: req.session.usertype })
-    
 })
 
 app.post('/signup-handler', async (req, res) => {
-
-    var email = req.body.email
 
     var email = req.body.email
     var secret_pin = req.body.secret_pin
@@ -153,9 +159,8 @@ app.post('/signup-handler', async (req, res) => {
     var password = req.body.password
     var firstname = req.body.firstname
     var lastname = req.body.lastname
-
-
-
+    var usertype = req.body.usertype
+    console.log(`The usertype is ${usertype}`)
 
     const schema = Joi.object(
         {
@@ -164,7 +169,8 @@ app.post('/signup-handler', async (req, res) => {
             secret_pin: Joi.number().min(4).required(),
             password: Joi.string().min(4).max(20).required(),
             firstname: Joi.string().max(20).required(),
-            lastname: Joi.string().max(20).required()
+            lastname: Joi.string().max(20).required(),
+        usertype: Joi.string().required()
         })
 
     const validation = schema.validate(req.body)
@@ -173,11 +179,14 @@ app.post('/signup-handler', async (req, res) => {
         var error = validation.error.details
         console.log(error)
         res.render('/signup', { auth: req.session.authenticated, type: req.session.usertype, message: error[0].message })
-  
         return
     }
 
-    result = await userCollection.findOne({
+    if (usertype == 'user')
+    result = await userCollection.findOne({ 
+        username: username
+    })
+    else result = await goferCollection.findOne({
         username: username
     })
 
@@ -206,7 +215,8 @@ app.post('/signup-handler', async (req, res) => {
     }
 
     else if (result) {
-        res.render('signup', { message: 'User already exists', auth: req.session.authenticated, type: req.session.usertype })
+
+       return res.render('signup', { message: 'User already exists' })
     }
 
 })
@@ -214,12 +224,10 @@ app.post('/signup-handler', async (req, res) => {
 
 // login page
 app.get('/login', (req, res) => {
-    if (req.session.authenticated) {
-        res.redirect('/main')
-    }
-    else {
-        res.render('login', { message: '' })
-    }
+    (req.session.authenticated) ? (req.session.usertype) == 'gofer' ? res.redirect('/goferHome')
+    : res.redirect('/main')
+    : res.render('login', { message: '' })
+    
 })
 
 app.post('/login-handler', async (req, res) => {
@@ -237,24 +245,21 @@ app.post('/login-handler', async (req, res) => {
     const validation = schema.validate({ username, password })
 
 
-
     if (validation.error) {
         var error = validation.error
         console.log(error)
-        return res.render('login', { message: "Invalid username or password" })
+        return res.render('login', { message: "Invalid username or password"})
 
     }
 
+    let result = !await userCollection.findOne({ username: username }) ? await goferCollection.findOne({ username: username })
 
-    result = await userCollection.findOne({ username: username })
+    :  res.render('login', { message: 'This username does not exist'}); 
+
+    console.log(`login result is ${result}`);
 
 
-    if (!result) {
-        res.render('login', { message: 'This username does not exist', auth: req.session.authenticated, type: req.session.usertype })
- 
-    }
-
-    else if (result) {
+    if (result) {
         const match = await bcrypt.compare(password, result.password)
 
         if (match) {
@@ -262,11 +267,12 @@ app.post('/login-handler', async (req, res) => {
             req.session.username = result.username
             req.session.usertype = result.usertype
             req.session.cookie.maxAge = expirytime
-            res.redirect(`/main?mode=${req.session.usertype}`)
+            req.session.usertype == 'gofer' ? res.redirect('/goferHome')
+            : res.redirect('main')
         }
 
         else {
-            res.render('login', { message: 'Incorrect password', auth: req.session.authenticated, type: req.session.usertype })
+            res.render('login', { message: 'Incorrect password'})
         }
     }
 })
@@ -329,21 +335,27 @@ app.get('/main', IsAuthenticated, (req, res) => {
     let mode = req.query.mode
 
 
-
-    if (req.session.authenticated) {
-        res.render('main')
+    if (req.session.authenticated && req.session.usertype == 'user') {
+        res.render('main',
+            {
+               
+ 
+            })
     }
     else {
         res.redirect('/login')
     }
-    // console.log(req.session)
     // console.log(req.session)
 })
 
 // Urgent Tasks Page
 app.get('/urgentTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
-        res.render('urgentTask')
+        res.render('urgentTask', {
+            username: req.session.username,
+            auth: req.session.authenticated,
+            type: req.session.usertype
+        })
     }
     else {
         res.redirect('/login')
@@ -353,7 +365,11 @@ app.get('/urgentTask', IsAuthenticated, (req, res) => {
 // Pending Tasks Page
 app.get('/pendingTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
-        res.render('pendingTask')
+        res.render('pendingTask', {
+            username: req.session.username,
+            auth: req.session.authenticated,
+            type: req.session.usertype
+        })
     }
     else {
         res.redirect('/login')
@@ -364,8 +380,6 @@ app.get('/pendingTask', IsAuthenticated, (req, res) => {
 app.get('/tasks', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('tasks', {
-            username: req.session.username,
-            auth: req.session.authenticated,
             username: req.session.username,
             auth: req.session.authenticated,
             type: req.session.usertype
@@ -380,8 +394,6 @@ app.get('/tasks', IsAuthenticated, (req, res) => {
 app.get('/acceptedTask', IsAuthenticated, (req, res) => {
     if (req.session.authenticated) {
         res.render('acceptedTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
             username: req.session.username,
             auth: req.session.authenticated,
             type: req.session.usertype
@@ -403,28 +415,30 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
     }
     else {
         res.redirect('/login')
+        return
     }
 })
 
-
+// Recommended Tasks Page
+app.get('/recommendedTask', IsAuthenticated, (req, res) => {
+    if (req.session.authenticated) {
+        res.render('recommendedTask', {
+            username: req.session.username,
+            auth: req.session.authenticated,
+            type: req.session.usertype
+        })
+    }
+    else {
+        res.redirect('/login')
+        return
+    }
+})
 
 // logout
 app.get('/logout', (req, res) => {
     req.session.destroy()
     res.redirect('/login')
 })
-
-// Display Create Task Form
-app.get('/createTask', IsAuthenticated, (req, res) => {
-    res.render('createTask', {
-        username: req.session.username,
-        auth: req.session.authenticated,
-        type: req.session.usertype,
-        message: ''
-    });
-});
-
-// Handle Create Task Form Submission
 app.post('/createTask', IsAuthenticated, async (req, res) => {
     const { title, description, dueDate } = req.body;
 
@@ -475,7 +489,6 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
             return res.status(404).send('User not found');
         }
         res.render('profile', { member: user});
-
     } catch (error) {
         console.error('Failed to fetch user:', error);
         res.status(500).send('Internal server error');
@@ -483,10 +496,102 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 });
 
 
-app.get('/find', IsAuthenticated, IsGofer, async (req, res) => {
-    res.render('findjobs')
+// --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
+
+app.get('/goferHome',  IsGofer, async (req, res) => {
+    console.log(req.session.username)
+    const jobs = await jobCollection.find().toArray()
+    console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
+    res.render('goferDashboard.ejs', {job: jobs, firstname : req.session.username, type: 'gofer'});
 
 })
+
+
+app.get('/jobListings', IsGofer, async (req, res) => {
+
+    const jobs = await jobCollection.find().toArray()
+    let user = req.session.username
+    
+    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: {savedjobs: 1 }});
+    let savedjobs = querysavedjobs.savedjobs
+
+    res.render('jobListings', {jobs: jobs, savedjobs: savedjobs} );
+    
+})
+
+
+app.get('/savedJobs', IsGofer, async (req, res) => {
+
+    const jobs = await jobCollection.find().toArray()
+    let user = req.session.username
+    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: {savedjobs: 1 }});
+    
+    let savedjobs = querysavedjobs.savedjobs
+   
+    const objectIds = [];
+    savedjobs.forEach(stringID => {
+        const objectId = mongoose.Types.ObjectId.createFromHexString(stringID);
+        objectIds.push(objectId);
+    });
+    
+    const query = { _id: { $in: objectIds } };
+    
+    const savedJobs = await jobCollection.find(query).toArray();
+    
+    
+    return res.render('savedJobs', {savedjobs: savedJobs} );
+    
+})
+
+
+
+app.post('/saveremoveacceptjob', async (req,res) => {
+
+    let user = req.session.username
+    var jobid = req.body.jobid
+    if (req.body.saveJob) {
+        try {
+        await goferCollection.updateOne({username: user}, {$push : {savedjobs: jobid}})
+        console.log(`Saved job ID ${jobid}`)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    if (req.body.removeJob)
+        {
+            try {
+                await goferCollection.updateOne({username: user}, {$pull : {savedjobs: jobid}})
+                console.log(`removed job ID ${jobid}`)
+               }
+               catch (err) {
+                   console.log(err)
+               }
+        }
+     res.redirect('/jobListings');
+     return
+   
+})
+
+
+// This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
+app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/')]);
+
+// Serving static files 
+app.use(express.static(__dirname + "/public"));
+// Display Create Task Form
+app.get('/createTask', IsAuthenticated, (req, res) => {
+    res.render('createTask', {
+        username: req.session.username,
+        auth: req.session.authenticated,
+        type: req.session.usertype,
+        message: ''
+    });
+});
+
+// Handle Create Task Form Submission
+
+
 
 app.get('/complete', IsAuthenticated, IsGofer, async (req, res) => {
     res.render('completedjobs')
@@ -498,84 +603,6 @@ app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
 
 })
 
-app.get('/recomend', IsAuthenticated, async (req, res) => {
-    const username = req.session.username // username is stored in session
-    const user = await userCollection.findOne({ username });
-
-    if (!user) {
-        return res.status(404).redirect('/login');
-    }
-
-
-    async function getTasks() {
-        const tasksAll = await tasksCollection.find({}).toArray();
-        fiveRandomTasks = []
-
-        for (let i = 0; i < 5; i++) {
-            fiveRandomTasks.push(Math.floor(Math.random() * tasksAll.length))
-            // console.log(fiveRandomTasks)
-        }
-
-        let tasks = []
-        for (let i = 0; i < tasksAll.length; i++) {
-            if (i === fiveRandomTasks[0] || i === fiveRandomTasks[1] || i === fiveRandomTasks[2] || i === fiveRandomTasks[3] || i === fiveRandomTasks[4]) {
-                tasks.push(tasksAll[i])
-            }
-        }
-        return tasks
-    }
-
-    await getTasks().then((tasks) => {
-
-        // console.log(" tasks:",tasks)
-        res.render('recomendTasks', { tasks: tasks });
-    })
-
-});
-
-app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) => {
-    const username = req.session.username 
-
-    const user = await userCollection.findOne({ username });
-    var taskID = req.params.selectedtask
-    // console.log(taskID)
-    // console.log(typeof taskID)
-
-    // let objectId = new ObjectId(`${taskID}`) 
-    // console.log(objectId)
-    // console.log(taskID)
-   
-
-
-    let task = await tasksCollection.findOne({ id: parseInt(taskID) })
-    console.log(task)
-  
-    return res.render('pendingTask', { task: task })
-
-})
-
-
-
-
-
-app.get('/history', IsAuthenticated, async (req, res) => {
-    const username = req.session.username // username is stored in session
-    const user = await userCollection.findOne({ username });
-
-
-    if (!user) {
-        return res.status(404).redirect('/login');
-    }
-
-    const tasks = await tasksCollection.find({}).toArray();
-
-    console.log(tasks)
-
-
-    res.render('history', { tasks: tasks })
-
-})
-
 
 
 
@@ -584,10 +611,8 @@ app.get('/history', IsAuthenticated, async (req, res) => {
 
 app.get('*', (req, res) => {
     res.send('404 page not found')
-})
+})  
 // Server
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })
-
-
