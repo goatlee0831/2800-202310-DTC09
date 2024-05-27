@@ -541,13 +541,13 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
     // console.log(taskID)
     // console.log(typeof taskID)
 
-    // let objectId = new ObjectId(`${taskID}`) 
+    let objectId = new ObjectId(taskID) 
     // console.log(objectId)
     // console.log(taskID)
    
 
 
-    let task = await tasksCollection.findOne({ id: parseInt(taskID) })
+    let task = await tasksCollection.findOne({ _id: objectId })
     console.log(task)
   
     return res.render('pendingTask', { task: task })
