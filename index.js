@@ -39,6 +39,7 @@ const database = new MongoClient(atlasurl);
 const userCollection = database.db(mongodb_database).collection('users');
 const jobCollection = database.db(mongodb_database).collection('jobs');
 const goferCollection = database.db(mongodb_database).collection('gofers');
+const tasksCollection = database.db(mongodb_database).collection('tasks');
 
 
 
@@ -425,25 +426,19 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
 })
 
 // Recommended Tasks Page
-app.get('/recommendedTask', IsAuthenticated, (req, res) => {
-    if (req.session.authenticated) {
-        res.render('recommendedTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
-    }
-    else {
-        res.redirect('/login')
-        return
-    }
-})
+
 
 // logout
 app.get('/logout', (req, res) => {
     req.session.destroy()
     res.redirect('/login')
 })
+
+// Display Create Task Form
+
+
+
+// Handle Create Task Form Submission
 app.post('/createTask', IsAuthenticated, async (req, res) => {
     const { title, description, dueDate } = req.body;
 
@@ -600,6 +595,8 @@ app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/tem
 
 // Serving static files 
 app.use(express.static(__dirname + "/public"));
+
+
 // Display Create Task Form
 app.get('/createTask', IsAuthenticated, (req, res) => {
     res.render('createTask', {
@@ -621,6 +618,84 @@ app.get('/complete', IsAuthenticated, IsGofer, async (req, res) => {
 
 app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
     res.render('myjobs')
+
+})
+
+app.get('/recommend', IsAuthenticated, async (req, res) => {
+    const username = req.session.username // username is stored in session
+    const user = await userCollection.findOne({ username });
+
+    if (!user) {
+        return res.status(404).redirect('/login');
+    }
+
+
+    async function getTasks() {
+        const tasksAll = await tasksCollection.find({}).toArray();
+        fiveRandomTasks = []
+
+        for (let i = 0; i < 5; i++) {
+            fiveRandomTasks.push(Math.floor(Math.random() * tasksAll.length))
+            // console.log(fiveRandomTasks)
+        }
+
+        let tasks = []
+        for (let i = 0; i < tasksAll.length; i++) {
+            if (i === fiveRandomTasks[0] || i === fiveRandomTasks[1] || i === fiveRandomTasks[2] || i === fiveRandomTasks[3] || i === fiveRandomTasks[4]) {
+                tasks.push(tasksAll[i])
+            }
+        }
+        return tasks
+    }
+
+    await getTasks().then((tasks) => {
+
+        // console.log(" tasks:",tasks)
+        res.render('recommendTasks', { tasks: tasks });
+    })
+
+});
+
+app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) => {
+    const username = req.session.username 
+
+    const user = await userCollection.findOne({ username });
+    var taskID = req.params.selectedtask
+    // console.log(taskID)
+    // console.log(typeof taskID)
+
+    let objectId = new ObjectId(taskID) 
+    // console.log(objectId)
+    // console.log(taskID)
+   
+
+
+    let task = await tasksCollection.findOne({ _id: objectId })
+    console.log(task)
+  
+    return res.render('pendingTask', { task: task })
+
+})
+
+
+
+
+
+app.get('/history', IsAuthenticated, async (req, res) => {
+    const username = req.session.username // username is stored in session
+    const user = await userCollection.findOne({ username });
+
+
+    if (!user) {
+        return res.status(404).redirect('/login');
+    }
+
+    const tasks = await tasksCollection.find({}).toArray();
+
+    console.log(tasks)
+
+
+    res.render('history', { tasks: tasks })
 
 })
 
