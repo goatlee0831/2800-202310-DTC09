@@ -113,7 +113,7 @@ function IsAuthenticated(req, res, next) {
 // gofers
 function IsGofer(req, res, next) {
     if (req.session.usertype === 'gofer') {
-        
+
         return next()
     }
     else {
@@ -170,7 +170,7 @@ app.post('/signup-handler', async (req, res) => {
             password: Joi.string().min(4).max(20).required(),
             firstname: Joi.string().max(20).required(),
             lastname: Joi.string().max(20).required(),
-        usertype: Joi.string().required()
+            usertype: Joi.string().required()
         })
 
     const validation = schema.validate(req.body)
@@ -183,9 +183,9 @@ app.post('/signup-handler', async (req, res) => {
     }
 
     if (usertype == 'user')
-    result = await userCollection.findOne({ 
-        username: username
-    })
+        result = await userCollection.findOne({
+            username: username
+        })
     else result = await goferCollection.findOne({
         username: username
     })
@@ -193,22 +193,22 @@ app.post('/signup-handler', async (req, res) => {
     const hashPassword = await bcrypt.hash(password, saltRounds)
     const hashSecret_pin = await bcrypt.hash(secret_pin, saltRounds)
 
-   
+
     const user = {
         username: username,
         password: hashPassword,
-        
+
         email: email,
         secret_pin: hashSecret_pin,
         firstname: firstname,
         lastname: lastname,
-        usertype : usertype
-    } 
-    
+        usertype: usertype
+    }
+
 
     if (!result) {
         if (usertype == 'user') userCollection.insertOne(user)
-        else {user.savedjobs = [] ; goferCollection.insertOne(user)};
+        else { user.savedjobs = []; goferCollection.insertOne(user) };
 
         console.log(`Inserted user ${user}`);
         return res.redirect('/login')
@@ -216,7 +216,7 @@ app.post('/signup-handler', async (req, res) => {
 
     else if (result) {
 
-       return res.render('signup', { message: 'User already exists' })
+        return res.render('signup', { message: 'User already exists' })
     }
 
 })
@@ -225,16 +225,15 @@ app.post('/signup-handler', async (req, res) => {
 // login page
 app.get('/login', (req, res) => {
     (req.session.authenticated) ? (req.session.usertype) == 'gofer' ? res.redirect('/goferHome')
-    : res.redirect('/main')
-    : res.render('login', { message: '' })
-    
+        : res.redirect('/main')
+        : res.render('login', { message: '' })
+
 })
 
 app.post('/login-handler', async (req, res) => {
 
     var username = req.body.username
     var password = req.body.password
-    var usertype = req.body.usertype
 
     const schema = Joi.object(
         {
@@ -248,18 +247,24 @@ app.post('/login-handler', async (req, res) => {
     if (validation.error) {
         var error = validation.error
         console.log(error)
-        return res.render('login', { message: "Invalid username or password"})
-
+        return res.render('login', { message: "Invalid username or password" })
     }
 
-    let result = !await userCollection.findOne({ username: username }) ? await goferCollection.findOne({ username: username })
+    
+    let result = await userCollection.findOne({ username: username })
 
-    :  res.render('login', { message: 'This username does not exist'}); 
+    if (!result)
+        result = await goferCollection.findOne({ username: username }) 
+        
 
-    console.log(`login result is ${result}`);
+    if (!result) {
+        res.render('login', { message: 'This username does not exist' });
+        console.log(`login result is ${result}`);
+    }
 
 
-    if (result) {
+
+    else {
         const match = await bcrypt.compare(password, result.password)
 
         if (match) {
@@ -268,11 +273,11 @@ app.post('/login-handler', async (req, res) => {
             req.session.usertype = result.usertype
             req.session.cookie.maxAge = expirytime
             req.session.usertype == 'gofer' ? res.redirect('/goferHome')
-            : res.redirect('main')
+                : res.redirect('main')
         }
 
         else {
-            res.render('login', { message: 'Incorrect password'})
+            res.render('login', { message: 'Incorrect password' })
         }
     }
 })
@@ -338,8 +343,8 @@ app.get('/main', IsAuthenticated, (req, res) => {
     if (req.session.authenticated && req.session.usertype == 'user') {
         res.render('main',
             {
-               
- 
+
+
             })
     }
     else {
@@ -488,7 +493,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
         if (!user) {
             return res.status(404).send('User not found');
         }
-        res.render('profile', { member: user});
+        res.render('profile', { member: user });
     } catch (error) {
         console.error('Failed to fetch user:', error);
         res.status(500).send('Internal server error');
@@ -498,11 +503,11 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 
 // --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
 
-app.get('/goferHome',  IsGofer, async (req, res) => {
+app.get('/goferHome', IsGofer, async (req, res) => {
     console.log(req.session.username)
     const jobs = await jobCollection.find().toArray()
     console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
-    res.render('goferDashboard.ejs', {job: jobs, firstname : req.session.username, type: 'gofer'});
+    res.render('goferDashboard.ejs', { job: jobs, firstname: req.session.username, type: 'gofer' });
 
 })
 
@@ -511,12 +516,12 @@ app.get('/jobListings', IsGofer, async (req, res) => {
 
     const jobs = await jobCollection.find().toArray()
     let user = req.session.username
-    
-    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: {savedjobs: 1 }});
+
+    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
     let savedjobs = querysavedjobs.savedjobs
 
-    res.render('jobListings', {jobs: jobs, savedjobs: savedjobs} );
-    
+    res.render('jobListings', { jobs: jobs, savedjobs: savedjobs });
+
 })
 
 
@@ -524,53 +529,52 @@ app.get('/savedJobs', IsGofer, async (req, res) => {
 
     const jobs = await jobCollection.find().toArray()
     let user = req.session.username
-    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: {savedjobs: 1 }});
-    
+    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
+
     let savedjobs = querysavedjobs.savedjobs
-   
+
     const objectIds = [];
     savedjobs.forEach(stringID => {
         const objectId = mongoose.Types.ObjectId.createFromHexString(stringID);
         objectIds.push(objectId);
     });
-    
+
     const query = { _id: { $in: objectIds } };
-    
+
     const savedJobs = await jobCollection.find(query).toArray();
-    
-    
-    return res.render('savedJobs', {savedjobs: savedJobs} );
-    
+
+
+    return res.render('savedJobs', { savedjobs: savedJobs });
+
 })
 
 
 
-app.post('/saveremoveacceptjob', async (req,res) => {
+app.post('/saveremoveacceptjob', async (req, res) => {
 
     let user = req.session.username
     var jobid = req.body.jobid
     if (req.body.saveJob) {
         try {
-        await goferCollection.updateOne({username: user}, {$push : {savedjobs: jobid}})
-        console.log(`Saved job ID ${jobid}`)
+            await goferCollection.updateOne({ username: user }, { $push: { savedjobs: jobid } })
+            console.log(`Saved job ID ${jobid}`)
         }
         catch (err) {
             console.log(err)
         }
     }
-    if (req.body.removeJob)
-        {
-            try {
-                await goferCollection.updateOne({username: user}, {$pull : {savedjobs: jobid}})
-                console.log(`removed job ID ${jobid}`)
-               }
-               catch (err) {
-                   console.log(err)
-               }
+    if (req.body.removeJob) {
+        try {
+            await goferCollection.updateOne({ username: user }, { $pull: { savedjobs: jobid } })
+            console.log(`removed job ID ${jobid}`)
         }
-     res.redirect('/jobListings');
-     return
-   
+        catch (err) {
+            console.log(err)
+        }
+    }
+    res.redirect('/jobListings');
+    return
+
 })
 
 
@@ -611,7 +615,7 @@ app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
 
 app.get('*', (req, res) => {
     res.send('404 page not found')
-})  
+})
 // Server
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
