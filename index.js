@@ -415,14 +415,7 @@ app.get('/logout', (req, res) => {
 })
 
 // Display Create Task Form
-app.get('/createTask', IsAuthenticated, (req, res) => {
-    res.render('createTask', {
-        username: req.session.username,
-        auth: req.session.authenticated,
-        type: req.session.usertype,
-        message: ''
-    });
-});
+
 
 // Handle Create Task Form Submission
 app.post('/createTask', IsAuthenticated, async (req, res) => {
@@ -498,7 +491,7 @@ app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
 
 })
 
-app.get('/recomend', IsAuthenticated, async (req, res) => {
+app.get('/recommend', IsAuthenticated, async (req, res) => {
     const username = req.session.username // username is stored in session
     const user = await userCollection.findOne({ username });
 
@@ -528,7 +521,7 @@ app.get('/recomend', IsAuthenticated, async (req, res) => {
     await getTasks().then((tasks) => {
 
         // console.log(" tasks:",tasks)
-        res.render('recomendTasks', { tasks: tasks });
+        res.render('recommendTasks', { tasks: tasks });
     })
 
 });
