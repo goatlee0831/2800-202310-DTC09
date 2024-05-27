@@ -39,6 +39,7 @@ const database = new MongoClient(atlasurl);
 const userCollection = database.db(mongodb_database).collection('users');
 const jobCollection = database.db(mongodb_database).collection('jobs');
 const goferCollection = database.db(mongodb_database).collection('gofers');
+const tasksCollection = database.db(mongodb_database).collection('tasks');
 
 
 
@@ -425,19 +426,7 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
 })
 
 // Recommended Tasks Page
-app.get('/recommendedTask', IsAuthenticated, (req, res) => {
-    if (req.session.authenticated) {
-        res.render('recommendedTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
-    }
-    else {
-        res.redirect('/login')
-        return
-    }
-})
+
 
 // logout
 app.get('/logout', (req, res) => {
@@ -446,6 +435,7 @@ app.get('/logout', (req, res) => {
 })
 
 // Display Create Task Form
+
 
 
 // Handle Create Task Form Submission
@@ -588,6 +578,8 @@ app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/tem
 
 // Serving static files 
 app.use(express.static(__dirname + "/public"));
+
+
 // Display Create Task Form
 app.get('/createTask', IsAuthenticated, (req, res) => {
     res.render('createTask', {
