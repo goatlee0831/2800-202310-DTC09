@@ -5,20 +5,22 @@
     <h2>Recommended Tasks</h2>
 
 
-    <div id="RecomendedTaskCards">
-        <% tasks.forEach(task => { %>
-            <div class="card">
-                <h3><%= task.title %></h3>
-                <p><%= task.description %></p>
-                <p><%= task.Date %></p>
-                <p><%= task.location %></p>
-                <p><%= task.offer %></p>
-                <p><%= task.id %></p>
-                <a onclick="bang()" href="/AcceptTaskHandler/<%= task.id %>">Accept Task</a>
-            </div> 
-            
-            <% }) %>
-            
+    
+        <div id="RecommendedTaskCards">
+            <% tasks.forEach(task => { %>
+                <div class="card">
+                    <h3><%= task.title %></h3>
+                    <p><%= task.description %></p>
+                    <p><%= task.Date %></p>
+                    <p><%= task.location %></p>
+                    <p><%= task.offer %></p>
+                    <p><%= task.id %></p>
+                    <a onclick="bang()" href="/AcceptTaskHandler/<%= task._id %>">Accept Task</a>
+                </div> 
+                
+                <% }) %>
+                
+       
         </div> 
         
         <script>

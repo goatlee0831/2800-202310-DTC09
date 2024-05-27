@@ -607,6 +607,84 @@ app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
 
 })
 
+app.get('/recomend', IsAuthenticated, async (req, res) => {
+    const username = req.session.username // username is stored in session
+    const user = await userCollection.findOne({ username });
+
+    if (!user) {
+        return res.status(404).redirect('/login');
+    }
+
+
+    async function getTasks() {
+        const tasksAll = await tasksCollection.find({}).toArray();
+        fiveRandomTasks = []
+
+        for (let i = 0; i < 5; i++) {
+            fiveRandomTasks.push(Math.floor(Math.random() * tasksAll.length))
+            // console.log(fiveRandomTasks)
+        }
+
+        let tasks = []
+        for (let i = 0; i < tasksAll.length; i++) {
+            if (i === fiveRandomTasks[0] || i === fiveRandomTasks[1] || i === fiveRandomTasks[2] || i === fiveRandomTasks[3] || i === fiveRandomTasks[4]) {
+                tasks.push(tasksAll[i])
+            }
+        }
+        return tasks
+    }
+
+    await getTasks().then((tasks) => {
+
+        // console.log(" tasks:",tasks)
+        res.render('recomendTasks', { tasks: tasks });
+    })
+
+});
+
+app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) => {
+    const username = req.session.username 
+
+    const user = await userCollection.findOne({ username });
+    var taskID = req.params.selectedtask
+    // console.log(taskID)
+    // console.log(typeof taskID)
+
+    let objectId = new ObjectId(taskID) 
+    // console.log(objectId)
+    // console.log(taskID)
+   
+
+
+    let task = await tasksCollection.findOne({ _id: objectId })
+    console.log(task)
+  
+    return res.render('pendingTask', { task: task })
+
+})
+
+
+
+
+
+app.get('/history', IsAuthenticated, async (req, res) => {
+    const username = req.session.username // username is stored in session
+    const user = await userCollection.findOne({ username });
+
+
+    if (!user) {
+        return res.status(404).redirect('/login');
+    }
+
+    const tasks = await tasksCollection.find({}).toArray();
+
+    console.log(tasks)
+
+
+    res.render('history', { tasks: tasks })
+
+})
+
 
 
 
