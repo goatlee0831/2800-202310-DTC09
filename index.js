@@ -444,14 +444,11 @@ app.get('/logout', (req, res) => {
     req.session.destroy()
     res.redirect('/login')
 })
-<<<<<<< HEAD
-=======
 
 // Display Create Task Form
 
 
 // Handle Create Task Form Submission
->>>>>>> fea0f18 (Minor speeling changes to recommendtasks)
 app.post('/createTask', IsAuthenticated, async (req, res) => {
     const { title, description, dueDate } = req.body;
 
