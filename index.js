@@ -444,6 +444,14 @@ app.get('/logout', (req, res) => {
     req.session.destroy()
     res.redirect('/login')
 })
+<<<<<<< HEAD
+=======
+
+// Display Create Task Form
+
+
+// Handle Create Task Form Submission
+>>>>>>> fea0f18 (Minor speeling changes to recommendtasks)
 app.post('/createTask', IsAuthenticated, async (req, res) => {
     const { title, description, dueDate } = req.body;
 
@@ -607,7 +615,7 @@ app.get('/jobs', IsAuthenticated, IsGofer, async (req, res) => {
 
 })
 
-app.get('/recomend', IsAuthenticated, async (req, res) => {
+app.get('/recommend', IsAuthenticated, async (req, res) => {
     const username = req.session.username // username is stored in session
     const user = await userCollection.findOne({ username });
 
@@ -637,7 +645,7 @@ app.get('/recomend', IsAuthenticated, async (req, res) => {
     await getTasks().then((tasks) => {
 
         // console.log(" tasks:",tasks)
-        res.render('recomendTasks', { tasks: tasks });
+        res.render('recommendTasks', { tasks: tasks });
     })
 
 });
