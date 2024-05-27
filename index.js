@@ -572,6 +572,23 @@ app.post('/saveremoveacceptjob', async (req, res) => {
             console.log(err)
         }
     }
+
+    if (req.body.acceptjob) {
+        try {
+            await goferCollection.updateOne({ username: user }, { $push: { acceptedjobs: jobid } })
+            console.log(`accepted job ID ${jobid}`)
+        }
+        catch (err) {
+            console.log(err)
+        }
+        try {
+            await jobCollection.updateOne({_id: jobid }, { $set : {acceptedby: user} })
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
     res.redirect('/jobListings');
     return
 

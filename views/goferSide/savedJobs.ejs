@@ -97,9 +97,9 @@
                      
                         <button type="button" class="closeBtn">Close</button>
                       
-                        <button value=<%=job._id%> class="Btn removeBtn">Remove from saved</button>
+                        <button value=<%=job._id%> class="removeBtn">Remove from saved</button>
                            
-                        <button value=<%=job._id%> class="Btn acceptBtn">Accept</button>
+                        <button value=<%=job._id%> class="acceptBtn">Accept</button>
                                 
                 
                      </div>
@@ -118,14 +118,17 @@
 
             var popups = document.querySelectorAll('.listingpopup')
             var closeBtns = document.querySelectorAll('.closeBtn')
-            var dataBtns = document.querySelectorAll('.Btn');
+            var acceptBtns = document.querySelectorAll('.acceptBtn');
+            var removeBtns = document.querySelectorAll('.removeBtn');
+
        
 
            // Looping through all listings
             showListing.forEach((listing, i) => {
                 let eachpopup = popups[i];
                 let closeBtn = closeBtns[i];
-                let eachBtn = dataBtns[i];
+                let acceptBtn = acceptBtns[i];
+                let removeBtn = removeBtn[i];
 
                 listing.addEventListener('click', () =>
                     eachpopup.showModal())
@@ -135,36 +138,33 @@
                 });
            
 
-                eachBtn.addEventListener('click', () => {
-                    var jobId = eachBtn.value;
-                    if (eachBtn.classList.contains("acceptBtn"))
-                        {
+                acceptBtn.addEventListener('click', () => {
+                    var jobId = acceptBtn.value;
+                   
+                        
                             fetch('/saveremoveacceptjob', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ acceptJob: true , jobid : jobId})
                         })
                             .then(eachpopup.close())
-                                .catch((error) => {
-                                    console.error('Error:', error);
-                                });
-                        }
-                    else if (eachBtn.classList.contains("removeBtn"))
-                    {
+                               
+                })
+                removeBtn.addEventListener('click', () => {
+                    var jobId = removeBtn.value;
+                       
                         fetch('/saveremoveacceptjob', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ removeJob: true , jobid : jobId})
                         })
                                 .then(eachpopup.close())
-                                .catch((error) => {
-                                    console.error('Error:', error);
-                                });
-                    }
-            })
+                                
+        
+            });
                     
           
-            });   
+            });
                 
             
         </script>
