@@ -501,7 +501,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 app.get('/goferHome', IsGofer, async (req, res) => {
     console.log(req.session.username)
     const jobs = await jobCollection.find().toArray()
-    console.log(`${jobs}, The length of jobs array is ${jobs.length}`)
+   
     res.render('goferDashboard.ejs', { job: jobs, firstname: req.session.username, type: 'gofer' });
 
 })
@@ -509,7 +509,9 @@ app.get('/goferHome', IsGofer, async (req, res) => {
 
 app.get('/jobListings', IsGofer, async (req, res) => {
 
-    const jobs = await jobCollection.find().toArray()
+    let jobs = await jobCollection.find({ acceptedby: { $exists: false } }).toArray();
+    
+
     let user = req.session.username
 
     let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
@@ -522,7 +524,7 @@ app.get('/jobListings', IsGofer, async (req, res) => {
 
 app.get('/savedJobs', IsGofer, async (req, res) => {
 
-    const jobs = await jobCollection.find().toArray()
+   
     let user = req.session.username
     let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
 
@@ -537,8 +539,7 @@ app.get('/savedJobs', IsGofer, async (req, res) => {
     const query = { _id: { $in: objectIds } };
 
     const savedJobs = await jobCollection.find(query).toArray();
-
-
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     return res.render('savedJobs', { savedjobs: savedJobs });
 
 })
@@ -570,7 +571,7 @@ app.post('/saveremoveacceptjob', async (req, res) => {
 
     if (req.body.acceptjob) {
         try {
-            await goferCollection.updateOne({ username: user }, { $push: { acceptedjobs: jobid } })
+            await goferCollection.updateOne({ username: user }, { $set: { acceptedjobs: jobid } })
             console.log(`accepted job ID ${jobid}`)
         }
         catch (err) {
@@ -578,11 +579,14 @@ app.post('/saveremoveacceptjob', async (req, res) => {
         }
         try {
             await jobCollection.updateOne({_id: jobid }, { $set : {acceptedby: user} })
+            await goferCollection.updateOne({ username: user }, { $pull: { savedjobs: jobid } })
+            console.log("Successfully removed from Job listings")
         }
         catch (err) {
             console.log(err)
         }
     }
+
 
     res.redirect('/jobListings');
     return

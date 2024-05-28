@@ -4,7 +4,7 @@
             .listing {
                 display: flex;
                 flex-direction: column;
-                background-color: lightcoral;
+                background-color: rgb(128, 210, 240);
                 width: 300px;
                 margin: auto;
                 margin-top: 6px;
@@ -33,7 +33,7 @@
                 padding: 9px;
 
             }
-
+            
 
             :modal.listing.topRow {
                 display: flex;
@@ -56,6 +56,8 @@
                 display: flex;
                 justify-content: space-around;
             }
+
+          
         </style>
 
         <section id="jobListings">
@@ -106,11 +108,24 @@
                      
                 </dialog>
 
-
-
-
                     <% }) %>
         </section>
+
+        <section id="acceptedJobs">
+        
+
+        </section>
+        <dialog id="confirmationpopup">
+            <div id="message">
+
+            </div>
+            <button id="confirmAccept">Accept</button>
+            <button id="close"> Close </button>
+            
+        </dialog>
+       
+
+
         <script>
     
 
@@ -120,15 +135,15 @@
             var closeBtns = document.querySelectorAll('.closeBtn')
             var acceptBtns = document.querySelectorAll('.acceptBtn');
             var removeBtns = document.querySelectorAll('.removeBtn');
-
-       
+            let confirmationpopup = document.getElementById('confirmationpopup');
+            
 
            // Looping through all listings
             showListing.forEach((listing, i) => {
                 let eachpopup = popups[i];
                 let closeBtn = closeBtns[i];
                 let acceptBtn = acceptBtns[i];
-                let removeBtn = removeBtn[i];
+                let removeBtn = removeBtns[i];
 
                 listing.addEventListener('click', () =>
                     eachpopup.showModal())
@@ -140,14 +155,21 @@
 
                 acceptBtn.addEventListener('click', () => {
                     var jobId = acceptBtn.value;
-                   
-                        
-                            fetch('/saveremoveacceptjob', {
+                    // confirmationpopup.value = jobId
+
+                    confirmationpopup.querySelector('#message').innerHTML += `Are you sure you want to accept this job `
+                    confirmationpopup.showModal();
+                        confirmationpopup.querySelector('#confirmAccept').addEventListener('click', () => 
+                            {fetch('/saveremoveacceptjob', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ acceptJob: true , jobid : jobId})
+                            body: JSON.stringify({ acceptjob: true , jobid : jobId})
                         })
-                            .then(eachpopup.close())
+                            ;eachpopup.close(); confirmationpopup.close()}
+                    )
+                            
+                    confirmationpopup.querySelector('#close').addEventListener('click', () => confirmationpopup.close())
+                        
                                
                 })
                 removeBtn.addEventListener('click', () => {
@@ -159,12 +181,11 @@
                             body: JSON.stringify({ removeJob: true , jobid : jobId})
                         })
                                 .then(eachpopup.close())
-                                
-        
+                            
             });
-                    
-          
             });
                 
             
+
+       
         </script>
