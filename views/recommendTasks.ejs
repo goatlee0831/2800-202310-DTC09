@@ -8,26 +8,30 @@
     
         <div id="RecommendedTaskCards">
             <% tasks.forEach(task => { %>
-                <div class="card">
+                <div id="<%= task._id %>" class="card">
                     <h3><%= task.title %></h3>
                     <p><%= task.description %></p>
                     <p><%= task.Date %></p>
                     <p><%= task.location %></p>
                     <p><%= task.offer %></p>
-                    <p><%= task.id %></p>
-                    <a onclick="bang()" href="/AcceptTaskHandler/<%= task._id %>">Accept Task</a>
+                    <a onclick="" href="/AcceptTaskHandler/<%= task._id %>">Accept Task</a>
+                    <button onclick="decline(`<%= task._id %>`)" >Decline Task</button>
                 </div> 
                 
                 <% }) %>
-                
-       
         </div> 
+
+        <div>
+            <a href='/recommend'>Generate New</a>
+        </div>
         
         <script>
-            function bang(){
-                console.log("button clicked");
+            function decline(id){
+
+                document.getElementById(id).style.display = "none";
+
             }
-            </script>
+        </script>
 
 
 

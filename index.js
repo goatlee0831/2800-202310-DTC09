@@ -19,11 +19,12 @@ const MongoStore = require('connect-mongo');
 const { error } = require('console');
 const { isObjectIdOrHexString } = require('mongoose');
 const mongoose = require('mongoose');
+const url = require('url');
 
 
 // global variables and secret keys
 const saltRounds = 10;
-const expirytime = 1 * 60 * 60 * 1000// (milliseconds * sec * min) 1 hour
+const expirytime = 24 * 60 * 60 * 1000// (milliseconds * sec * min) 1 hour
 
 const mongodb_user = process.env.MONGODB_USER
 const mongodb_password = process.env.MONGODB_PASSWORD
@@ -70,7 +71,13 @@ app.use(express.static(__dirname + "/css"));
 app.use(express.static(__dirname + "/frontend_js"));
 app.set('view engine', 'ejs');
 
-app.use('/', (req, res, next) => {
+
+
+
+
+
+
+app.use('/', async (req, res, next) => {
     app.locals.auth = req.session.authenticated
     app.locals.type = req.session.usertype
     app.locals.username = req.session.username
@@ -84,14 +91,6 @@ app.use('/', (req, res, next) => {
 
 app.use(bodyParser.json());
 
-app.use('/', (req, res, next) => {
-    app.locals.auth = req.session.authenticated
-    app.locals.type = req.session.usertype
-    app.locals.username = req.session.username
-
-    next()
-
-})
 
 
 
@@ -251,12 +250,12 @@ app.post('/login-handler', async (req, res) => {
         return res.render('login', { message: "Invalid username or password" })
     }
 
-    
+
     let result = await userCollection.findOne({ username: username })
 
     if (!result)
-        result = await goferCollection.findOne({ username: username }) 
-        
+        result = await goferCollection.findOne({ username: username })
+
 
     if (!result) {
         res.render('login', { message: 'This username does not exist' });
@@ -383,18 +382,7 @@ app.get('/pendingTask', IsAuthenticated, (req, res) => {
 })
 
 // Tasks Page
-app.get('/tasks', IsAuthenticated, (req, res) => {
-    if (req.session.authenticated) {
-        res.render('tasks', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
-    }
-    else {
-        res.redirect('/login')
-    }
-})
+
 
 // Accepted Tasks Page
 app.get('/acceptedTask', IsAuthenticated, (req, res) => {
@@ -631,35 +619,50 @@ app.get('/recommend', IsAuthenticated, async (req, res) => {
         return tasks
     }
 
-    await getTasks().then((tasks) => {
+    
+    req.session.tasks = await getTasks()
 
-        // console.log(" tasks:",tasks)
-        res.render('recommendTasks', { tasks: tasks });
-    })
 
-});
+    res.render('recommendTasks', { tasks: req.session.tasks });
+})
+
+
 
 app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) => {
-    const username = req.session.username 
+    const username = req.session.username
 
     const user = await userCollection.findOne({ username });
     var taskID = req.params.selectedtask
     // console.log(taskID)
     // console.log(typeof taskID)
 
-    let objectId = new ObjectId(taskID) 
+    let objectId = new ObjectId(taskID)
     // console.log(objectId)
     // console.log(taskID)
-   
-
 
     let task = await tasksCollection.findOne({ _id: objectId })
-    console.log(task)
-  
-    return res.render('pendingTask', { task: task })
+    // updateResult = await tasksCollection.updateOne({ _id: objectId }, { $set: { status: 'pending', username: username } })
+    insertResultinJobs = await jobCollection.insertOne(task).then(() => {
+        jobCollection.updateOne({ _id: objectId }, { $set: { status: 'open', username: username, acceptedby: null, id: taskID, date: new Date().setFullYear(2054) } })
+         
+    })
+
+
+
+    let postedTasksbyUser = await jobCollection.find({ username: username }).toArray()
+
+    return res.render('tasks', { usersTasks: postedTasksbyUser })
 
 })
 
+app.get('/tasks', IsAuthenticated, async (req, res) => {
+
+    username = req.session.username
+
+    let postedTasksbyUser = await jobCollection.find({ username: username }).toArray()
+
+    return res.render('tasks', { usersTasks: postedTasksbyUser })
+})
 
 
 
