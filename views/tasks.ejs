@@ -1,74 +1,124 @@
 <%- include('templates/header') %>
-<%- include('templates/nav') %>
-<main>
-    <header style="text-align: center;">
-        <h1>Tasks</h1>
-    </header>
+    <%- include('templates/nav') %>
+        <main>
+            <header style="text-align: center;">
+                <h1>All Tasks</h1>
+            </header>
 
-    <div class="columnContainer">
-        <!-- Tasks In Progress -->
-        <div>
-            <h1>Tasks in Progress</h1>
-            <div id="InProgressTasks"></div>
-        </div>
+           
+                <!-- Tasks In Progress -->
+                <div>
+                    <h1>Tasks in Progress</h1>
+                    <div id="InProgressTasks"></div>
+                    <% usersTasks.forEach(task=> { %>
+                        <div class="card">
+                            <h3><%= task.title %></h3>
+                            <p><%= task.description %></p>
+                            <p><%= task.Date %></p>
+                            <p><%= task.location %></p>
+                            <p><%= task.offer %></p>
+                            <p><%= task.status %></p>
+                        </div>
+                        <% }) %>
+                        
+                </div>
+                <!-- Scheduled Tasks -->
+                <div>
+                    <h1>Scheduled Tasks</h1>
+                    <div id="ScheduledTasks"></div>
+                    <% usersTasks.forEach(task=> { %>
+                        <% if(task.status == "closed" && !task.completed) { %>
+                            <div class="card">
+                                <h3><%= task.title %></h3>
+                                <p><%= task.description %></p>
+                                <p><%= task.Date %></p>
+                                <p><%= task.location %></p>
+                                <p><%= task.offer %></p>
+                                <p><%= task.status %></p>
+                            </div>
+                    <% }}) %>
+                </div>
 
-        <!-- Scheduled Tasks -->
-        <div>
-            <h1>Scheduled Tasks</h1>
-            <div id="ScheduledTasks"></div>
-        </div>
+                <!-- Pending Tasks -->
+                <div>
+                    <h1>Pending Tasks</h1>
+                    <div id="PendingTaskCards">
+                        <% usersTasks.forEach(task=> { %>
+                            <% if(task.status == "pending") { %>
+                                <div class="card">
+                                    <h3><%= task.title %></h3>
+                                    <p><%= task.description %></p>
+                                    <p><%= task.Date %></p>
+                                    <p><%= task.location %></p>
+                                    <p><%= task.offer %></p>
+                                    <p><%= task.status %></p>
+                                </div>
+                        <% }}) %>
+                    </div>
+                </div>
+                                <!-- Completed Tasks -->
+                <div>
+                    <h1>Completed Tasks</h1>
+                    <div id="CompletedTaskCards">
+                        <% usersTasks.forEach(task=> { %>
+                            <% if(task.status == "closed" && task.completed) { %>
+                                <div class="card">
+                                    <h3><%= task.title %></h3>
+                                    <p><%= task.description %></p>
+                                    <p><%= task.Date %></p>
+                                    <p><%= task.location %></p>
+                                    <p><%= task.offer %></p>
+                                    <p><%= task.status %></p>
+                                </div>
+                        <% }}) %>
+                    </div>
+                </div>
+        </main>
 
-        <!-- Pending Tasks -->
-        <div>
-            <h1>Pending Tasks</h1>
-            <div id="PendingTasks"></div>
-    </div>
-</main>
+        <!-- <script>
+            const InProgressTasks = document.getElementById('InProgressTasks');
+            const ScheduledTasks = document.getElementById('ScheduledTasks');
+            const PendingTasks = document.getElementById('PendingTasks');
 
-<script>
-const InProgressTasks = document.getElementById('InProgressTasks');
-const ScheduledTasks = document.getElementById('ScheduledTasks');
-const PendingTasks = document.getElementById('PendingTasks');
+            function createCard(title, content) {
+                const card = document.createElement('div');
+                card.classList.add('card');
 
-function createCard(title, content) {
-    const card = document.createElement('div');
-    card.classList.add('card');
+                const cardTitle = document.createElement('h2');
+                cardTitle.textContent = title;
 
-    const cardTitle = document.createElement('h2');
-    cardTitle.textContent = title;
+                const cardContent = document.createElement('p');
+                cardContent.textContent = content;
 
-    const cardContent = document.createElement('p');
-    cardContent.textContent = content;
+                card.appendChild(cardTitle);
+                card.appendChild(cardContent);
 
-    card.appendChild(cardTitle);
-    card.appendChild(cardContent);
+                return card;
+            }
 
-    return card;
-}
+            const InProgressCard1 = createCard('In Progress Task 1', 'SOME THINGS TO DO!');
+            const InProgressCard2 = createCard('In Progress Task 2', 'SOME MORE THINGS TO DO!');
+            const InProgressCard3 = createCard('In Progress Task 3', 'EVEN MORE THINGS TO DO!');
 
-const InProgressCard1 = createCard('In Progress Task 1', 'SOME THINGS TO DO!');
-const InProgressCard2 = createCard('In Progress Task 2', 'SOME MORE THINGS TO DO!');
-const InProgressCard3 = createCard('In Progress Task 3', 'EVEN MORE THINGS TO DO!');
+            const ScheduledCard1 = createCard('Scheduled Task 1', 'LOTS OF THINGS TO DO!');
+            const ScheduledCard2 = createCard('Scheduled Task 2', 'LOTS OF MORE THINGS TO DO!');
+            const ScheduledCard3 = createCard('Scheduled Task 3', 'EVEN MORE THINGS TO DO!');
 
-const ScheduledCard1 = createCard('Scheduled Task 1', 'LOTS OF THINGS TO DO!');
-const ScheduledCard2 = createCard('Scheduled Task 2', 'LOTS OF MORE THINGS TO DO!');
-const ScheduledCard3 = createCard('Scheduled Task 3', 'EVEN MORE THINGS TO DO!');
+            const PendingCard1 = createCard('Pending Task 1', 'LOTS OF THINGS TO DO!');
+            const PendingCard2 = createCard('Pending Task 2', 'LOTS OF MORE THINGS TO DO!');
+            const PendingCard3 = createCard('Pending Task 3', 'EVEN MORE THINGS TO DO!');
 
-const PendingCard1 = createCard('Pending Task 1', 'LOTS OF THINGS TO DO!');
-const PendingCard2 = createCard('Pending Task 2', 'LOTS OF MORE THINGS TO DO!');
-const PendingCard3 = createCard('Pending Task 3', 'EVEN MORE THINGS TO DO!');
+            InProgressTasks.appendChild(InProgressCard1);
+            InProgressTasks.appendChild(InProgressCard2);
+            InProgressTasks.appendChild(InProgressCard3);
 
-InProgressTasks.appendChild(InProgressCard1);
-InProgressTasks.appendChild(InProgressCard2);
-InProgressTasks.appendChild(InProgressCard3);
+            ScheduledTasks.appendChild(ScheduledCard1);
+            ScheduledTasks.appendChild(ScheduledCard2);
+            ScheduledTasks.appendChild(ScheduledCard3);
 
-ScheduledTasks.appendChild(ScheduledCard1);
-ScheduledTasks.appendChild(ScheduledCard2);
-ScheduledTasks.appendChild(ScheduledCard3);
+            PendingTasks.appendChild(PendingCard1);
+            PendingTasks.appendChild(PendingCard2);
+            PendingTasks.appendChild(PendingCard3);
+        </script> -->
 
-PendingTasks.appendChild(PendingCard1);
-PendingTasks.appendChild(PendingCard2);
-PendingTasks.appendChild(PendingCard3);
-</script>
-
-<%- include('templates/footer') %>
+        <%- include('templates/footer') %>
