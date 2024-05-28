@@ -76,6 +76,12 @@
         padding: 9px;
         
     }
+    #acceptedJobs {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+
+    }
 </style>
  
 <section id="WelcomeSection">
@@ -89,15 +95,17 @@
 <div id="linksCard">
 <a><button class="linkButton">Portfolio</button></a>
 <a href="/jobListings"><button class="linkButton">Job Listings</button></a>
-<a><button class="linkButton">Saved jobs</button></a>
+<a href="/savedJobs"><button class="linkButton">Saved jobs</button></a>
     
 </div>
 </section>
 
 <section id="acceptedJobs">
-    <%# job.forEach((job) => { %>
-        <%#- include('jobListing', {job: job})%>
-    <%# }) %>
+    <h3>Your upcoming Jobs</h3>
+    <span> Jobs accepted by you</span>
+    <% job.forEach((job) => { %>
+        <%- include('jobListing', {job: job})%>
+    <% }) %>
 </section>
 
 

@@ -499,10 +499,11 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 // --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
 
 app.get('/goferHome', IsGofer, async (req, res) => {
-    console.log(req.session.username)
-    const jobs = await jobCollection.find().toArray()
+    const username = req.session.username
+    console.log(`${username} has logged in.`)
+    const jobs = await jobCollection.find({ acceptedby: username}).toArray()
    
-    res.render('goferDashboard.ejs', { job: jobs, firstname: req.session.username, type: 'gofer' });
+    res.render('goferDashboard.ejs', { job: jobs, savedjobs: [], firstname: username, type: 'gofer' });
 
 })
 
@@ -578,7 +579,7 @@ app.post('/saveremoveacceptjob', async (req, res) => {
             console.log(err)
         }
         try {
-            await jobCollection.updateOne({_id: jobid }, { $set : {acceptedby: user} })
+            await jobCollection.updateOne({_id: new ObjectId(jobid) }, { $set : {acceptedby: user} })
             await goferCollection.updateOne({ username: user }, { $pull: { savedjobs: jobid } })
             console.log("Successfully removed from Job listings")
         }
@@ -592,6 +593,8 @@ app.post('/saveremoveacceptjob', async (req, res) => {
     return
 
 })
+
+// -----------------------------------End of gofer-specific middleware---------------------------------------------
 
 
 // This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
