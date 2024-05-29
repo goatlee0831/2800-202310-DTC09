@@ -708,23 +708,6 @@ app.get('/tasks', IsAuthenticated, async (req, res) => {
 
 
 
-app.get('/history', IsAuthenticated, async (req, res) => {
-    const username = req.session.username // username is stored in session
-    const user = await userCollection.findOne({ username });
-
-
-    if (!user) {
-        return res.status(404).redirect('/login');
-    }
-
-    const tasks = await tasksCollection.find({}).toArray();
-
-    console.log(tasks)
-
-
-    res.render('history', { tasks: tasks })
-
-})
 
 
 // Admin Page
