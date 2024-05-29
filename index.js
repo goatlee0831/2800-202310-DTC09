@@ -255,16 +255,17 @@ app.post('/login-handler', async (req, res) => {
 
 
     let result = await userCollection.findOne({ username: username })
+    let goferResult = await goferCollection.findOne({ username: username })
 
 
-    if (!result) {
+    if (!result && !goferResult) {
         res.render('login', { message: 'This username does not exist' });
         console.log(`login result is ${result}`);
     }
 
 
 
-    else {
+    else if (result) {
         const match = await bcrypt.compare(password, result.password)
 
         if (match) {
@@ -272,15 +273,33 @@ app.post('/login-handler', async (req, res) => {
             req.session.username = result.username
             req.session.usertype = result.usertype
             req.session.cookie.maxAge = expirytime
-            req.session.usertype == 'gofer' ? res.redirect('/goferHome')
-                : res.redirect('/main')
+            // req.session.usertype == 'gofer' ? res.redirect('/goferHome')
+            res.redirect('/main')
         }
 
         else {
             res.render('login', { message: 'Incorrect password' })
         }
     }
+    else if (goferResult) {
+        const gofermatch = await bcrypt.compare(password, goferResult.password)
+
+        if (gofermatch) {
+            req.session.authenticated = true
+            req.session.username = goferResult.username
+            req.session.usertype = goferResult.usertype
+            req.session.cookie.maxAge = expirytime
+            res.redirect('/goferHome')
+        }
+
+        else {
+            res.render('login', { message: 'Incorrect password' })
+        }
+    }
+
 })
+
+
 
 
 // reset password
@@ -691,26 +710,10 @@ app.get('/tasks', IsAuthenticated, async (req, res) => {
 
 
 
-// app.get('/history', IsAuthenticated, async (req, res) => {
-//     const username = req.session.username // username is stored in session
-//     const user = await userCollection.findOne({ username });
 
 
-//     if (!user) {
-//         return res.status(404).redirect('/login');
-//     }
 
-//     const tasks = await tasksCollection.find({}).toArray();
-
-//     console.log(tasks)
-
-
-//     res.render('history', { tasks: tasks })
-
-// })
-
-
-app.get('/gofer', IsAuthenticated, (req, res) => {
+app.get('/goferSignup', (req, res) => {
     res.render('become-gofer', { message: '' })
 })
 
@@ -718,16 +721,25 @@ app.get('/gofer', IsAuthenticated, (req, res) => {
 
 app.post('/gofer-handler', async (req, res) => {
 
-    username = req.session.username
+    var email = req.body.email
+    var secret_pin = req.body.secret_pin
+    var username = req.body.username
+    var password = req.body.password
     var firstname = req.body.firstname
     var lastname = req.body.lastname
-
+    var phonenumber = req.body.phonenumber
+    // var usertype = req.body.usertype
+    // console.log(`The usertype is ${usertype}`)
 
     const schema = Joi.object(
         {
-          
+            username: Joi.string().min(3).max(20).required(),
+            email: Joi.string().min(3).max(30).required(),
+            secret_pin: Joi.number().min(4).required(),
+            password: Joi.string().min(4).max(20).required(),
             firstname: Joi.string().max(20).required(),
             lastname: Joi.string().max(20).required(),
+            phonenumber: Joi.number().min(10).required(),
 
         })
 
@@ -736,32 +748,42 @@ app.post('/gofer-handler', async (req, res) => {
     if (validation.error) {
         var error = validation.error.details
         console.log(error)
-        res.render('/gofer', { message: error[0].message })
+        res.render('goferSignup', { message: error[0].message })
         return
     }
 
+    result = await goferCollection.findOne({ username: username })
 
-    result = await userCollection.findOne({ username: username })
+    const hashPassword = await bcrypt.hash(password, saltRounds)
+    const hashSecret_pin = await bcrypt.hash(secret_pin, saltRounds)
+
+
+    const user = {
+        username: username,
+        password: hashPassword,
+        email: email,
+        secret_pin: hashSecret_pin,
+        firstname: firstname,
+        lastname: lastname,
+        phonenumber: phonenumber,
+        usertype: 'gofer'
+    }
 
 
     if (!result) {
-        return res.redirect('/login')
+        // if (user.usertype == 'user') userCollection.insertOne(user)
+        // else { user.savedjobs = []; goferCollection.insertOne(user) };
+        goferCollection.insertOne(user)
+
+        console.log('Inserted gofer:', user);
+        return res.render('goferSignupComplete', { message: 'You have successfully signed up as a gofer' })
     }
 
     else if (result) {
-        if (result.usertype == 'gofer') {
-            return res.render('become-gofer', { message: 'You are already a Gofer' })
-        } else {
-            await goferCollection.insertOne(result).then( async () => {
-                goferCollection.updateOne({ username: username }, { $set: { usertype: 'gofer', firstname: firstname, lastname: lastname } })   
-                updateResult = await userCollection.updateOne({ username: username }, { $set: { usertype: 'gofer' } })
-            })
 
-            return res.redirect('/goferHome')
-        }
-
-
+        return res.render('goferSignup', { message: 'User already exists' })
     }
+
 })
 
 
@@ -773,6 +795,13 @@ app.get('*', (req, res) => {
     res.status(404)
     res.render('error', { message: 'Page not found' })
 })
+
+catchError = (err, res) => {
+    console.log(err)
+    res.status(500)
+    res.render('error', { message: 'An error occurred' })
+}
+
 // Server
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
