@@ -212,7 +212,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ removeJob: true, jobid: jobId })
                     })
-                        .then(eachpopup.close())
+                        .then(eachpopup.close()).then(location.reload())
 
                 });
             });

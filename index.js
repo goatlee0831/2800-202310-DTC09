@@ -560,7 +560,7 @@ app.post('/saveremoveacceptjob', async (req, res) => {
 
     if (req.body.acceptjob) {
         try {
-            await goferCollection.updateOne({ username: user }, { $set: { acceptedjobs: jobid } })
+            await goferCollection.updateOne({ username: user }, { $push: { acceptedjobs: jobid } })
             console.log(`accepted job ID ${jobid}`)
         }
         catch (err) {
@@ -575,7 +575,16 @@ app.post('/saveremoveacceptjob', async (req, res) => {
             console.log(err)
         }
     }
-
+    if (req.body.canceljob) {
+        try {
+            await jobCollection.updateOne({_id: new ObjectId(jobid) }, { $pull : {acceptedby: user} })
+            await goferCollection.updateOne({ username: user }, { $pull: { acceptedjobs: jobid } })
+            console.log("Successfully removed from accepted jobs")
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
 
     res.redirect('/jobListings');
     return

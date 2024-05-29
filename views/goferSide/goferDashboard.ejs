@@ -115,3 +115,41 @@
 
 
 <%- include('../templates/footer') %>
+
+<script>
+    var showListing = document.querySelectorAll('.joblisting')
+    var dataBtns = document.querySelectorAll('.Btn');
+
+    showListing.forEach((listing, i) => {
+                let eachpopup = popups[i];
+                let closeBtn = closeBtns[i];
+                let eachBtn = dataBtns[i];
+
+
+    removeBtn.addEventListener('click', () => {
+                    var jobId = removeBtn.value;
+
+                    
+                acceptBtn.addEventListener('click', () => {
+                    var jobId = acceptBtn.value;
+                    // confirmationpopup.value = jobId
+
+                    confirmationpopup.querySelector('#message').innerHTML += `Are you sure you want to cancel this job `
+                    confirmationpopup.showModal();
+                    confirmationpopup.querySelector('#confirmAccept').addEventListener('click', () => {
+                        fetch('/canceljob', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ canceljob: true, jobid: jobId })
+                        })
+                        ; eachpopup.close(); confirmationpopup.close()
+                    }
+                    )
+                    confirmationpopup.querySelector('#close').addEventListener('click', () => confirmationpopup.close())
+
+
+                })
+            });
+
+        })
+</script>
