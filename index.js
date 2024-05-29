@@ -692,7 +692,7 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
 
     let postedTasksbyUser = await jobCollection.find({ username: username }).toArray()
 
-    return res.render('tasks', { usersTasks: postedTasksbyUser })
+    return res.redirect('/tasks')
 
 })
 
