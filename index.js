@@ -86,19 +86,6 @@ app.use('/', async (req, res, next) => {
 
 app.use(bodyParser.json());
 
-app.use('/', (req, res, next) => {
-    app.locals.auth = req.session.authenticated
-    app.locals.type = req.session.usertype
-    app.locals.username = req.session.username
-
-    next()
-
-})
-
-
-
-
-
 
 
 // functions for authentication and authorization
@@ -503,7 +490,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 
 // --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
 
-app.get('/goferHome', IsGofer, async (req, res) => {
+app.get('/goferHome', IsAuthenticated , IsGofer, async (req, res) => {
     const username = req.session.username
     console.log(`${username} has logged in.`)
     const jobs = await jobCollection.find({ acceptedby: username }).toArray()
@@ -513,17 +500,22 @@ app.get('/goferHome', IsGofer, async (req, res) => {
 })
 
 
-app.get('/jobListings', IsGofer, async (req, res) => {
+app.get('/jobListings', IsAuthenticated ,IsGofer, async (req, res) => {
 
-    let jobs = await jobCollection.find({ acceptedby: { $exists: false } }).toArray();
+    // let jobs = await jobCollection.find({ acceptedby: { $exists: false } }).toArray();
 
 
-    let user = req.session.username
+    // let user = req.session.username
 
-    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
-    let savedjobs = querysavedjobs.savedjobs
+    // let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
+    // let savedjobs = querysavedjobs.savedjobs
 
-    res.render('jobListings', { jobs: jobs, savedjobs: savedjobs });
+    // res.render('jobListings', { jobs: jobs, savedjobs: savedjobs });
+    let jobs = await jobCollection.find({ acceptedby: null }).toArray();
+    let gofer = req.session.username
+    savedjobs = await goferCollection.findOne({ username: gofer }, { projection: { savedjobs: 1 } });
+
+    res.render('jobListings', { jobs: jobs, gofer: gofer , savedjobs: savedjobs.savedjobs });
 
 })
 
