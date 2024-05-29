@@ -653,8 +653,10 @@ app.get('/recommend', IsAuthenticated, async (req, res) => {
     }
 
 
-    req.session.tasks = await getTasks()
-
+    if (req.session.tasks.length == 0){
+        req.session.tasks = await getTasks()
+    }
+    console.log(req.session.tasks.length)
 
     res.render('recommendTasks', { tasks: req.session.tasks });
 })
@@ -674,7 +676,7 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
     // console.log(taskID)
 
     let task = await tasksCollection.findOne({ _id: objectId })
-    // updateResult = await tasksCollection.updateOne({ _id: objectId }, { $set: { status: 'pending', username: username } })
+
     insertResultinJobs = await jobCollection.insertOne(task).then(() => {
         jobCollection.updateOne({ _id: objectId }, { $set: { status: 'open', username: username, acceptedby: null, id: taskID, date: "2054-05-31" } })
 
@@ -687,6 +689,19 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
     return res.redirect('/tasks')
 
 })
+
+app.get('/removefromsession/:selectedtask', (req, res) => {
+    taskID = req.params.selectedtask;
+ 
+
+    req.session.tasks = req.session.tasks.filter(task => task._id !== taskID);
+
+
+    res.render('recommendTasks', { tasks: req.session.tasks });
+}); 
+
+
+
 
 app.get('/tasks', IsAuthenticated, async (req, res) => {
 
