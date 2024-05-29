@@ -31,8 +31,8 @@ p {
 
 /* New Styles ----------- */
 
-input[type="password"], input[type="text"], input[type="email"] {
-    width: 96.6%;
+input[type="password"], input[type="text"], input[type="email"],input[type="tel"] {
+    width: 80%;
     border: 5px solid;
     padding: 2px 0;
     font-size: 1.1em;
