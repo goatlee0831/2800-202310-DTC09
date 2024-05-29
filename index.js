@@ -54,7 +54,6 @@ var mongoStore = MongoStore.create({
 
 
 // Middleware
-
 app.use(session({
     secret: node_session_secret,
     resave: true,
@@ -81,16 +80,20 @@ app.use('/', async (req, res, next) => {
     app.locals.auth = req.session.authenticated
     app.locals.type = req.session.usertype
     app.locals.username = req.session.username
-
     next()
-
 })
-
-
 
 
 app.use(bodyParser.json());
 
+app.use('/', (req, res, next) => {
+    app.locals.auth = req.session.authenticated
+    app.locals.type = req.session.usertype
+    app.locals.username = req.session.username
+
+    next()
+
+})
 
 
 
@@ -209,16 +212,12 @@ app.post('/signup-handler', async (req, res) => {
     if (!result) {
         if (usertype == 'user') userCollection.insertOne(user)
         else { user.savedjobs = []; goferCollection.insertOne(user) };
-
         console.log(`Inserted user ${user}`);
         return res.redirect('/login')
     }
-
     else if (result) {
-
         return res.render('signup', { message: 'User already exists' })
     }
-
 })
 
 
@@ -227,7 +226,6 @@ app.get('/login', (req, res) => {
     (req.session.authenticated) ? (req.session.usertype) == 'gofer' ? res.redirect('/goferHome')
         : res.redirect('/main')
         : res.render('login', { message: '' })
-
 })
 
 app.post('/login-handler', async (req, res) => {
@@ -243,26 +241,22 @@ app.post('/login-handler', async (req, res) => {
 
     const validation = schema.validate({ username, password })
 
-
     if (validation.error) {
         var error = validation.error
         console.log(error)
         return res.render('login', { message: "Invalid username or password" })
     }
 
-
+    
     let result = await userCollection.findOne({ username: username })
-
     if (!result)
-        result = await goferCollection.findOne({ username: username })
-
+        result = await goferCollection.findOne({ username: username }) 
+        
 
     if (!result) {
         res.render('login', { message: 'This username does not exist' });
         console.log(`login result is ${result}`);
     }
-
-
 
     else {
         const match = await bcrypt.compare(password, result.password)
@@ -665,28 +659,12 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
     // console.log(taskID)
 
     let task = await tasksCollection.findOne({ _id: objectId })
-    // updateResult = await tasksCollection.updateOne({ _id: objectId }, { $set: { status: 'pending', username: username } })
-    insertResultinJobs = await jobCollection.insertOne(task).then(() => {
-        jobCollection.updateOne({ _id: objectId }, { $set: { status: 'open', username: username, acceptedby: null, id: taskID, date: new Date().setFullYear(2054) } })
-         
-    })
-
-
-
-    let postedTasksbyUser = await jobCollection.find({ username: username }).toArray()
-
-    return res.render('tasks', { usersTasks: postedTasksbyUser })
+    console.log(task)
+  
+    return res.render('pendingTask', { task: task })
 
 })
 
-app.get('/tasks', IsAuthenticated, async (req, res) => {
-
-    username = req.session.username
-
-    let postedTasksbyUser = await jobCollection.find({ username: username }).toArray()
-
-    return res.render('tasks', { usersTasks: postedTasksbyUser })
-})
 
 
 
@@ -710,6 +688,28 @@ app.get('/history', IsAuthenticated, async (req, res) => {
 })
 
 
+// Admin Page
+app.get('/admin', IsAuthenticated, async (req, res) => {
+    const listOfGofers = await goferCollection.find().toArray()
+    const listOfUsers = await userCollection.find().toArray()
+
+    res.render('admin', {Gofers: listOfGofers, Users: listOfUsers})
+})
+
+// Change User Type to Admin for Gofers
+app.get('/changeAdminTypeForGofers/:email', async (req, res) => {
+    var email = req.params.email
+
+    async function changeToAdmin(email) {
+        var gofer = await goferCollection.findOne({ email}).then((gofer) => {
+            console.log(gofer)
+            gofer.usertype == 'admin'
+        })
+        gofer.save()
+}
+    changeToAdmin(email)
+    res.redirect('/admin')  
+})
 
 
 

@@ -1,0 +1,31 @@
+<%- include('templates/header') %>
+<%- include('templates/nav') %>
+
+<div id="goferList">
+    <h1>List of Gofers</h1>
+<% Gofers.forEach(gofer=> { %>
+    <div class="goferCard">
+        <h3> <%= gofer.username %> </h3>
+        <p>First name: <%= gofer.firstname %></p>
+        <p>Last name: <%= gofer.lastname %></p>
+        <p><%= gofer.email%> : <%= gofer.usertype %> </p>
+        <a href="/changeAdminTypeForGofers/<%= gofer.email %>">Promote to Admin</a>
+        <!-- <a href="/changeAdminType/<%= gofer.email %>">Demote from Admin</a> -->
+</div>
+<% }) %>
+
+<div id="userList">
+    <h1>List of Users</h1>
+<% Users.forEach(user=> { %>
+    <div class="userCard">
+        <h3> <%= user.username %> </h3>
+        <p>First name: <%= user.firstname %></p>
+        <p>Last name: <%= user.lastname %></p>
+        <p><%= user.email%> : <%= user.usertype %> </p>
+        <a href="/changeAdminTypeForUsers/<%= user.email %>" >Promote to Admin</a>
+        <!-- <a href="/changeAdminType/<%= user.email %>" >Demote from Admin</a> -->
+    </div>
+<% }) %>
+</div>
+
+<%- include('templates/footer') %>
