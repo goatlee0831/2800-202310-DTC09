@@ -697,7 +697,7 @@ app.get('/admin', IsAuthenticated, async (req, res) => {
 })
 
 // Change User Type to Admin From Gofers
-app.get('/PromoteGoferToAdmin/:email', IsAuthenticated, async (req, res) => {
+app.get('/PromoteGoferToAdmin/:email', IsAuthenticated, IsAdmin, async (req, res) => {
     var email = req.params.email;
 
     async function changeToAdmin(emailAddress) {
@@ -708,7 +708,7 @@ app.get('/PromoteGoferToAdmin/:email', IsAuthenticated, async (req, res) => {
 });
 
 // Change User Type to Gofer From Admin
-app.get('/DemoteGoferFromAdmin/:email', IsAuthenticated, async (req, res) => {
+app.get('/DemoteGoferFromAdmin/:email', IsAuthenticated, IsAdmin, async (req, res) => {
     var email = req.params.email;
 
     async function changeToGofer(emailAddress) {
@@ -719,7 +719,7 @@ app.get('/DemoteGoferFromAdmin/:email', IsAuthenticated, async (req, res) => {
 })
 
 // Change User to Admin From Users
-app.get('/PromoteUserToAdmin/:email', IsAuthenticated, async (req, res) => {
+app.get('/PromoteUserToAdmin/:email', IsAuthenticated, IsAdmin, async (req, res) => {
     var email = req.params.email;
 
     async function changeToAdminUser(emailAddress) {
@@ -730,7 +730,7 @@ app.get('/PromoteUserToAdmin/:email', IsAuthenticated, async (req, res) => {
 })
 
 // Change User to User From Admin
-app.get('/DemoteUserFromAdmin/:email', IsAuthenticated, async (req, res) => {
+app.get('/DemoteUserFromAdmin/:email', IsAuthenticated, IsAdmin, async (req, res) => {
     var email = req.params.email;
 
     async function changeToUser(emailAddress) {
