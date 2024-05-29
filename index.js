@@ -696,19 +696,48 @@ app.get('/admin', IsAuthenticated, async (req, res) => {
     res.render('admin', {Gofers: listOfGofers, Users: listOfUsers})
 })
 
-// Change User Type to Admin for Gofers
-app.get('/changeAdminTypeForGofers/:email', async (req, res) => {
-    var email = req.params.email
+// Change User Type to Admin From Gofers
+app.get('/PromoteGoferToAdmin/:email', IsAuthenticated, async (req, res) => {
+    var email = req.params.email;
 
-    async function changeToAdmin(email) {
-        var gofer = await goferCollection.findOne({ email}).then((gofer) => {
-            console.log(gofer)
-            gofer.usertype == 'admin'
-        })
-        gofer.save()
+    async function changeToAdmin(emailAddress) {
+        const gofer = await goferCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'admin' }});
+    res.redirect('/admin');
 }
-    changeToAdmin(email)
-    res.redirect('/admin')  
+    changeToAdmin(email);
+});
+
+// Change User Type to Gofer From Admin
+app.get('/DemoteGoferFromAdmin/:email', IsAuthenticated, async (req, res) => {
+    var email = req.params.email;
+
+    async function changeToGofer(emailAddress) {
+        const gofer = await goferCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'gofer' }})
+    res.redirect('/admin');
+}
+    changeToGofer(email);
+})
+
+// Change User to Admin From Users
+app.get('/PromoteUserToAdmin/:email', IsAuthenticated, async (req, res) => {
+    var email = req.params.email;
+
+    async function changeToAdminUser(emailAddress) {
+        const user = await userCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'admin' }})
+        res.redirect('/admin');
+}
+    changeToAdminUser(email);
+})
+
+// Change User to User From Admin
+app.get('/DemoteUserFromAdmin/:email', IsAuthenticated, async (req, res) => {
+    var email = req.params.email;
+
+    async function changeToUser(emailAddress) {
+        const user = await userCollection.updateOne({email: emailAddress}, { $set: { usertype: 'user' }})
+    res.redirect('/admin');
+}
+    changeToUser(email);
 })
 
 
