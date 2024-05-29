@@ -707,6 +707,80 @@ app.get('/tasks', IsAuthenticated, async (req, res) => {
 
 
 
+app.get('/goferSignup', (req, res) => {
+    res.render('become-gofer', { message: '' })
+})
+
+
+
+app.post('/gofer-handler', async (req, res) => {
+
+    var email = req.body.email
+    var secret_pin = req.body.secret_pin
+    var username = req.body.username
+    var password = req.body.password
+    var firstname = req.body.firstname
+    var lastname = req.body.lastname
+    var phonenumber = req.body.phonenumber
+    // var usertype = req.body.usertype
+    // console.log(`The usertype is ${usertype}`)
+
+    const schema = Joi.object(
+        {
+            username: Joi.string().min(3).max(20).required(),
+            email: Joi.string().min(3).max(30).required(),
+            secret_pin: Joi.number().min(4).required(),
+            password: Joi.string().min(4).max(20).required(),
+            firstname: Joi.string().max(20).required(),
+            lastname: Joi.string().max(20).required(),
+            phonenumber: Joi.number().min(10).required(),
+
+        })
+
+    const validation = schema.validate(req.body)
+
+    if (validation.error) {
+        var error = validation.error.details
+        console.log(error)
+        res.render('goferSignup', { message: error[0].message })
+        return
+    }
+
+    result = await goferCollection.findOne({ username: username })
+
+    const hashPassword = await bcrypt.hash(password, saltRounds)
+    const hashSecret_pin = await bcrypt.hash(secret_pin, saltRounds)
+
+
+    const user = {
+        username: username,
+        password: hashPassword,
+        email: email,
+        secret_pin: hashSecret_pin,
+        firstname: firstname,
+        lastname: lastname,
+        phonenumber: phonenumber,
+        usertype: 'gofer',
+        acceptedjobs: [],
+        savedjobs: [],
+    }
+
+
+    if (!result) {
+        // if (user.usertype == 'user') userCollection.insertOne(user)
+        // else { user.savedjobs = []; goferCollection.insertOne(user) };
+        goferCollection.insertOne(user)
+
+        console.log('Inserted gofer:', user);
+        return res.render('goferSignupComplete', { message: 'You have successfully signed up as a gofer' })
+    }
+
+    else if (result) {
+
+        return res.render('goferSignup', { message: 'User already exists' })
+    }
+
+})
 
 
 
@@ -732,8 +806,6 @@ app.get('/changeAdminTypeForGofers/:email', async (req, res) => {
     changeToAdmin(email)
     res.redirect('/admin')  
 })
-
-
 
 
 
