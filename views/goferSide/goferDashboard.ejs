@@ -1,111 +1,40 @@
 
 <%- include('header') %>
 <%- include('nav_gofer') %>
-<style>
-    section {
-        margin: 8px 8px;  
-    }
-
-    #welcomeSection {
-        box-sizing: content-box;
-        height: fit-content;
-    }
-    
-    #welcomeCard {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-        max-width: 200px;
-        border-radius: 10px;
-        background-color: blanchedalmond;
-        margin: auto;
-        padding-top: 10px;
-    }
-    #welcomCard img {
-        max-height: 50px;
-    }
-
-    #linksCard {
-        display: flex;
-        flex-direction: row;
-        padding: 3px;
-        justify-content: space-around;
-       
-        margin: 5px;
-    }
-     
-    .linkButton {
-        height: 25px;
-        margin: 3px;
-        text-align: center;
-        /* line-height: 25px; */
-        background-color: blanchedalmond;
-        border-radius: 5px;
-        padding: 5px;
-    }
-
-    .listing {
-        display: flex;
-        flex-direction: column;
-        background-color: lightcoral;
-        width: 300px;
-        margin :auto;
-        margin-top: 6px;
-        margin-bottom: 10px;
-        border-radius: 10px;
-        border: solid saddlebrown 2px;
-        overflow: hidden;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: small;
-        
-    }
-
-    .listing .topRow {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        background-color: darkgreen;
-        padding: 9px;
-        color: seashell;
-    }
-
-    .listing .bottomRow {
-        display: flex;
-        flex-direction: column;
-        background-color: lightpink;
-        padding: 9px;
-        
-    }
-    #acceptedJobs {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-
-    }
-</style>
  
 <section id="WelcomeSection">
 
-<div id="welcomeCard">
- <!-- <img src="/favicon.ico"> -->
-<div id="image-placeholder"><img src="favicon.ico"></div>
- <h3> Welcome <%=firstname%>!</h3>
+<div class="card1">
+    <div class="left column">
+        <img src="/images/gofer-hello.png">
+        <br>
+        <br>
+        <h3> Welcome <%=firstname%>!</h3>
+    </div>
+    <div class="right column">
+        <a class="lightBtn">Portfolio</a>
+        <br>
+        <a class="lightBtn" href="/jobListings">Job Listings</a>
+        <br>
+        <a class="lightBtn">Saved jobs</a>
+    </div>
+ 
+</div>
 </div>
 
-<div id="linksCard">
-<a><button class="linkButton">Portfolio</button></a>
-<a href="/jobListings"><button class="linkButton">Job Listings</button></a>
-<a href="/savedJobs"><button class="linkButton">Saved jobs</button></a>
-    
-</div>
 </section>
 
-<section id="acceptedJobs">
-    <h3>Your upcoming Jobs</h3>
-    <span> Jobs accepted by you</span>
-    <% job.forEach((job) => { %>
-        <%- include('jobListing', {job: job})%>
-    <% }) %>
+<section id="acceptedJobs" class="card3">
+    <div class="left">
+        <h3>Your upcoming Jobs</h3>
+    </div>
+    <div class="right">
+        <span> Jobs accepted by you</span>
+        <% job.forEach((job) => { %>
+            <%- include('jobListing', {job: job})%>
+        <% }) %>
+    </div>
+    
 </section>
 
 
