@@ -159,8 +159,8 @@ app.post('/signup-handler', async (req, res) => {
     var password = req.body.password
     var firstname = req.body.firstname
     var lastname = req.body.lastname
-    var usertype = req.body.usertype
-    console.log(`The usertype is ${usertype}`)
+    // var usertype = req.body.usertype
+    // console.log(`The usertype is ${usertype}`)
 
     const schema = Joi.object(
         {
@@ -170,7 +170,7 @@ app.post('/signup-handler', async (req, res) => {
             password: Joi.string().min(4).max(20).required(),
             firstname: Joi.string().max(20).required(),
             lastname: Joi.string().max(20).required(),
-            usertype: Joi.string().required()
+            // usertype: Joi.string().required()
         })
 
     const validation = schema.validate(req.body)
@@ -178,17 +178,19 @@ app.post('/signup-handler', async (req, res) => {
     if (validation.error) {
         var error = validation.error.details
         console.log(error)
-        res.render('/signup', { auth: req.session.authenticated, type: req.session.usertype, message: error[0].message })
+        res.render('signup', { message: error[0].message })
         return
     }
 
-    if (usertype == 'user')
-        result = await userCollection.findOne({
-            username: username
-        })
-    else result = await goferCollection.findOne({
-        username: username
-    })
+    // if (usertype == 'user')
+    //     result = await userCollection.findOne({
+    //         username: username
+    //     })
+    // else result = await goferCollection.findOne({
+    //     username: username
+    // })
+
+    result = await userCollection.findOne({ username: username })
 
     const hashPassword = await bcrypt.hash(password, saltRounds)
     const hashSecret_pin = await bcrypt.hash(secret_pin, saltRounds)
@@ -202,15 +204,16 @@ app.post('/signup-handler', async (req, res) => {
         secret_pin: hashSecret_pin,
         firstname: firstname,
         lastname: lastname,
-        usertype: usertype
+        usertype: 'user'
     }
 
 
     if (!result) {
-        if (usertype == 'user') userCollection.insertOne(user)
-        else { user.savedjobs = []; goferCollection.insertOne(user) };
+        // if (user.usertype == 'user') userCollection.insertOne(user)
+        // else { user.savedjobs = []; goferCollection.insertOne(user) };
+        userCollection.insertOne(user)
 
-        console.log(`Inserted user ${user}`);
+        console.log('Inserted user', user);
         return res.redirect('/login')
     }
 
@@ -253,9 +256,6 @@ app.post('/login-handler', async (req, res) => {
 
     let result = await userCollection.findOne({ username: username })
 
-    if (!result)
-        result = await goferCollection.findOne({ username: username })
-
 
     if (!result) {
         res.render('login', { message: 'This username does not exist' });
@@ -273,7 +273,7 @@ app.post('/login-handler', async (req, res) => {
             req.session.usertype = result.usertype
             req.session.cookie.maxAge = expirytime
             req.session.usertype == 'gofer' ? res.redirect('/goferHome')
-                : res.redirect('main')
+                : res.redirect('/main')
         }
 
         else {
@@ -489,8 +489,8 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 app.get('/goferHome', IsGofer, async (req, res) => {
     const username = req.session.username
     console.log(`${username} has logged in.`)
-    const jobs = await jobCollection.find({ acceptedby: username}).toArray()
-   
+    const jobs = await jobCollection.find({ acceptedby: username }).toArray()
+
     res.render('goferDashboard.ejs', { job: jobs, savedjobs: [], firstname: username, type: 'gofer' });
 
 })
@@ -499,7 +499,7 @@ app.get('/goferHome', IsGofer, async (req, res) => {
 app.get('/jobListings', IsGofer, async (req, res) => {
 
     let jobs = await jobCollection.find({ acceptedby: { $exists: false } }).toArray();
-    
+
 
     let user = req.session.username
 
@@ -513,7 +513,7 @@ app.get('/jobListings', IsGofer, async (req, res) => {
 
 app.get('/savedJobs', IsGofer, async (req, res) => {
 
-   
+
     let user = req.session.username
     let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
 
@@ -567,7 +567,7 @@ app.post('/saveremoveacceptjob', async (req, res) => {
             console.log(err)
         }
         try {
-            await jobCollection.updateOne({_id: new ObjectId(jobid) }, { $set : {acceptedby: user} })
+            await jobCollection.updateOne({ _id: new ObjectId(jobid) }, { $set: { acceptedby: user } })
             await goferCollection.updateOne({ username: user }, { $pull: { savedjobs: jobid } })
             console.log("Successfully removed from Job listings")
         }
@@ -643,7 +643,7 @@ app.get('/recommend', IsAuthenticated, async (req, res) => {
         return tasks
     }
 
-    
+
     req.session.tasks = await getTasks()
 
 
@@ -667,8 +667,8 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
     let task = await tasksCollection.findOne({ _id: objectId })
     // updateResult = await tasksCollection.updateOne({ _id: objectId }, { $set: { status: 'pending', username: username } })
     insertResultinJobs = await jobCollection.insertOne(task).then(() => {
-        jobCollection.updateOne({ _id: objectId }, { $set: { status: 'open', username: username, acceptedby: null, id: taskID, date: new Date().setFullYear(2054) } })
-         
+        jobCollection.updateOne({ _id: objectId }, { $set: { status: 'open', username: username, acceptedby: null, id: taskID, date: "2054-05-31" } })
+
     })
 
 
@@ -691,22 +691,77 @@ app.get('/tasks', IsAuthenticated, async (req, res) => {
 
 
 
-app.get('/history', IsAuthenticated, async (req, res) => {
-    const username = req.session.username // username is stored in session
-    const user = await userCollection.findOne({ username });
+// app.get('/history', IsAuthenticated, async (req, res) => {
+//     const username = req.session.username // username is stored in session
+//     const user = await userCollection.findOne({ username });
 
 
-    if (!user) {
-        return res.status(404).redirect('/login');
+//     if (!user) {
+//         return res.status(404).redirect('/login');
+//     }
+
+//     const tasks = await tasksCollection.find({}).toArray();
+
+//     console.log(tasks)
+
+
+//     res.render('history', { tasks: tasks })
+
+// })
+
+
+app.get('/gofer', IsAuthenticated, (req, res) => {
+    res.render('become-gofer', { message: '' })
+})
+
+
+
+app.post('/gofer-handler', async (req, res) => {
+
+    username = req.session.username
+    var firstname = req.body.firstname
+    var lastname = req.body.lastname
+
+
+    const schema = Joi.object(
+        {
+          
+            firstname: Joi.string().max(20).required(),
+            lastname: Joi.string().max(20).required(),
+
+        })
+
+    const validation = schema.validate(req.body)
+
+    if (validation.error) {
+        var error = validation.error.details
+        console.log(error)
+        res.render('/gofer', { message: error[0].message })
+        return
     }
 
-    const tasks = await tasksCollection.find({}).toArray();
 
-    console.log(tasks)
+    result = await userCollection.findOne({ username: username })
 
 
-    res.render('history', { tasks: tasks })
+    if (!result) {
+        return res.redirect('/login')
+    }
 
+    else if (result) {
+        if (result.usertype == 'gofer') {
+            return res.render('become-gofer', { message: 'You are already a Gofer' })
+        } else {
+            await goferCollection.insertOne(result).then( async () => {
+                goferCollection.updateOne({ username: username }, { $set: { usertype: 'gofer', firstname: firstname, lastname: lastname } })   
+                updateResult = await userCollection.updateOne({ username: username }, { $set: { usertype: 'gofer' } })
+            })
+
+            return res.redirect('/goferHome')
+        }
+
+
+    }
 })
 
 
@@ -714,9 +769,9 @@ app.get('/history', IsAuthenticated, async (req, res) => {
 
 
 
-
 app.get('*', (req, res) => {
-    res.send('404 page not found')
+    res.status(404)
+    res.render('error', { message: 'Page not found' })
 })
 // Server
 app.listen(port, () => {

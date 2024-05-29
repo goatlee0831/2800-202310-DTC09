@@ -1,0 +1,34 @@
+<%- include('templates/header') %>
+<%- include('templates/nav') %>
+
+<!-- Your Content Starts Here -->
+    <div class="card4 column">
+        <h2>Members Sign Up</h2>
+        <form action="/gofer-handler" method="POST">
+            <label for="firstname">
+                <h3>First Name:</h3>
+            </label>
+            <input type="text" id="firstname" name="firstname" required><br>
+    
+            <label for="lastname">
+                <h3>Last Name:</h3>
+            </label>
+            <input type="text" id="lastname" name="lastname" required><br>
+    
+    
+            <!-- <label for="username">
+                <h3>Username:</h3>
+            </label>
+            <input type="text" id="fullname" name="username" required><br> -->
+
+            <button cltype="submit" class="darkBtn">Submit</button>
+        </form>
+    </div>
+    
+    <div>
+        <%= message %>
+    </div>
+
+<!-- Your Content Ends Here -->
+
+<%- include('templates/footer') %>
