@@ -9,8 +9,8 @@
         <p>First name: <%= gofer.firstname %></p>
         <p>Last name: <%= gofer.lastname %></p>
         <p><%= gofer.email%> : <%= gofer.usertype %> </p>
-        <a href="/changeAdminTypeForGofers/<%= gofer.email %>">Promote to Admin</a>
-        <!-- <a href="/changeAdminType/<%= gofer.email %>">Demote from Admin</a> -->
+        <a href="/PromoteGoferToAdmin/<%= gofer.email %>">Promote to Admin</a>
+        <a href="/DemoteGoferFromAdmin/<%= gofer.email %>">Demote from Admin</a>
 </div>
 <% }) %>
 
@@ -22,8 +22,8 @@
         <p>First name: <%= user.firstname %></p>
         <p>Last name: <%= user.lastname %></p>
         <p><%= user.email%> : <%= user.usertype %> </p>
-        <a href="/changeAdminTypeForUsers/<%= user.email %>" >Promote to Admin</a>
-        <!-- <a href="/changeAdminType/<%= user.email %>" >Demote from Admin</a> -->
+        <a href="/PromoteUserToAdmin/<%= user.email %>" >Promote to Admin</a>
+        <a href="/DemoteUserFromAdmin/<%= user.email %>" >Demote from Admin</a>
     </div>
 <% }) %>
 </div>
