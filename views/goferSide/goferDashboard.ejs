@@ -12,30 +12,29 @@
         <h3> Welcome <%=firstname%>!</h3>
     </div>
     <div class="right column">
-        <a><button class="lightBtn">Portfolio</button></a>
+        <a class="lightBtn">Portfolio</a>
         <br>
-        <a href="/jobListings"><button class="lightBtn">Job Listings</button></a>
+        <a class="lightBtn" href="/jobListings">Job Listings</a>
         <br>
-        <a class="lightBtn"><button ">Saved jobs</button></a>
+        <a class="lightBtn">Saved jobs</a>
     </div>
  
 </div>
-
-<div id="linksCard">
-<a><button class="linkButton">Portfolio</button></a>
-<a href="/jobListings"><button class="linkButton">Job Listings</button></a>
-<a href="/savedJobs"><button class="linkButton">Saved jobs</button></a>
-    
 </div>
 
 </section>
 
-<section id="acceptedJobs">
-    <h3>Your upcoming Jobs</h3>
-    <span> Jobs accepted by you</span>
-    <% job.forEach((job) => { %>
-        <%- include('jobListing', {job: job})%>
-    <% }) %>
+<section id="acceptedJobs" class="card3">
+    <div class="left">
+        <h3>Your upcoming Jobs</h3>
+    </div>
+    <div class="right">
+        <span> Jobs accepted by you</span>
+        <% job.forEach((job) => { %>
+            <%- include('jobListing', {job: job})%>
+        <% }) %>
+    </div>
+    
 </section>
 
 
