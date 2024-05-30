@@ -1,80 +1,25 @@
 <%- include('header') %>
     <%- include('nav_gofer') %>
-        <style>
-            .listing {
-                display: flex;
-                flex-direction: column;
-                background-color: lightcoral;
-                width: 300px;
-                margin: auto;
-                margin-top: 6px;
-                margin-bottom: 10px;
-                border-radius: 10px;
-                border: solid saddlebrown 2px;
-                overflow: hidden;
-                font-family: 'Courier New', Courier, monospace;
-                font-size: small;
-
-            }
-
-            .listing .topRow {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-                background-color: rgb(111, 229, 111);
-                padding: 9px;
-                color: seashell;
-            }
-
-            .listing .bottomRow {
-                display: flex;
-                flex-direction: column;
-                background-color: lightpink;
-                padding: 9px;
-
-            }
 
 
-            :modal.listing.topRow {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-                background-color: rgb(70, 205, 70);
-                padding: 9px;
-                color: seashell;
-            }
-
-            :modal .listing .bottomRow {
-                display: flex;
-                flex-direction: column;
-                background-color: rgb(236, 218, 221);
-                padding: 9px;
-
-            }
-
-            :modal .optionRow {
-                display: flex;
-                justify-content: space-around;
-            }
-
-            ::backdrop {
-  background-image: linear-gradient(
-    45deg,
-    magenta,
-    rebeccapurple,
-    dodgerblue,
-    green
-  );
-  opacity: 0.50;
-}
-        </style>
 
         <section id="jobListings">
             <h1 style="text-align: center;">Jobs Near you </h1>
             <% jobs.forEach((job)=> { %>
-                <%- include('jobListing', {job: job, savedjobs:savedjobs})%>
+                <%- include('jobListing', {job: job, savedjobs:savedjobs, save: true})%>
                     <% }) %>
         </section>
+
+        <dialog id="confirmationpopup">
+            <div id="message">
+
+            </div>
+            <button id="confirmAccept">Accept</button>
+            <button id="close"> Close </button>
+
+        </dialog>
+
+
         <script>
     
 
@@ -83,21 +28,41 @@
             var popups = document.querySelectorAll('.listingpopup')
             var closeBtns = document.querySelectorAll('.closeBtn')
             var dataBtns = document.querySelectorAll('.Btn');
-       
-
+            var acceptBtns = document.querySelectorAll('.acceptBtn');
+            let confirmationpopup = document.getElementById('confirmationpopup');
            // Looping through all listings
             showListing.forEach((listing, i) => {
                 let eachpopup = popups[i];
                 let closeBtn = closeBtns[i];
                 let eachBtn = dataBtns[i];
-
+                let acceptBtn = acceptBtns[i];
+                
                 listing.addEventListener('click', () =>
                     eachpopup.showModal())
                 
                 closeBtn.addEventListener('click', () => {
                     eachpopup.close();
                 });
-           
+                acceptBtn.addEventListener('click', () => {
+                    var jobId = acceptBtn.value;
+
+
+                    confirmationpopup.querySelector('#message').innerHTML += `Are you sure you want to accept this job `
+                    confirmationpopup.showModal();
+                    confirmationpopup.querySelector('#confirmAccept').addEventListener('click', () => {
+                        fetch('/saveremoveacceptjob', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ acceptjob: true, jobid: jobId })
+                        })
+                        ; eachpopup.close(); confirmationpopup.close()
+                    }
+                    )
+
+                    confirmationpopup.querySelector('#close').addEventListener('click', () => confirmationpopup.close())
+
+
+                })
 
                 eachBtn.addEventListener('click', () => {
                     var jobId = eachBtn.value;
