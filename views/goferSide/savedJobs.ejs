@@ -237,7 +237,7 @@
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ acceptjob: true, jobid: jobId })
                         })
-                        ; eachpopup.close(); confirmationpopup.close()
+                        ; eachpopup.close(); confirmationpopup.close();  location.reload();
                     }
                     )
 
@@ -253,7 +253,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ removeJob: true, jobid: jobId })
                     })
-                        .then(eachpopup.close()).then(location.reload())
+                        .then(eachpopup.close()); location.reload();
 
                 });
             });

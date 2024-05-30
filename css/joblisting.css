@@ -12,7 +12,7 @@
     border-radius: 10px;
     border: solid saddlebrown 2px;
     overflow: hidden;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Lilita One", sans-serif;
     font-size: small;
 
 }
@@ -21,25 +21,44 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    background-color: darkgreen;
+    background-color: #CAF0FF;
     padding: 9px;
-    color: seashell;
+    color: brown;
 }
 
 .listing .bottomRow {
     display: flex;
     flex-direction: column;
-    background-color: lightpink;
+    background-color: rgb(250, 182, 155);
+    
     padding: 9px;
 
 }
 
-
+button {
+    border: 2px solid;
+    padding: 4px;
+    font-size: 1.1em;
+    /* font-weight: 700; */
+    border-radius: 10px;
+    border-color: #78361F;
+    color: #78361F;
+    background-color: #CAF0FF;
+   
+    text-decoration: none;
+    text-align: center;
+    font-family: "Lilita One", sans-serif;
+}
+:modal{
+    border: 2px solid #78361F;
+    border-radius: 10px;
+    background:#efddd6;
+}
 :modal.listing.topRow {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    background-color: darkgreen;
+   
     padding: 9px;
     color: seashell;
 }
