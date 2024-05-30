@@ -81,6 +81,7 @@ app.use('/', async (req, res, next) => {
     app.locals.auth = req.session.authenticated
     app.locals.type = req.session.usertype
     app.locals.username = req.session.username
+    app.locals.message = ''
     next()
 })
 
@@ -309,6 +310,7 @@ app.post('/reset-password-handler', async (req, res) => {
         })
 
     const validation = schema.validate({ username, password, secret_pin })
+    
 
 
     if (validation.error) {
@@ -348,7 +350,7 @@ app.get('/main', IsAuthenticated, (req, res) => {
     if (req.session.authenticated && req.session.usertype == 'user') {
         res.render('main',
             {
-
+                message: "",
 
             })
     }
@@ -432,38 +434,26 @@ app.get('/logout', (req, res) => {
 
 
 app.post('/createTask', IsAuthenticated, async (req, res) => {
-    const { title, description, dueDate, offer, location, skills, otherSkill } = req.body;
+    const { title, description, date, offer, location, skills, otherSkill } = req.body;
 
     const schema = Joi.object({
-        username: Joi.string().required(),
         title: Joi.string().min(3).max(100).required(),
-        description: Joi.string().min(3).max(1000).required(),
-        dueDate: Joi.date().required(),
+        description: Joi.string().min(3).max(100).required(),
+        date: Joi.date().required(),
         offer: Joi.number().required(),
         location: Joi.string().min(3).max(100).required(),
-        skills: Joi.items(Joi.string().valid(
-            'plumbing',
-            'wiring',
-            'baking',
-            'hvac',
-            'tailoring',
-            'graphicDesign',
-            'photography'
-        )).optional(),
         otherSkill: Joi.string().optional().allow('')
     });
 
-    const validation = schema.validate({ username: req.session.username, title, description, dueDate, offer, location, skills, otherSkill });
-
+    const validation = schema.validate({ title, description, date, offer, location, otherSkill });
+    console.log(validation.error)
     if (validation.error) {
-        return res.render('createTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype,
-            message: validation.error.details[0].message,
-            massage: console.log(validation.error.details[0].message)
-        });
-    }
+        var error = validation.error.details
+        console.log(error)
+        return res.render('createTasks', { message: error[0].message })
+         
+        }
+    
 
     const task = {
         username: req.session.username,
@@ -473,7 +463,7 @@ app.post('/createTask', IsAuthenticated, async (req, res) => {
         location,
         skills: skills ? skills : [],
         otherSkill: otherSkill ? otherSkill : '',
-        dueDate,
+        date,
         goferID: null,
         status: 'open',
         completed: false,
@@ -487,12 +477,7 @@ app.post('/createTask', IsAuthenticated, async (req, res) => {
     } catch (error) {
         console.error('Error creating task:', error);
         res.render('createTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype,
-            message: 'Failed to create task. Please try again later.',
-            massage: console.log(message + 'Failed to create task. Please try again later. New shit')
-
+            message: 'Failed to create task. Please try again later.'
         });
     }
 });
