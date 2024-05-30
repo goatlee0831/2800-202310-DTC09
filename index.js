@@ -499,13 +499,19 @@ app.post('/createTask', IsAuthenticated, async (req, res) => {
 // display profile page
 app.get('/profile', IsAuthenticated, async (req, res) => {
     try {
-        const { username } = req.session; // username is stored in session
+        const { username } = req.session // username is stored in session
         const user = await userCollection.findOne({ username });
-        if (!user) {
+        const gofer = await goferCollection.findOne({ username})
+   
+        if (!user && !gofer) {
             return res.status(404).send('User not found');
+        } else if (user) {
+            res.render('profile', { member: user });
+        } else if (gofer) {
+            res.render('profile', { member: gofer });
         }
-        res.render('profile', { member: user });
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Failed to fetch user:', error);
         res.status(500).send('Internal server error');
     }
