@@ -2,16 +2,19 @@
     <%- include('templates/nav') %>
         <main>
             <div class="card1">
-                <header style="text-align: center;">
+                <header class="left">
                     <h2>All Tasks</h2>
                 </header>
             </div>
 
            
                 <!-- Tasks In Progress -->
-                <div>
-                    <h1>Tasks in Progress</h1>
-                    <div id="InProgressTasks"></div>
+                <div class="card3">
+                    <div class="left">
+                        <h3>Pending Tasks</h3>
+                    </div>
+                    
+                    <div id="InProgressTasks" class="right column"></div>
                     <% usersTasks.forEach(task=> { %>
                         <div class="card">
                             <h3><%= task.title %></h3>
@@ -25,9 +28,12 @@
                         
                 </div>
                 <!-- Scheduled Tasks -->
-                <div>
-                    <h1>Scheduled Tasks</h1>
-                    <div id="ScheduledTasks"></div>
+                <div class="card2">
+                    <div class="left">
+                        <h3>Posted Tasks</h3>
+                    </div>
+    
+                    <div id="ScheduledTasks" class="right"></div>
                     <% usersTasks.forEach(task=> { %>
                         <% if(task.status == "closed" && !task.completed) { %>
                             <div class="card">
@@ -42,9 +48,12 @@
                 </div>
 
                 <!-- Pending Tasks -->
-                <div>
-                    <h1>Pending Tasks</h1>
-                    <div id="PendingTaskCards">
+                <div class="card3">
+                    <div class="left">
+                        <h3>Completed Tasks</h3>
+                    </div>
+                    
+                    <div id="PendingTaskCards" class="right column">
                         <% usersTasks.forEach(task=> { %>
                             <% if(task.status == "pending") { %>
                                 <div class="card">
@@ -59,9 +68,11 @@
                     </div>
                 </div>
                                 <!-- Completed Tasks -->
-                <div>
-                    <h1>Completed Tasks</h1>
-                    <div id="CompletedTaskCards">
+                <div class="card4">
+                    <div class="left">
+                        <h3>Pending Tasks</h3>
+                    </div>
+                    <div id="CompletedTaskCards" class="right column">
                         <% usersTasks.forEach(task=> { %>
                             <% if(task.status == "closed" && task.completed) { %>
                                 <div class="card">
