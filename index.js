@@ -434,7 +434,11 @@ app.get('/logout', (req, res) => {
 
 
 app.post('/createTask', IsAuthenticated, async (req, res) => {
-    const { title, description, date, offer, location, skills, otherSkill } = req.body;
+    
+    const { title, description, date, offer, location, skills, otherSkill} = req.body
+    // console.log(req.body)
+    
+
 
     const schema = Joi.object({
         title: Joi.string().min(3).max(100).required(),
@@ -446,15 +450,16 @@ app.post('/createTask', IsAuthenticated, async (req, res) => {
     });
 
     const validation = schema.validate({ title, description, date, offer, location, otherSkill });
-    console.log(validation.error)
+    
     if (validation.error) {
         var error = validation.error.details
-        console.log(error)
-        return res.render('createTasks', { message: error[0].message })
+        // console.log(error)
+        return res.render('createTask', { message: error[0].message })
          
         }
-    
 
+    skills.push(otherSkill)
+    
     const task = {
         username: req.session.username,
         title,
@@ -462,7 +467,6 @@ app.post('/createTask', IsAuthenticated, async (req, res) => {
         offer,
         location,
         skills: skills ? skills : [],
-        otherSkill: otherSkill ? otherSkill : '',
         date,
         goferID: null,
         status: 'open',
