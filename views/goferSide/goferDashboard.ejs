@@ -25,60 +25,62 @@
 </section>
 
 <section id="acceptedJobs" class="card3">
-    <div class="left">
-        <h3>Your upcoming Jobs</h3>
-    </div>
-    <div class="right">
-        <span> Jobs accepted by you</span>
+    
+        <h3 style="text-align: center;">Your upcoming Jobs</h3>
+    
+        <div id="mainPageScroll">
         <% job.forEach((job) => { %>
             <%- include('jobListing', {job: job, save:false})%>
         <% }) %>
     </div>
     
 </section>
+<dialog id="popup">
+    <div id="message">
 
+    </div>
+    <button id="confirmAccept">Confirm</button>
+    <button id="close"> Close </button>
 
-<section id="savedJobs">
-
-</section>
+</dialog>
 
 
 <%- include('../templates/footer') %>
 
 <script>
     var showListing = document.querySelectorAll('.joblisting')
-    var dataBtns = document.querySelectorAll('.Btn');
-
+    var popup = document.getElementById("popup")
+    var dataBtns = document.querySelectorAll('.saveBtn');
     showListing.forEach((listing, i) => {
-                let eachpopup = popups[i];
-                let closeBtn = closeBtns[i];
-                let eachBtn = dataBtns[i];
-
-
-    removeBtn.addEventListener('click', () => {
-                    var jobId = removeBtn.value;
-
+               
+               listing.addEventListener("click", () => {
+   
                     
-                acceptBtn.addEventListener('click', () => {
-                    var jobId = acceptBtn.value;
-                    // confirmationpopup.value = jobId
-
-                    confirmationpopup.querySelector('#message').innerHTML += `Are you sure you want to cancel this job `
-                    confirmationpopup.showModal();
-                    confirmationpopup.querySelector('#confirmAccept').addEventListener('click', () => {
+                    console.log(jobId)
+                    dataBtn = dataBtns[i]
+                    var jobId = dataBtn.value
+                   
+                    popup.querySelector('#message').innerHTML += `Are you sure you want to cancel this job `
+                   
+                   popup.showModal();
+                   
+                   popup.querySelector('#confirmAccept').addEventListener('click', () => {
                         fetch('/canceljob', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ canceljob: true, jobid: jobId })
+                            
                         })
-                        ; eachpopup.close(); confirmationpopup.close();  location.reload()
+                    
+                        popup.close();  location.reload()
                     }
                     )
-                    confirmationpopup.querySelector('#close').addEventListener('click', () => confirmationpopup.close())
+                   
+                    popup.querySelector('#close').addEventListener('click', () =>
+                   popup.close())
 
 
                 })
             });
 
-        })
 </script>
