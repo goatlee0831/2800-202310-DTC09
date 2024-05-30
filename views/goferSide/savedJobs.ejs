@@ -1,6 +1,10 @@
-<%- include('header') %>
-    <%- include('nav_gofer') %>
+<%- include('../templates/header') %>
+    <%- include('../templates/nav_gofer') %>
         <style>
+            section {
+                display: grid;
+                gap: 5px 5px;
+            }
             .listing {
                 display: flex;
                 flex-direction: column;
@@ -65,7 +69,79 @@
                         green);
                 opacity: 0.75;
             }
+
+            
         </style>
+    <section id="acceptedJobs">
+        <h1 style="text-align: center;">Your accepted Jobs </h1>
+        <% acceptedjobs.forEach((job)=> { %>
+            <div class="listing acceptedjob" id=<%=job._id %>>
+                <div class="topRow">
+                    <div>
+                        <%=job.title%>
+                    </div>
+                    <div>
+                        <%=job.date%>
+                    </div>
+                </div>
+
+                <div class="bottomRow">
+                    <div>Description: <%=job.description %>
+                    </div>
+                    <div>Location: <%=job.location%>
+                    </div>
+                    <div style="display:flex; justify-content: space-between;">
+                        <div>Offered pay: $<%=job.offer%>
+                        </div>
+
+                       
+                    </div>
+                </div>
+            </div>
+
+            <dialog class="acclistingpopup">
+                
+                <div class="listing">
+                    <div class="topRow">
+                        <div>
+                            <%=job.title%>
+                        </div>
+                        <div>
+                            <%=job.date%>
+                        </div>
+                    </div>
+
+                    <div class="bottomRow">
+                        <div>Description: <%=job.description %>
+                        </div>
+                        <div>Location: <%=job.location%>
+                        </div>
+                        <div>Offered pay: $<%=job.offer%>
+                        </div>
+                    </div>
+                </div>
+                <div class="optionRow">
+
+                    <button type="button" class="accCloseBtn">Close</button>
+
+                    <button value=<%=job._id%> class="completedBtn">Mark as completed</button>
+
+                </div>
+
+            </dialog>
+
+            <% }) %>
+            <dialog id="completedpopup">
+                <div id="message">
+    
+                </div>
+                <button id="complete">Mark as complete</button>
+                <button id="close"> Close </button>
+    
+            </dialog>
+    </section>
+
+<!---------------------------------------------------------------------------------------------------------->
 
         <section id="jobListings">
             <h1 style="text-align: center;">Your Saved Jobs </h1>
@@ -141,11 +217,6 @@
 
                 <% }) %>
         </section>
-
-        <section id="acceptedJobs">
-
-
-        </section>
         <dialog id="confirmationpopup">
             <div id="message">
 
@@ -161,13 +232,54 @@
 
 
             var showListing = document.querySelectorAll('.joblisting')
-
+            var acceptedListing = document.querySelectorAll('.acceptedjob')
             var popups = document.querySelectorAll('.listingpopup')
+            var accpopups = document.querySelectorAll('.acclistingpopup')
+            var accCloseBtns = document.querySelectorAll('.accCloseBtn')
+            let completedBtns = document.querySelectorAll('.completedBtn')
             var closeBtns = document.querySelectorAll('.closeBtn')
             var acceptBtns = document.querySelectorAll('.acceptBtn');
             var removeBtns = document.querySelectorAll('.removeBtn');
             let confirmationpopup = document.getElementById('confirmationpopup');
+            let completedpopup = document.getElementById('completedpopup');
 
+
+
+            acceptedListing.forEach((acc, i) => {
+                let accpopup = accpopups[i]
+                let accCloseBtn = accCloseBtns[i]
+                let completedBtn = completedBtns[i]
+
+                acc.addEventListener('click', () =>
+                    accpopup.showModal())
+
+                accCloseBtn.addEventListener('click', () => {
+                    accpopup.close();
+                });
+
+                completedBtn.addEventListener('click', () => {
+                    var jobId = completedBtn.value;
+
+
+                    completedpopup.querySelector('#message').innerHTML += `Mark this as complete? `
+                    completedpopup.showModal();
+                    completedpopup.querySelector('#complete').addEventListener('click', () => {
+                        fetch('/saveremoveacceptjob', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ completejob: true, jobid: jobId })
+                        })
+                        ; accpopup.close(); completedpopup.close()
+                    }
+                    )
+
+                    completedpopup.querySelector('#close').addEventListener('click', () => accpopup.close())
+
+
+                })
+
+
+            })
 
             // Looping through all listings
             showListing.forEach((listing, i) => {
@@ -186,7 +298,7 @@
 
                 acceptBtn.addEventListener('click', () => {
                     var jobId = acceptBtn.value;
-                    // confirmationpopup.value = jobId
+
 
                     confirmationpopup.querySelector('#message').innerHTML += `Are you sure you want to accept this job `
                     confirmationpopup.showModal();

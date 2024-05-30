@@ -1,0 +1,38 @@
+<%- include('templates/header') %>
+<%- include('templates/nav') %>
+
+    <div>
+        <h1>Completed Jobs</h1>
+    </div>
+    <section id="completedtedJobs">
+      
+        <% completedjobs.forEach((job)=> { %>
+            <div class="listing acceptedjob" id=<%=job._id %>>
+                <div class="topRow">
+                    <div>
+                        <%=job.title%>
+                    </div>
+                    <div>
+                        <%=job.date%>
+                    </div>
+                </div>
+
+                <div class="bottomRow">
+                    <div>Description: <%=job.description %>
+                    </div>
+                    <div>Location: <%=job.location%>
+                    </div>
+                    <div style="display:flex; justify-content: space-between;">
+                        <div>Offered pay: $<%=job.offer%>
+                        </div>
+
+                       
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+    </section>
+
+
+
+<%- include('templates/footer') %>
