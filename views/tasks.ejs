@@ -9,64 +9,91 @@
 
            
                 <!-- Tasks In Progress -->
-                <div class="card3">
-                    <div class="left">
-                        <h3>Posted Tasks</h3>
+                    <div class="card5">
+                        <div class="left">
+                            <h3>Posted Tasks</h3>
+                        </div>
                     </div>
                     
                     
                     <% usersTasks.forEach(task=> { %>
-                        <div class="card right column2">
-                            <h3><%= task.title %></h3>
-                            <p><%= task.description %></p>
-                            <p><%= task.Date %></p>
-                            <p><%= task.offer %></p>
-                            <p><%= task.status %></p>
+                        <div class="card2">
+                            <div class="left">
+                                <h3><%= task.title %></h3>
+                            </div>
+                            <div class="right w column2">
+                                <h4>Task Description:</h4>
+                                <p><%= task.description %></p>
+                                <br>
+                                <p><%= task.Date %></p>
+                                <br>
+                                <h4>Price:</h4>
+                                <p>$<%= task.offer %></p>
+                                <br>
+                                <h4>Status:</h4>
+                                <p><%= task.status %></p>
+                            </div>
                         </div>
                         <% }) %>
-                        
-                </div>
                 <!-- Pending Tasks -->
-                <div class="card2">
-                    <div class="left">
-                        <h3>Pending Tasks</h3>
-                    </div>
     
-                    
+                    <div class="card5">
+                        <div class="left">
+                            <h3>Pending Tasks</h3>
+                        </div>
+                    </div>
                     <% usersTasks.forEach(task=> { %>
                         <% if(task.acceptedby) { %>
-                            <div class="card right column2">
-                                <h3><%= task.title %></h3>
-                                <p><%= task.description %></p>
-                                <p><%= task.Date %></p>
-                                <p><%= task.offer %></p>
-                                <p><%= task.status %></p>
-                                <p><%= task.acceptedby %></p>
-                                
+                            <div class="card2">
+                                <div class="left">
+                                    <h3><%= task.title %></h3>
+                                </div>
+                                <div class="right w column2">
+                                    <h4>Task Description:</h4>
+                                    <p><%= task.description %></p>
+                                    <br>
+                                    <p><%= task.Date %></p>
+                                    <br>
+                                    <h4>Price:</h4>
+                                    <p>$<%= task.offer %></p>
+                                    <br>
+                                    <h4>Status:</h4>
+                                    <p>In Progress</p>
+                                    <br>
+                                    <h4>Being Completed By:</h4>
+                                    <p><%= task.acceptedby %></p>
+                                </div>
                             </div>
                     <% }}) %>
-                </div>
+
 
                 <!-- Completed Tasks -->
-                <div class="card3">
+                <div class="card5">
                     <div class="left">
                         <h3>Completed Tasks</h3>
                     </div>
+                </div>
                     
                     <div id="PendingTaskCards" class="right">
                         <% usersTasks.forEach(task=> { %>
                             <% if(task.completed == true) { %>
-                                <div class="card right column2">
-                                    <h3><%= task.title %></h3>
+                                <div class="right w column2">
+                                    <h4>Task Description:</h4>
                                     <p><%= task.description %></p>
+                                    <br>
                                     <p><%= task.Date %></p>
-                                    <p><%= task.offer %></p>
+                                    <br>
+                                    <h4>Price:</h4>
+                                    <p>$<%= task.offer %></p>
+                                    <br>
+                                    <h4>Status:</h4>
                                     <p><%= task.status %></p>
+                                    <br>
+                                    <h4>Being Completed By:</h4>
                                     <p><%= task.acceptedby %></p>
                                 </div>
                         <% }}) %>
                     </div>
-                </div>
         </main>
 
         <%- include('templates/footer') %>
