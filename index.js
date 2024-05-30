@@ -20,6 +20,7 @@ const { error } = require('console');
 const { isObjectIdOrHexString } = require('mongoose');
 const mongoose = require('mongoose');
 const url = require('url');
+const { stat } = require('fs');
 
 
 // global variables and secret keys
@@ -430,36 +431,57 @@ app.get('/logout', (req, res) => {
 
 
 
-// Handle Create Task Form Submission
 app.post('/createTask', IsAuthenticated, async (req, res) => {
-    const { title, description, dueDate } = req.body;
+    const { title, description, dueDate, offer, location, skills, otherSkill } = req.body;
 
     const schema = Joi.object({
+        username: Joi.string().required(),
         title: Joi.string().min(3).max(100).required(),
         description: Joi.string().min(3).max(1000).required(),
-        dueDate: Joi.date().required()
+        dueDate: Joi.date().required(),
+        offer: Joi.number().required(),
+        location: Joi.string().min(3).max(100).required(),
+        skills: Joi.array().items(Joi.string().valid(
+            'plumbing',
+            'wiring',
+            'baking',
+            'hvac',
+            'tailoring',
+            'graphicDesign',
+            'photography'
+        )).optional(),
+        otherSkill: Joi.string().optional().allow('')
     });
 
-    const validation = schema.validate({ title, description, dueDate });
+    const validation = schema.validate({ username: req.session.username, title, description, dueDate, offer, location, skills, otherSkill });
 
     if (validation.error) {
         return res.render('createTask', {
             username: req.session.username,
             auth: req.session.authenticated,
             type: req.session.usertype,
-            message: validation.error.details[0].message
+            message: validation.error.details[0].message,
+            massage: console.log(validation.error.details[0].message)
         });
     }
 
     const task = {
+        username: req.session.username,
         title,
         description,
+        offer,
+        location,
+        skills: skills ? skills : [],
+        otherSkill: otherSkill ? otherSkill : '',
         dueDate,
-        createdBy: req.session.username
+        goferID: null,
+        status: 'open',
+        completed: false,
     };
 
+
     try {
-        await database.db(mongodb_database).collection('tasks').insertOne(task);
+        await tasksCollection.insertOne(task);
         res.redirect('/tasks');
     } catch (error) {
         console.error('Error creating task:', error);
@@ -467,7 +489,9 @@ app.post('/createTask', IsAuthenticated, async (req, res) => {
             username: req.session.username,
             auth: req.session.authenticated,
             type: req.session.usertype,
-            message: 'Failed to create task. Please try again later.'
+            message: 'Failed to create task. Please try again later.',
+            massage: console.log(message + 'Failed to create task. Please try again later. New shit')
+
         });
     }
 });

@@ -1,45 +1,63 @@
 <%- include('templates/header') %>
 <%- include('templates/nav') %>
-    <h1>Create Task</h1>
-    <form class="card" id="createTaskForm" action="/createTask" method="POST">
-        <div>
-            <label for="title">Title:</label>
-            <input class="form-text" type="text" id="title" name="title" required>
-        </div>
-        <label for="description">Description:</label>
-        <div>
-            <textarea class="form-text" id="description" name="description" required></textarea>
-        </div>
-        <div>
-            <label for="dueDate">Due Date:</label>
-            <input type="date" id="dueDate" name="dueDate" required>
-        </div>
-        <div>
-            <label for="tools">Tools that may be required:</label>
-            <div>
-                <input type="radio" id="hammer" name="tool" value="hammer" required>
-                <label for="hammer">Hammer</label>
-            </div>
-            <div>
-                <input type="radio" id="screwdriver" name="tool" value="screwdriver" required>
-                <label for="screwdriver">Screwdriver</label>
-            </div>
-            <div>
-                <input type="radio" id="wrench" name="tool" value="wrench" required>
-                <label for="wrench">Wrench</label>
-            </div>
-            <div>
-                <input type="radio" id="pliers" name="tool" value="pliers" required>
-                <label for="pliers">Pliers</label>
-            </div>
-            <div>
-                <input type="radio" id="drill" name="tool" value="drill" required>
-                <label for="drill">Drill</label>
-            </div>
-            <input class="form-text" type="text" id="title" name="title" required placeholder="Any other...">
 
-            <!-- Add more tool types as needed -->
+<h1>Create Task</h1>
+<form class="card" id="createTaskForm" action="/createTask" method="post">
+    <div>
+        <label for="title">Title:</label>
+        <input class="form-text" type="text" id="title" name="title" required>
+    </div>
+    <div>
+        <label for="description">Description:</label>
+        <textarea class="form-text" id="description" name="description" required></textarea>
+    </div>
+    <div>
+        <label for="dueDate">Date:</label>
+        <input type="date" id="dueDate" name="dueDate" required>
+    </div>
+    <div>
+        <label for="offer">Offer</label>
+        <input class="form-text" type="number" id="offer" name="offer" required>
+    </div>
+    <div>
+        <label for="location">Location:</label>
+        <input class="form-text" type="text" id="location" name="location" required>
+    </div>
+    <div>
+        <label for="skills">Skills that may be required:</label>
+        <div>
+            <input type="checkbox" id="plumbing" name="skills" value="plumbing">
+            <label for="plumbing">Plumbing</label>
         </div>
-        <button class="task-btn" type="submit">Create Task</button>
-    </form>
+        <div>
+            <input type="checkbox" id="wiring" name="skills" value="wiring">
+            <label for="wiring">Wiring</label>
+        </div>
+        <div>
+            <input type="checkbox" id="baking" name="skills" value="baking">
+            <label for="baking">Baking</label>
+        </div>
+        <div>
+            <input type="checkbox" id="hvac" name="skills" value="hvac">
+            <label for="hvac">HVAC Installing</label>
+        </div>
+        <div>
+            <input type="checkbox" id="tailoring" name="skills" value="tailoring">
+            <label for="tailoring">Tailoring</label>
+        </div>
+        <div>
+            <input type="checkbox" id="graphicDesign" name="skills" value="graphicDesign">
+            <label for="graphicDesign">Graphic Design</label>
+        </div>
+        <div>
+            <input type="checkbox" id="photography" name="skills" value="photography">
+            <label for="photography">Photography</label>
+        </div>
+        <div>
+            <input class="form-text" type="text" id="otherSkill" name="otherSkill" placeholder="Any other...">
+        </div>
+    </div>
+    <button class="task-btn" type="submit">Create Task</button>
+</form>
+
 <%- include('templates/footer') %>
