@@ -2,46 +2,50 @@
     <%- include('templates/nav') %>
 
         <div class="card4 column">
-            <h2>Members Sign Up</h2>
-            <form action="/gofer-handler" method="POST">
-                <label for="firstname">
-                    <h3>First Name:</h3>
-                </label>
-                <input type="text" id="firstname" name="firstname" required><br>
-
-                <label for="lastname">
-                    <h3>Last Name:</h3>
-                </label>
-                <input type="text" id="lastname" name="lastname" required><br>
-
-                <label for="username">
-                    <h3>Username:</h3>
-                </label>
-                <input type="text" id="fullname" name="username" required><br>
-
-                <label for="email">
-                    <h3>Email:</h3>
-                </label>
-                <input type="email" id="email" name="email" required><br>
-
-                <label for="phonenumber">
-                    <h3>Phonenumber:</h3>
-                </label>
-                <input type="tel" id="phonenumber" name="phonenumber" required><br>
-
-                <label for="password">
-                    <h3>Password:</h3>
-                </label>
-                <input type="password" id="password" name="password" required><br>
-
-                <label for="secret_pin">
-                    <h3>Secret Pin:</h3>
-                </label>
-                <input type="password" id="secret_pin" name="secret_pin" required>
-                <p>Please enter a secret pin (min 4 digits) </p><br>
-
-                <button cltype="submit" class="darkBtn">Sign Up</button>
-            </form>
+            <div class="left">
+                <h2>Members Sign Up</h2>
+            </div>
+            <div class="right">
+                <form action="/gofer-handler" method="POST">
+                    <label for="firstname">
+                        <h3>First Name:</h3>
+                    </label>
+                    <input type="text" id="firstname" name="firstname" required><br>
+    
+                    <label for="lastname">
+                        <h3>Last Name:</h3>
+                    </label>
+                    <input type="text" id="lastname" name="lastname" required><br>
+    
+                    <label for="username">
+                        <h3>Username:</h3>
+                    </label>
+                    <input type="text" id="fullname" name="username" required><br>
+    
+                    <label for="email">
+                        <h3>Email:</h3>
+                    </label>
+                    <input type="email" id="email" name="email" required><br>
+    
+                    <label for="phonenumber">
+                        <h3>Phonenumber:</h3>
+                    </label>
+                    <input type="tel" id="phonenumber" name="phonenumber" required><br>
+    
+                    <label for="password">
+                        <h3>Password:</h3>
+                    </label>
+                    <input type="password" id="password" name="password" required><br>
+    
+                    <label for="secret_pin">
+                        <h3>Secret Pin:</h3>
+                    </label>
+                    <input type="password" id="secret_pin" name="secret_pin" required>
+                    <p>Please enter a secret pin (min 4 digits) </p><br>
+    
+                    <button cltype="submit" class="darkBtn">Sign Up</button>
+                </form>
+            </div>
         </div>
 
         <div>

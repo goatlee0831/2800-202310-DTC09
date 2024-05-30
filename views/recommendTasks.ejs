@@ -14,25 +14,21 @@
                     <p><%= task.Date %></p>
                     <p><%= task.location %></p>
                     <p><%= task.offer %></p>
-                    <a onclick="" href="/AcceptTaskHandler/<%= task._id %>">Accept Task</a>
-                    <button onclick="decline(`<%= task._id %>`)" >Decline Task</button>
+                    <a onclick="" href="/AcceptTaskHandler/<%= task._id %>">Accept Task  </a>
+                    <a onclick="" href="/removefromsession/<%= task._id %>">Decline Task  </a>
+   
                 </div> 
                 
                 <% }) %>
         </div> 
 
+        <% if (tasks.length === 0) { %>
         <div>
             <a href='/recommend'>Generate New</a>
         </div>
+        <% } %>
         
-        <script>
-            function decline(id){
-
-                document.getElementById(id).style.display = "none";
-
-            }
-        </script>
-
+      
        
 
 

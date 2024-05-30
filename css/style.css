@@ -32,7 +32,7 @@ p {
 /* New Styles ----------- */
 
 input[type="password"], input[type="text"], input[type="email"],input[type="tel"] {
-    width: 80%;
+    width: 97%;
     border: 5px solid;
     padding: 2px 0;
     font-size: 1.1em;
@@ -46,7 +46,7 @@ input[type="password"], input[type="text"], input[type="email"],input[type="tel"
 }
 
 .lightBtn {
-    width: 100%;
+    width: 97%;
     border: 5px solid;
     padding: 2px;
     font-size: 1.1em;
@@ -228,5 +228,12 @@ form {
 
     .w {
         padding: 10%;
+    }
+
+    .column2 {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        align-content: flex-start;
     }
 }
