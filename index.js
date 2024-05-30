@@ -435,9 +435,12 @@ app.get('/logout', (req, res) => {
 
 app.post('/createTask', IsAuthenticated, async (req, res) => {
     
-    const { title, description, date, offer, location, skills, otherSkill} = req.body
-    // console.log(req.body)
     
+    
+    let { title, description, date, offer, location, skills, otherSkill} = req.body
+    // console.log(req.body)
+    // console.log(skills)
+    if(!skills) skills = []
 
 
     const schema = Joi.object({
@@ -447,6 +450,7 @@ app.post('/createTask', IsAuthenticated, async (req, res) => {
         offer: Joi.number().required(),
         location: Joi.string().min(3).max(100).required(),
         otherSkill: Joi.string().optional().allow('')
+
     });
 
     const validation = schema.validate({ title, description, date, offer, location, otherSkill });
