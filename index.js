@@ -530,9 +530,10 @@ app.get('/jobListings', IsGofer, async (req, res) => {
 
 app.get('/savedJobs', IsGofer, async (req, res) => {
 
-
     let user = req.session.username
     let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
+
+    const acceptedjobs = await jobCollection.find({ acceptedby: user }).toArray();
 
     let savedjobs = querysavedjobs.savedjobs
 
@@ -546,7 +547,7 @@ app.get('/savedJobs', IsGofer, async (req, res) => {
 
     const savedJobs = await jobCollection.find(query).toArray();
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    return res.render('savedJobs', { savedjobs: savedJobs });
+    return res.render('savedJobs', { savedjobs: savedJobs, acceptedjobs: acceptedjobs});
 
 })
 
@@ -611,8 +612,7 @@ app.post('/saveremoveacceptjob', async (req, res) => {
 // -----------------------------------End of gofer-specific middleware---------------------------------------------
 
 
-// This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
-app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/')]);
+
 
 // Serving static files 
 app.use(express.static(__dirname + "/public"));
@@ -816,7 +816,8 @@ app.get('/changeAdminTypeForGofers/:email', async (req, res) => {
     res.redirect('/admin')  
 })
 
-
+// This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
+app.set('views', [path.join(__dirname, 'views'), path.join(__dirname, 'views/templates/'), path.join(__dirname, 'views/goferSide/')]);
 
 app.get('*', (req, res) => {
     res.status(404)
