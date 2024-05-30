@@ -86,19 +86,6 @@ app.use('/', async (req, res, next) => {
 
 app.use(bodyParser.json());
 
-app.use('/', (req, res, next) => {
-    app.locals.auth = req.session.authenticated
-    app.locals.type = req.session.usertype
-    app.locals.username = req.session.username
-
-    next()
-
-})
-
-
-
-
-
 
 
 // functions for authentication and authorization
@@ -503,7 +490,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 
 // --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
 
-app.get('/goferHome', IsGofer, async (req, res) => {
+app.get('/goferHome', IsAuthenticated , IsGofer, async (req, res) => {
     const username = req.session.username
     console.log(`${username} has logged in.`)
     const jobs = await jobCollection.find({ acceptedby: username }).toArray()
@@ -513,17 +500,22 @@ app.get('/goferHome', IsGofer, async (req, res) => {
 })
 
 
-app.get('/jobListings', IsGofer, async (req, res) => {
+app.get('/jobListings', IsAuthenticated ,IsGofer, async (req, res) => {
 
-    let jobs = await jobCollection.find({ acceptedby: { $exists: false } }).toArray();
+    // let jobs = await jobCollection.find({ acceptedby: { $exists: false } }).toArray();
 
 
-    let user = req.session.username
+    // let user = req.session.username
 
-    let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
-    let savedjobs = querysavedjobs.savedjobs
+    // let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
+    // let savedjobs = querysavedjobs.savedjobs
 
-    res.render('jobListings', { jobs: jobs, savedjobs: savedjobs });
+    // res.render('jobListings', { jobs: jobs, savedjobs: savedjobs });
+    let jobs = await jobCollection.find({ acceptedby: null }).toArray();
+    let gofer = req.session.username
+    savedjobs = await goferCollection.findOne({ username: gofer }, { projection: { savedjobs: 1 } });
+
+    res.render('jobListings', { jobs: jobs, gofer: gofer , savedjobs: savedjobs.savedjobs });
 
 })
 
@@ -670,8 +662,10 @@ app.get('/recommend', IsAuthenticated, async (req, res) => {
     }
 
 
-    req.session.tasks = await getTasks()
-
+    if (req.session.tasks.length == 0){
+        req.session.tasks = await getTasks()
+    }
+    console.log(req.session.tasks.length)
 
     res.render('recommendTasks', { tasks: req.session.tasks });
 })
@@ -691,7 +685,7 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
     // console.log(taskID)
 
     let task = await tasksCollection.findOne({ _id: objectId })
-    // updateResult = await tasksCollection.updateOne({ _id: objectId }, { $set: { status: 'pending', username: username } })
+
     insertResultinJobs = await jobCollection.insertOne(task).then(() => {
         jobCollection.updateOne({ _id: objectId }, { $set: { status: 'open', username: username, acceptedby: null, id: taskID, date: "2054-05-31" } })
 
@@ -704,6 +698,19 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
     return res.redirect('/tasks')
 
 })
+
+app.get('/removefromsession/:selectedtask', (req, res) => {
+    taskID = req.params.selectedtask;
+ 
+
+    req.session.tasks = req.session.tasks.filter(task => task._id !== taskID);
+
+
+    res.render('recommendTasks', { tasks: req.session.tasks });
+}); 
+
+
+
 
 app.get('/tasks', IsAuthenticated, async (req, res) => {
 
@@ -801,19 +808,48 @@ app.get('/admin', IsAuthenticated, async (req, res) => {
     res.render('admin', {Gofers: listOfGofers, Users: listOfUsers})
 })
 
-// Change User Type to Admin for Gofers
-app.get('/changeAdminTypeForGofers/:email', async (req, res) => {
-    var email = req.params.email
+// Change User Type to Admin From Gofers
+app.get('/PromoteGoferToAdmin/:email', IsAuthenticated, IsAdmin, async (req, res) => {
+    var email = req.params.email;
 
-    async function changeToAdmin(email) {
-        var gofer = await goferCollection.findOne({ email}).then((gofer) => {
-            console.log(gofer)
-            gofer.usertype == 'admin'
-        })
-        gofer.save()
+    async function changeToAdmin(emailAddress) {
+        const gofer = await goferCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'admin' }});
+    res.redirect('/admin');
 }
-    changeToAdmin(email)
-    res.redirect('/admin')  
+    changeToAdmin(email);
+});
+
+// Change User Type to Gofer From Admin
+app.get('/DemoteGoferFromAdmin/:email', IsAuthenticated, IsAdmin, async (req, res) => {
+    var email = req.params.email;
+
+    async function changeToGofer(emailAddress) {
+        const gofer = await goferCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'gofer' }})
+    res.redirect('/admin');
+}
+    changeToGofer(email);
+})
+
+// Change User to Admin From Users
+app.get('/PromoteUserToAdmin/:email', IsAuthenticated, IsAdmin, async (req, res) => {
+    var email = req.params.email;
+
+    async function changeToAdminUser(emailAddress) {
+        const user = await userCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'admin' }})
+        res.redirect('/admin');
+}
+    changeToAdminUser(email);
+})
+
+// Change User to User From Admin
+app.get('/DemoteUserFromAdmin/:email', IsAuthenticated, IsAdmin, async (req, res) => {
+    var email = req.params.email;
+
+    async function changeToUser(emailAddress) {
+        const user = await userCollection.updateOne({email: emailAddress}, { $set: { usertype: 'user' }})
+    res.redirect('/admin');
+}
+    changeToUser(email);
 })
 
 // This is called 'setting the view directory' to allow middleware to look into folders as specified below for requested pages
