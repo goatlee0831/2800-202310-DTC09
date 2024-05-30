@@ -71,7 +71,7 @@
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ canceljob: true, jobid: jobId })
                         })
-                        ; eachpopup.close(); confirmationpopup.close()
+                        ; eachpopup.close(); confirmationpopup.close();  location.reload()
                     }
                     )
                     confirmationpopup.querySelector('#close').addEventListener('click', () => confirmationpopup.close())

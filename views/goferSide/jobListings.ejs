@@ -55,7 +55,7 @@
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ acceptjob: true, jobid: jobId })
                         })
-                        ; eachpopup.close(); confirmationpopup.close()
+                        ; eachpopup.close(); confirmationpopup.close();  location.reload()
                     }
                     )
 
@@ -73,10 +73,10 @@
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ saveJob: true , jobid : jobId})
                         })
-                            .then(eachpopup.close())
-                                .catch((error) => {
-                                    console.error('Error:', error);
-                                });
+                            .then(eachpopup.close());
+                            location.reload()
+                                
+                              
                         }
                     else if (eachBtn.classList.contains("removeBtn"))
                     {
@@ -85,10 +85,9 @@
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ removeJob: true , jobid : jobId})
                         })
-                                .then(eachpopup.close())
-                                .catch((error) => {
-                                    console.error('Error:', error);
-                                });
+                                .then(eachpopup.close()); location.reload()
+                
+                               
                     }
             })
                     
