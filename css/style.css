@@ -31,7 +31,8 @@ p {
 
 /* New Styles ----------- */
 
-input[type="password"], input[type="text"], input[type="email"],input[type="tel"] {
+input[type="password"], input[type="text"], input[type="email"], input[type="tel"], input[type="text"],
+ input[type="date"], textarea, input[type="number"] {
     width: 97%;
     border: 5px solid;
     padding: 2px 0;

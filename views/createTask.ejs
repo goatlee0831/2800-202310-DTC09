@@ -1,64 +1,76 @@
 <%- include('templates/header') %>
 <%- include('templates/nav') %>
+<div class="card3">
+    <div class="left">
+        <h2>Create Task</h2>
+    </div>
+    <div class="right">
+        <form class="card" id="createTaskForm" action="/createTask" method="post">
+            <div>
+                <label for="title"><h3>Title:</h3></label>
+                <input class="form-text" type="text" id="title" name="title" required>
+            </div>
+            <br>
+            <div>
+                <label for="description"><h3>Description:</h3></label>
+                <textarea class="form-text" id="description" name="description" required></textarea>
+            </div>
+            <br>
+            <div>
+                <label for="dueDate"><h3>Date:</h3></label>
+                <input type="date" id="dueDate" name="dueDate" required>
+            </div>
+            <br>
+            <div>
+                <label for="offer"><h3>Offer:</h3></label>
+                <input class="form-text" type="number" id="offer" name="offer" required>
+            </div>
+            <br>
+            <div>
+                <label for="location"><h3>Location:</h3></label>
+                <input class="form-text" type="text" id="location" name="location" required>
+            </div>
+            <br>
+            <div>
+                <label for="skills"><h3>Skills that may be required:</h3></label>
+                <div>
+                    <input type="checkbox" id="plumbing" name="skills" value="plumbing">
+                    <label for="plumbing">Plumbing</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="wiring" name="skills" value="wiring">
+                    <label for="wiring">Wiring</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="baking" name="skills" value="baking">
+                    <label for="baking">Baking</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="hvac" name="skills" value="hvac">
+                    <label for="hvac">HVAC Installing</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="tailoring" name="skills" value="tailoring">
+                    <label for="tailoring">Tailoring</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="graphicDesign" name="skills" value="graphicDesign">
+                    <label for="graphicDesign">Graphic Design</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="photography" name="skills" value="photography">
+                    <label for="photography">Photography</label>
+                </div>
+                <div>
+                    <br>
+                    <input class="form-text" type="text" id="otherSkill" name="otherSkill" placeholder="Any other...">
+                </div>
+            </div>
+            <br>
+            <button class="darkBtn" type="submit">Create Task</button>
+        </form>
+    </div>
+</div>
 
-<h1>Create Task</h1>
-<form class="card" id="createTaskForm" action="/createTask" method="post">
-    <div>
-        <label for="title">Title:</label>
-        <input class="form-text" type="text" id="title" name="title" required>
-    </div>
-    <div>
-        <label for="description">Description:</label>
-        <textarea class="form-text" id="description" name="description" required></textarea>
-    </div>
-    <div>
-        <label for="dueDate">Date:</label>
-        <input type="date" id="dueDate" name="dueDate" required>
-    </div>
-    <div>
-        <label for="offer">Offer</label>
-        <input class="form-text" type="number" id="offer" name="offer" required>
-    </div>
-    <div>
-        <label for="location">Location:</label>
-        <input class="form-text" type="text" id="location" name="location" required>
-    </div>
-    <div>
-        <label for="skills">Skills that may be required:</label>
-        <div>
-            <input type="checkbox" id="plumbing" name="skills" value="plumbing">
-            <label for="plumbing">Plumbing</label>
-        </div>
-        <div>
-            <input type="checkbox" id="wiring" name="skills" value="wiring">
-            <label for="wiring">Wiring</label>
-        </div>
-        <div>
-            <input type="checkbox" id="baking" name="skills" value="baking">
-            <label for="baking">Baking</label>
-        </div>
-        <div>
-            <input type="checkbox" id="hvac" name="skills" value="hvac">
-            <label for="hvac">HVAC Installing</label>
-        </div>
-        <div>
-            <input type="checkbox" id="tailoring" name="skills" value="tailoring">
-            <label for="tailoring">Tailoring</label>
-        </div>
-        <div>
-            <input type="checkbox" id="graphicDesign" name="skills" value="graphicDesign">
-            <label for="graphicDesign">Graphic Design</label>
-        </div>
-        <div>
-            <input type="checkbox" id="photography" name="skills" value="photography">
-            <label for="photography">Photography</label>
-        </div>
-        <div>
-            <input class="form-text" type="text" id="otherSkill" name="otherSkill" placeholder="Any other...">
-        </div>
-    </div>
-    <button class="task-btn" type="submit">Create Task</button>
-</form>
-<div><%= message %></div>
 
 <%- include('templates/footer') %>
