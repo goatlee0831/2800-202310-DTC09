@@ -724,19 +724,30 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
 
     let objectId = new ObjectId(taskID)
     // console.log(objectId)
-    // console.log(taskID)
+  
 
     let task = await tasksCollection.findOne({ _id: objectId })
 
+    checkinjobcollection = await jobCollection.findOne({ id: taskID })
+    // console.log(checkinjobcollection)
+
+
+    if (checkinjobcollection) {
+        req.session.tasks = req.session.tasks.filter(task => task._id !== taskID);
+        // console.log(req.session.tasks)
+        return res.redirect('/recommend')
+    } else {
+
     insertResultinJobs = await jobCollection.insertOne(task).then(() => {
-        jobCollection.updateOne({ _id: objectId }, { $set: { status: 'open', username: username, acceptedby: null, id: taskID, date: "2054-05-31" } })
+        jobCollection.updateOne({ _id: objectId }, { $set: { status: 'open', username: username, id: taskID, acceptedby: null, date: "2054-05-31" } })
+    })}
 
-    })
-
-
+    
+    
     return res.redirect('/tasks')
-
 })
+
+
 
 app.get('/removefromsession/:selectedtask', (req, res) => {
     taskID = req.params.selectedtask;
