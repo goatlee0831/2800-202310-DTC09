@@ -233,7 +233,6 @@ form {
     .column2 {
         display: flex;
         flex-direction: column;
-        text-align: left;
-        align-content: flex-start;
+        align-items: start;
     }
 }

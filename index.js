@@ -658,14 +658,17 @@ app.get('/recommend', IsAuthenticated, async (req, res) => {
                 tasks.push(tasksAll[i])
             }
         }
+
+
         return tasks
     }
 
+    
 
-    if (req.session.tasks.length == 0){
+    if (!req.session.tasks || req.session.tasks.length === 0){
         req.session.tasks = await getTasks()
     }
-    console.log(req.session.tasks.length)
+
 
     res.render('recommendTasks', { tasks: req.session.tasks });
 })
@@ -691,9 +694,6 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
 
     })
 
-
-
-    let postedTasksbyUser = await jobCollection.find({ username: username }).toArray()
 
     return res.redirect('/tasks')
 
