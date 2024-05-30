@@ -525,7 +525,7 @@ app.get('/savedJobs', IsGofer, async (req, res) => {
     let user = req.session.username
     let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
 
-    const acceptedjobs = await jobCollection.find({ acceptedby: user }).toArray();
+    const acceptedjobs = await jobCollection.find({ acceptedby: user, completed: false}).toArray();
 
     let savedjobs = querysavedjobs.savedjobs
 
@@ -587,7 +587,7 @@ app.post('/saveremoveacceptjob', async (req, res) => {
     }
     if (req.body.canceljob) {
         try {
-            await jobCollection.updateOne({_id: new ObjectId(jobid) }, { $pull : {acceptedby: user} })
+            await jobCollection.updateOne({_id: new ObjectId(jobid) }, { $set : {acceptedby: null} })
             await goferCollection.updateOne({ username: user }, { $pull: { acceptedjobs: jobid } })
             console.log("Successfully removed from accepted jobs")
         }
@@ -595,6 +595,17 @@ app.post('/saveremoveacceptjob', async (req, res) => {
             console.log(err)
         }
     }
+
+    if (req.body.completejob) {
+        try {  
+            await jobCollection.updateOne({_id: new ObjectId(jobid) }, { $set : {completed: true} })
+            console.log(`Successfully completed ${req.body.jobid}`)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    
 
     res.redirect('/jobListings');
     return
@@ -625,7 +636,11 @@ app.get('/createTask', IsAuthenticated, (req, res) => {
 
 
 app.get('/complete', IsAuthenticated, IsGofer, async (req, res) => {
-    res.render('completedjobs')
+
+    let user = req.session.username
+    let completedjobs = await jobCollection.find({ acceptedby: user }, { completed: true}).toArray();
+
+    res.render('completedjobs', {completedjobs: completedjobs})
 
 })
 

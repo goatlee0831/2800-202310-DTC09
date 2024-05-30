@@ -235,8 +235,8 @@
             var acceptedListing = document.querySelectorAll('.acceptedjob')
             var popups = document.querySelectorAll('.listingpopup')
             var accpopups = document.querySelectorAll('.acclistingpopup')
-            let accCloseBtns = document.querySelectorAll('accCloseBtn')
-            let completedBtns = document.querySelectorAll('completedBtn')
+            var accCloseBtns = document.querySelectorAll('.accCloseBtn')
+            let completedBtns = document.querySelectorAll('.completedBtn')
             var closeBtns = document.querySelectorAll('.closeBtn')
             var acceptBtns = document.querySelectorAll('.acceptBtn');
             var removeBtns = document.querySelectorAll('.removeBtn');
@@ -245,12 +245,12 @@
 
 
 
-            acceptedListing.forEach((listing, i) => {
+            acceptedListing.forEach((acc, i) => {
                 let accpopup = accpopups[i]
-                let accClosebtn = accCloseBtns[i]
+                let accCloseBtn = accCloseBtns[i]
                 let completedBtn = completedBtns[i]
 
-                listing.addEventListener('click', () =>
+                acc.addEventListener('click', () =>
                     accpopup.showModal())
 
                 accCloseBtn.addEventListener('click', () => {
@@ -263,7 +263,7 @@
 
                     completedpopup.querySelector('#message').innerHTML += `Mark this as complete? `
                     completedpopup.showModal();
-                    completedpopup.querySelector('#confirmAccept').addEventListener('click', () => {
+                    completedpopup.querySelector('#complete').addEventListener('click', () => {
                         fetch('/saveremoveacceptjob', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
