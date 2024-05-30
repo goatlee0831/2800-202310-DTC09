@@ -441,7 +441,7 @@ app.post('/createTask', IsAuthenticated, async (req, res) => {
         dueDate: Joi.date().required(),
         offer: Joi.number().required(),
         location: Joi.string().min(3).max(100).required(),
-        skills: Joi.array().items(Joi.string().valid(
+        skills: Joi.items(Joi.string().valid(
             'plumbing',
             'wiring',
             'baking',
@@ -477,11 +477,12 @@ app.post('/createTask', IsAuthenticated, async (req, res) => {
         goferID: null,
         status: 'open',
         completed: false,
+        acceptedby: null
     };
 
 
     try {
-        await tasksCollection.insertOne(task);
+        await jobCollection.insertOne(task);
         res.redirect('/tasks');
     } catch (error) {
         console.error('Error creating task:', error);
