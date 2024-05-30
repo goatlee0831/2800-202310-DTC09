@@ -7,7 +7,6 @@
                 </header>
             </div>
 
-           
                 <!-- Tasks In Progress -->
                 <div>
                     <h1>Tasks in Progress</h1>
@@ -17,24 +16,22 @@
                             <h3><%= task.title %></h3>
                             <p><%= task.description %></p>
                             <p><%= task.Date %></p>
-                            <p><%= task.location %></p>
                             <p><%= task.offer %></p>
                             <p><%= task.status %></p>
                         </div>
                         <% }) %>
-                        
+                       
                 </div>
                 <!-- Scheduled Tasks -->
                 <div>
                     <h1>Scheduled Tasks</h1>
                     <div id="ScheduledTasks"></div>
                     <% usersTasks.forEach(task=> { %>
-                        <% if(task.status == "closed" && !task.completed) { %>
+                        <% if(task.acceptedby) { %>
                             <div class="card">
                                 <h3><%= task.title %></h3>
                                 <p><%= task.description %></p>
                                 <p><%= task.Date %></p>
-                                <p><%= task.location %></p>
                                 <p><%= task.offer %></p>
                                 <p><%= task.status %></p>
                             </div>
@@ -51,7 +48,6 @@
                                     <h3><%= task.title %></h3>
                                     <p><%= task.description %></p>
                                     <p><%= task.Date %></p>
-                                    <p><%= task.location %></p>
                                     <p><%= task.offer %></p>
                                     <p><%= task.status %></p>
                                 </div>
