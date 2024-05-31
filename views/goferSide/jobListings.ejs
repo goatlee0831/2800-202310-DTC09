@@ -4,7 +4,7 @@
 
 
         <section id="jobListings">
-            <h1 style="text-align: center;">Jobs Near you </h1>
+            <h2 style="text-align: center;">Jobs Near you </h2>
             <% jobs.forEach((job)=> { %>
                 <%- include('jobListing', {job: job, savedjobs:savedjobs, save: true})%>
                     <% }) %>
@@ -21,7 +21,7 @@
 
 
         <script>
-    
+
 
             var showListing = document.querySelectorAll('.joblisting')
 
@@ -30,16 +30,16 @@
             var dataBtns = document.querySelectorAll('.Btn');
             var acceptBtns = document.querySelectorAll('.acceptBtn');
             let confirmationpopup = document.getElementById('confirmationpopup');
-           // Looping through all listings
+            // Looping through all listings
             showListing.forEach((listing, i) => {
                 let eachpopup = popups[i];
                 let closeBtn = closeBtns[i];
                 let eachBtn = dataBtns[i];
                 let acceptBtn = acceptBtns[i];
-                
+
                 listing.addEventListener('click', () =>
                     eachpopup.showModal())
-                
+
                 closeBtn.addEventListener('click', () => {
                     eachpopup.close();
                 });
@@ -55,7 +55,7 @@
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ acceptjob: true, jobid: jobId })
                         })
-                        ; eachpopup.close(); confirmationpopup.close();  location.reload()
+                            ; eachpopup.close(); confirmationpopup.close(); location.reload()
                     }
                     )
 
@@ -66,33 +66,32 @@
 
                 eachBtn.addEventListener('click', () => {
                     var jobId = eachBtn.value;
-                    if (eachBtn.classList.contains("saveBtn"))
-                        {
-                            fetch('/saveremoveacceptjob', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ saveJob: true , jobid : jobId})
-                        })
-                            .then(eachpopup.close());
-                            location.reload()
-                                
-                              
-                        }
-                    else if (eachBtn.classList.contains("removeBtn"))
-                    {
+                    if (eachBtn.classList.contains("saveBtn")) {
                         fetch('/saveremoveacceptjob', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ removeJob: true , jobid : jobId})
+                            body: JSON.stringify({ saveJob: true, jobid: jobId })
                         })
-                                .then(eachpopup.close()); location.reload()
-                
-                               
+                            .then(eachpopup.close());
+                        location.reload()
+
+
                     }
-            })
-                    
-          
-            });   
-                
-            
+                    else if (eachBtn.classList.contains("removeBtn")) {
+                        fetch('/saveremoveacceptjob', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ removeJob: true, jobid: jobId })
+                        })
+                            .then(eachpopup.close()); location.reload()
+
+
+                    }
+                })
+
+
+            });
+
+
         </script>
+        <%- include('../templates/footer') %>
