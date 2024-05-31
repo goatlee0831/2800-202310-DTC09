@@ -4,6 +4,9 @@
     <div class="card4">
         <div class="left">
             <h2>Members Sign Up</h2>
+            <div>
+                <%= message %>
+            </div>
         </div>
         <div class="right">
             <form action="/signup-handler" method="POST">
@@ -34,8 +37,5 @@
         </div>
     </div>
 
-    <div>
-        <%= message %>
-    </div>
 
 <%- include('templates/footer') %>

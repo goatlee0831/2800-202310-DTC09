@@ -1,28 +1,33 @@
 <%- include('templates/header') %>
-<%- include('templates/nav') %>
+    <%- include('templates/nav') %>
 
-    <div class="card4">
-        <div class="left">
-            <h2>Members Login</h2>
+        <div class="card4">
+            <div class="left">
+                <h2>Members Login</h2>
+                <div>
+                    <%= message %>
+                </div>
+            </div>
+            <div class="right">
+                <form action="/login-handler" method="POST">
+                    <label for="username">
+                        <h3>Username:*</h3>
+                    </label>
+                    <input type="text" id="fullname" name="username" required>
+
+                    <label for="password">
+                        <h3>Password:*</h3>
+                    </label>
+                    <input type="password" id="password" name="password" required>
+                    <p><a href="/ResetPassword">Forgot Password?</a></p>
+                    <br>
+                    <button type="submit" class="darkBtn">Login</button>
+                </form>
+            </div>
         </div>
-        <div class="right">
-            <form action="/login-handler" method="POST">
-                <label for="username"><h3>Username:*</h3></label>
-                <input type="text" id="fullname" name="username" required>
-    
-                <label for="password"><h3>Password:*</h3></label>
-                <input type="password" id="password" name="password" required>
-                <p><a href="/ResetPassword">Forgot Password?</a></p>
-                <br>
-                <button type="submit" class="darkBtn">Login</button>
-            </form>
-        </div>
-    </div>
-
-    <div>
-        <%= message %>
-    </div>
 
 
 
-<%- include('templates/footer') %>
+
+
+        <%- include('templates/footer') %>

@@ -3,6 +3,10 @@
 <div class="card3">
     <div class="left">
         <h2>Create Task</h2>
+        <div>
+            <% message %>
+        </div>
+
     </div>
     <div class="right">
         <form class="card" id="createTaskForm" action="/createTask" method="post">
@@ -22,7 +26,7 @@
             </div>
             <br>
             <div>
-                <label for="offer"><h3>Offer:*</h3></label>
+                <label for="offer"><h3>Offer($):*</h3></label>
                 <input class="form-text" type="number" id="offer" name="offer" required>
             </div>
             <br>
@@ -72,6 +76,5 @@
     </div>
 </div>
 
-<div><% message %></div>
 
 <%- include('templates/footer') %>

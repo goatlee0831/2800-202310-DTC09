@@ -677,9 +677,7 @@ app.get('/recommend', IsAuthenticated, async (req, res) => {
     const username = req.session.username // username is stored in session
     const user = await userCollection.findOne({ username });
 
-    if (!user) {
-        return res.status(404).redirect('/login');
-    }
+    
 
 
     async function getTasks() {

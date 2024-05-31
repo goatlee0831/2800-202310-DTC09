@@ -3,7 +3,10 @@
 
         <div class="card4 column">
             <div class="left">
-                <h2>Members Sign Up</h2>
+                <h2>Gofer Sign Up</h2>
+                <div>
+                    <%= message %>
+                </div>
             </div>
             <div class="right">
                 <form action="/gofer-handler" method="POST">
@@ -48,8 +51,6 @@
             </div>
         </div>
 
-        <div>
-            <%= message %>
-        </div>
+      
 
         <%- include('templates/footer') %>
