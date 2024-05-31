@@ -15,12 +15,20 @@
                         <div class="left">
                             <h3><%= task.title %></h3>
                         </div>
-                        <div class="w">
-                            <p><%= task.description %></p>
-                        <p><%= task.Date %></p>
-                        <p><%= task.location %></p>
-                        <p><%= task.offer %></p>
-                        <br><br>
+                        <div class="right w column2">
+                            <h4>Task Description:</h4>
+                            <p>
+                                <%= task.description %>
+                            </p>
+                            <br>
+                            <p>
+                                <%= task.Date %>
+                            </p>
+                            <br>
+                            <h4>Price:</h4>
+                            <p>$<%= task.offer %>
+                            </p>
+                            <br>
                         <a onclick="" class="lightBtn" href="/AcceptTaskHandler/<%= task._id %>">Accept Task  </a>
                         <a onclick="" class="lightBtn" href="/removefromsession/<%= task._id %>">Decline Task  </a>
                         </div>

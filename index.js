@@ -696,7 +696,6 @@ app.get('/recommend', IsAuthenticated, async (req, res) => {
             }
         }
 
-
         return tasks
     }
 
