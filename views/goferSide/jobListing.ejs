@@ -36,7 +36,9 @@
      <div class= "optionRow">
      
         <button type="button" class="closeBtn">Close</button>
-
+        <% if (save) { %>
+        <button value=<%=job._id%> class="acceptBtn">Accept</button>
+            <% } %>
         <% if (savedjobs.includes(job._id.toString())) { %>
             <button value=<%=job._id%> class="Btn removeBtn">Remove from saved</button>
             <% } else { %>

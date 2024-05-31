@@ -3,25 +3,41 @@
 <main>
 
 <header>
-    <div>
-        <h2>Welcome <%= username %>!</h2>
+    <div class="card1 column">
+        <div class="left column">
+            <h2>Welcome <%= username %>!</h2>
+        </div>
     </div>
 </header>
 
 <div class="columnContainer" >
+    <div id="UrgentTasksCardContainer" class="card2">
+        <div class="left">
+            <h3><a href="/createTask">Create Task</a></h3>
+        </div>
+        
+    </div>
+
     <!-- Urgent Tasks -->
-    <div id="UrgentTasksCardContainer">
-        <h3>Urgent Tasks</h3>
+    <div id="UrgentTasksCardContainer" class="card2">
+        <div class="left">
+            <h3>Recommendations</h3>
+        </div>
+        
     </div>
     
     <!-- Tasks in Progress -->
-    <div id="InProgressTasksCardContainer">
-        <h3>Tasks in Progress</h3>
+    <div id="InProgressTasksCardContainer" class="card3">
+        <div class="left">
+            <h3>Progress</h3>
+        </div>
     </div>
     
     <!-- Recommended Tasks -->
-    <div id="RecommendedTasksCardContainer">
-        <h3>Recommended Tasks</h3>
+    <div id="RecommendedTasksCardContainer" class="card5">
+        <div class="left">
+            <h3>Completed</h3>
+        </div>
     </div>
 </div>
 
@@ -32,7 +48,7 @@
 
     function createCard(title, content) {
         const card = document.createElement('div');
-        card.classList.add('card3');
+        card.classList.add('w');
 
         const cardTitle = document.createElement('h4');
         cardTitle.textContent = title;

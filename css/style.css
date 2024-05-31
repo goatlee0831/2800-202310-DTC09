@@ -29,25 +29,44 @@ p {
     color: #4D2F25;
 }
 
+#mainPageScroll {
+   
+   
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    overflow-x: scroll;
+   
+}
+
+#mainPageScroll .bottomRow > :not(:first-child) {
+    display: none!important;;
+    }
+
+#mainPageScroll .topRow {
+    flex-direction: column;
+    justify-content: space-between;
+    height: 30px;
+    }
 /* New Styles ----------- */
 
-input[type="password"], input[type="text"], input[type="email"] {
-    width: 80%;
+input[type="password"], input[type="text"], input[type="email"], input[type="tel"], input[type="text"],
+ input[type="date"], textarea, input[type="number"] {
+    width: 97%;
     border: 5px solid;
-    padding: 2px;
+    padding: 2px 0;
     font-size: 1.1em;
     font-weight: 700;
     border-radius: 0.5em;
     border-color: #4D2F25;
     color: #78361F;
     background-color: #CAF0FF;
-    margin: 2.5% auto;
     outline: #4D2F25;
     font-family: "Lilita One", sans-serif;
 }
 
 .lightBtn {
-    width: 80%;
+    width: 97%;
     border: 5px solid;
     padding: 2px;
     font-size: 1.1em;
@@ -63,7 +82,7 @@ input[type="password"], input[type="text"], input[type="email"] {
 }
 
 .darkBtn {
-    width: 80%;
+    width: 100%;
     border: 5px solid;
     padding: 2px;
     font-size: 1.1em;
@@ -74,6 +93,8 @@ input[type="password"], input[type="text"], input[type="email"] {
     background-color: #4D2F25;
     margin: 2.5% auto;
     font-family: "Lilita One", sans-serif;
+    text-align: center;
+    text-decoration: none;
 }
 
 .card1 {
@@ -157,12 +178,13 @@ input[type="password"], input[type="text"], input[type="email"] {
 
 .w {
     background-color: #fdfdfd;
+    padding: 5%;
 }
 
 form {
-    width: 87.5%;
-    margin-left: 12.5%;
-    margin-top: 2.5%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Tablet (portrait and landscape) ----------- */
@@ -177,36 +199,23 @@ form {
     h2 {
         line-height: 1;
     }
-    .card1 {
-        flex-direction: column;
-    }
-    
-    .card2 {
-        flex-direction: column;
-    }
-    
-    .card3 {
-        flex-direction: column;
-    }
-    
-    .card4 {
-        flex-direction: column;
-    }
-    
-    .card5 {
+
+    .card1, .card2, .card3, .card4, .card5 {
         flex-direction: column;
     }
 
     .right {
-        width: 90%;
-        padding: 5%;
+        width: 80%;
+        padding: 10%;
+        padding: 0 10% 10% 10%;
     }
 
     .left {
-        width: 90%;
-        padding: 2.5% 2.5;
+        width: 80%;
+        padding: 10%;
         justify-content: space-between;
     }
+
 
     .login {
         display: flex;
@@ -220,7 +229,7 @@ form {
     }
 
     .login h2 {
-        margin-top: 20px;
+        margin: 20px 0;
     }
 
     .left img {
@@ -228,10 +237,22 @@ form {
     }
 
     .inv .left {
-        width: 90%;
+        width: 80%;
+        padding: 10%;
     }
 
     .inv .right {
-        width: 90%;
+        width: 80%;
+        padding: 0 10% 10% 10%;
+    }
+
+    .w {
+        padding: 10%;
+    }
+
+    .column2 {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
     }
 }

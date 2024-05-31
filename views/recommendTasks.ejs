@@ -1,0 +1,53 @@
+<%- include('templates/header') %>
+<%- include('templates/nav') %>
+
+    <div class="card4">
+        <div class="left column">
+            <h2>Recommended Tasks</h2>
+            <br>
+            <img src="/images/gofer-ai.png">
+            <br>
+            <h3>Never fear, AI is here! We don't spy, we just watch.</h3>
+        </div>
+            <div id="RecommendedTaskCards" class="card3 column2">
+                <% tasks.forEach(task => { %>
+                    <div id="<%= task._id %>" class="card2">
+                        <div class="left">
+                            <h3><%= task.title %></h3>
+                        </div>
+                        <div class="w">
+                            <p><%= task.description %></p>
+                        <p><%= task.Date %></p>
+                        <p><%= task.location %></p>
+                        <p><%= task.offer %></p>
+                        <br><br>
+                        <a onclick="" class="lightBtn" href="/AcceptTaskHandler/<%= task._id %>">Accept Task  </a>
+                        <a onclick="" class="lightBtn" href="/removefromsession/<%= task._id %>">Decline Task  </a>
+                        </div>
+                    </div> 
+                    
+                    <% }) %>
+        </div>
+    </div>
+    
+
+
+    
+        
+
+        <% if (tasks.length === 0) { %>
+        <div>
+            <a href='/recommend'>Generate New</a>
+        </div>
+        <% } %>
+        
+      
+       
+
+
+
+
+
+
+
+<%- include('templates/footer') %>

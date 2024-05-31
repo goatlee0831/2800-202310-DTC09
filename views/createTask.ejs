@@ -1,45 +1,77 @@
 <%- include('templates/header') %>
 <%- include('templates/nav') %>
-    <h1>Create Task</h1>
-    <form class="card" id="createTaskForm" action="/createTask" method="POST">
-        <div>
-            <label for="title">Title:</label>
-            <input class="form-text" type="text" id="title" name="title" required>
-        </div>
-        <label for="description">Description:</label>
-        <div>
-            <textarea class="form-text" id="description" name="description" required></textarea>
-        </div>
-        <div>
-            <label for="dueDate">Due Date:</label>
-            <input type="date" id="dueDate" name="dueDate" required>
-        </div>
-        <div>
-            <label for="tools">Tools that may be required:</label>
+<div class="card3">
+    <div class="left">
+        <h2>Create Task</h2>
+    </div>
+    <div class="right">
+        <form class="card" id="createTaskForm" action="/createTask" method="post">
             <div>
-                <input type="radio" id="hammer" name="tool" value="hammer" required>
-                <label for="hammer">Hammer</label>
+                <label for="title"><h3>Title:</h3></label>
+                <input class="form-text" type="text" id="title" name="title" required>
             </div>
+            <br>
             <div>
-                <input type="radio" id="screwdriver" name="tool" value="screwdriver" required>
-                <label for="screwdriver">Screwdriver</label>
+                <label for="description"><h3>Description:</h3></label>
+                <textarea class="form-text" id="description" name="description" required></textarea>
             </div>
+            <br>
             <div>
-                <input type="radio" id="wrench" name="tool" value="wrench" required>
-                <label for="wrench">Wrench</label>
+                <label for="date"><h3>Date:</h3></label>
+                <input type="date" id="date" name="date" required>
             </div>
+            <br>
             <div>
-                <input type="radio" id="pliers" name="tool" value="pliers" required>
-                <label for="pliers">Pliers</label>
+                <label for="offer"><h3>Offer:</h3></label>
+                <input class="form-text" type="number" id="offer" name="offer" required>
             </div>
+            <br>
             <div>
-                <input type="radio" id="drill" name="tool" value="drill" required>
-                <label for="drill">Drill</label>
+                <label for="location"><h3>Location:</h3></label>
+                <input class="form-text" type="text" id="location" name="location" required>
             </div>
-            <input class="form-text" type="text" id="title" name="title" required placeholder="Any other...">
+            <br>
+            <div>
+                <label for="skills"><h3>Skills that may be required:</h3></label>
+                <div>
+                    <input type="checkbox" id="plumbing" name="skills" value="plumbing">
+                    <label for="plumbing">Plumbing</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="wiring" name="skills" value="wiring">
+                    <label for="wiring">Wiring</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="baking" name="skills" value="baking">
+                    <label for="baking">Baking</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="hvac" name="skills" value="hvac">
+                    <label for="hvac">HVAC Installing</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="tailoring" name="skills" value="tailoring">
+                    <label for="tailoring">Tailoring</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="graphicDesign" name="skills" value="graphicDesign">
+                    <label for="graphicDesign">Graphic Design</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="photography" name="skills" value="photography">
+                    <label for="photography">Photography</label>
+                </div>
+                <div>
+                    <br>
+                    <input class="form-text" type="text" id="otherSkill" name="otherSkill" placeholder="Other Skills">
+                </div>
+            </div>
+            <br>
+            <button class="darkBtn" type="submit">Create Task</button>
+        </form>
+    </div>
+</div>
 
-            <!-- Add more tool types as needed -->
-        </div>
-        <button class="task-btn" type="submit">Create Task</button>
-    </form>
+<div><% message %></div>
+
 <%- include('templates/footer') %>

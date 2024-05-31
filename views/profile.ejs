@@ -1,14 +1,29 @@
 <%- include('templates/header') %>
 <%- include('templates/nav') %>
-
-    <header>
-        <h1>Profile of <%= member.name %></h1>
-    </header>
-    <div class="profile-container">
-        <img src="<%= member.profilePicture %>" alt="<%= member.name %>'s Profile Picture" style="width: 200px; height: auto; border-radius: 50%;">
-        <h2>Welcome, <%= member.username %>!</h2>
-        <p><strong>First Name:</strong> <%= member.firstname %></p>
-        <p><strong>Last Name:</strong> <%= member.lastname %></p>
-        <p><strong>Email:</strong> <%= member.email %></p>
+    <div class="card1">
+        <div class="left column">
+            <h2>Welcome, <%= member.username %>!</h2>
+            <br>
+            <img src="/images/gofer-face-left.png">
+        </div>
+        <div class="right column2">
+            <h2>About You:</h2>
+            <br>
+            <h3><strong>First Name:</strong>&nbsp;&nbsp;<%= member.firstname %></h3>
+            <br>
+            <h3><strong>Last Name:</strong>&nbsp;&nbsp;<%= member.lastname %></h3>
+            <br>
+            <h3><strong>User Name:</strong>&nbsp;&nbsp;<%= member.username %></h3>
+            <br>
+            <h3><strong>Email:</strong>&nbsp;&nbsp;<%= member.email %></h3>
+            <br><br><br>
+            <h2>User Type:</h2>
+            <br>
+            <h3><%= member.usertype %></h3>
+            <br>
+            <a href="/ResetPassword" class="lightBtn">Password Reset</a>
+            <br>
+            <a href="/logout" class="darkBtn">Logout</a>
+        </div>
     </div>
 <%- include('templates/footer') %>

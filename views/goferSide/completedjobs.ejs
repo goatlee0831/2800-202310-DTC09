@@ -1,7 +1,15 @@
-<%- include('header') %>
-<%- include('nav_gofer') %>
+<%- include('templates/header') %>
+<%- include('templates/nav') %>
+
+    <div>
+        <h2>Completed Jobs</h2>
+    </div>
+    <section id="completedtedJobs">
+      
+        <% completedjobs.forEach((job)=> { %>
+           <%- include('jobListing.ejs', {job: job, savedjobs:[''], save:false})%>
+            <% }) %>
+    </section>
 
 
-<h1> Under construction....</h1>
-
-<%- include('../templates/footer') %>
+<%- include('templates/footer') %>
