@@ -17,85 +17,85 @@ MongoDB (Atlas)
 
 #Listing of File Contents of folder
 Main Folder:
-Views (folder)
-About.ejs
-goferSignupComplete.ejs
-recommendTasks.ejs
-Admin.ejs
-History.ejs
-resetpassword.ejs
-Become-gofer.ejs
-Index.ejs
-signup.ejs
-createTask.ejs
-Login.ejs
-tasks.ejs
-Error.ejs
-Main.ejs
-template.ejs
-Findjobs.ejs
-Myjobs.ejs
-Templates
-Footer.ejs
-Header.ejs
-nav_out.ejs
-Footer_gofer.ejs
-Header_files
-Css.ejs
-Icons.ejs
-listing.ejs
-Fonts.ejs
-js_frontend_files.ejs
-nav_user.ejs
-Footer_out.ejs
-nav.ejs
-Footer_user.ejs
-nav_gofer.ejs
-goferSide
-acceptedJobs.ejs
-goferProfile.ejs
-savedJobs.ejs
-Completedjobs.ejs
-jobListing.ejs
-goferDashboard.ejs
-jobListings.ejs
-profile.ejs
-Package-lock.json
-Frontend_js (folder)
-nav.js
-Public (folder)
-Favicon.ico
-Images (folder)
-Abhi.png
-Gofer-ai.png
-mongo.png
-Alireza.png
-Gofer-didit.png
-node.png
-Annyn.png
-Gofer-face-left.png
-omar.png
-Confused.png
-Gofer-face-right.png
-rahul.png
-Css3.png
-Gofer-hello.png
-sam.png
-Defeat.png
-Gofer-logo.png
-teamphoto.png
-Express.png
-html5.png
-Node_modules
-Css (folder)
-Footer.css
-Joblisting.css
-nav.css	
-Reset.css
-style.css
-Package.json
-index.js
-README.md
+>Views (folder)
+>>About.ejs
+>>goferSignupComplete.ejs
+>>recommendTasks.ejs
+>>Admin.ejs
+>>History.ejs
+>>resetpassword.ejs
+>>Become-gofer.ejs
+>>Index.ejs
+>>signup.ejs
+>>createTask.ejs
+>>Login.ejs
+>>tasks.ejs
+>>Error.ejs
+>>Main.ejs
+>>template.ejs
+>>Findjobs.ejs
+>>Myjobs.ejs
+>>Templates
+>>>Footer.ejs
+>>>Header.ejs
+>>>nav_out.ejs
+>>>Footer_gofer.ejs
+>>>Header_files
+>>>>Css.ejs
+>>>>Icons.ejs
+>>>>listing.ejs
+>>>>Fonts.ejs
+>>>>js_frontend_files.ejs
+>>>nav_user.ejs
+>>>Footer_out.ejs
+>>>nav.ejs
+>>>Footer_user.ejs
+>>>nav_gofer.ejs
+>>goferSide
+>>>acceptedJobs.ejs
+>>>goferProfile.ejs
+>>>savedJobs.ejs
+>>>Completedjobs.ejs
+>>>jobListing.ejs
+>>>goferDashboard.ejs
+>>>jobListings.ejs
+>>profile.ejs
+>Package-lock.json
+>Frontend_js (folder)
+>>nav.js
+>Public (folder)
+>>Favicon.ico
+>>Images (folder)
+>>>Abhi.png
+>>>Gofer-ai.png
+>>>mongo.png
+>>>Alireza.png
+>>>Gofer-didit.png
+>>>node.png
+>>>Annyn.png
+>>>Gofer-face-left.png
+>>>omar.png
+>>>Confused.png
+>>>Gofer-face-right.png
+>>>rahul.png
+>>>Css3.png
+>>>Gofer-hello.png
+>>>sam.png
+>>>Defeat.png
+>>>Gofer-logo.png
+>>>teamphoto.png
+>>>Express.png
+>>>html5.png
+>Node_modules
+>Css (folder)
+>>Footer.css
+>>Joblisting.css
+>>nav.css	
+>>Reset.css
+>>style.css
+>Package.json
+>index.js
+>README.md
 
 #How to install or run the project
 In the package folder run npm install
