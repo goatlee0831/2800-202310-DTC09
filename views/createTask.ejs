@@ -3,31 +3,35 @@
 <div class="card3">
     <div class="left">
         <h2>Create Task</h2>
+        <div>
+            <% message %>
+        </div>
+
     </div>
     <div class="right">
         <form class="card" id="createTaskForm" action="/createTask" method="post">
             <div>
-                <label for="title"><h3>Title:</h3></label>
+                <label for="title"><h3>Title:*</h3></label>
                 <input class="form-text" type="text" id="title" name="title" required>
             </div>
             <br>
             <div>
-                <label for="description"><h3>Description:</h3></label>
+                <label for="description"><h3>Description:*</h3></label>
                 <textarea class="form-text" id="description" name="description" required></textarea>
             </div>
             <br>
             <div>
-                <label for="date"><h3>Date:</h3></label>
+                <label for="date"><h3>Date:*</h3></label>
                 <input type="date" id="date" name="date" required>
             </div>
             <br>
             <div>
-                <label for="offer"><h3>Offer:</h3></label>
+                <label for="offer"><h3>Offer($):*</h3></label>
                 <input class="form-text" type="number" id="offer" name="offer" required>
             </div>
             <br>
             <div>
-                <label for="location"><h3>Location:</h3></label>
+                <label for="location"><h3>Location:*</h3></label>
                 <input class="form-text" type="text" id="location" name="location" required>
             </div>
             <br>
@@ -72,6 +76,5 @@
     </div>
 </div>
 
-<div><% message %></div>
 
 <%- include('templates/footer') %>

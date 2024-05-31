@@ -1,12 +1,15 @@
 <nav class="top">
     <div class="company">
-      <img src="/images/gofer-hello.png">
-      <h1>Gofer</h1>
+      <a href="/goferHome"><img src="/images/gofer-hello.png"></a>
+      <a href="/goferHome">
+        <h1>Gofer</h1>
+      </a>
     </div>
     <div class="top-links">
       <div id="userLinks">
-        <button onclick="activateGofer()">
-          Gofer&nbsp;Mode
+        <button class="square" onclick="activateGofer()">
+          <h6>Switch from:</h6>
+          Task&nbsp;Mode
         </button>
         <a href="/logout">Log&nbsp;Out</a>
         <a href="/profile">Profile</a>
@@ -17,15 +20,16 @@
       </div>
 
       <div id="goferLinks">
-        <button onclick="activateUser()">
-          Task&nbsp;Mode
+        <button class="square" onclick="activateUser()">
+          <h6>Switch from:</h6>
+          Gofer&nbsp;Mode
         </button>
         <a href="/logout">Log&nbsp;Out</a>
         <a href="/profile">Profile</a>
         <a href="/complete">Completed&nbsp;Jobs</a>
         <a href="/savedJobs">My&nbsp;Jobs</a>
         <a href="/jobListings">Job&nbsp;Listings</a>
-        <a href="/main">Home</a>
+        <a href="/goferHome">Dashboard</a>
       </div>
     </div>
 
@@ -39,7 +43,8 @@
             <div class="dropdown-menu">
                 <div id="userMobile">
                     <button onclick="activateGofer()">
-                        Gofer&nbsp;Mode
+                      <h6>Switch from:</h6>
+                        Task&nbsp;Mode
                     </button>
                     <a href="/logout" class="links">Log&nbsp;Out</a>
                     <a href="/profile" class="links">Profile</a>
@@ -51,14 +56,15 @@
         
                 <div id="goferMobile">
                     <button onclick="activateUser()">
-                        Task&nbsp;Mode
+                      <h6>Switch from:</h6>
+                        Gofer&nbsp;Mode
                     </button>
                     <a href="/logout" class="links">Log&nbsp;Out</a>
                     <a href="/profile" class="links">Profile</a>
                     <a href="/complete" class="links">Completed&nbsp;Jobs</a>
                     <a href="/savedJobs" class="links">My&nbsp;Jobs</a>
                     <a href="/jobListings" class="links">Job&nbsp;Listings</a>
-                    <a href="/main" class="links">Home</a>
+                    <a href="/goferHome" class="links">Dashboard</a>
                 </div>
             </div>
         </div>
