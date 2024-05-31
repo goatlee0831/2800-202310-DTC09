@@ -24,6 +24,15 @@ h2, h3, h4, h5 {
     line-height: 1.25em;
 }
 
+h6 {
+    font-weight: 600;
+    color: #4b9cff;
+    font-family: "Lilita One", sans-serif;
+    font-size: .5em;
+    text-align: left;
+
+}
+
 p {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #4D2F25;
@@ -41,13 +50,17 @@ p {
 
 #mainPageScroll .bottomRow > :not(:first-child) {
     display: none!important;;
-    }
+}
 
 #mainPageScroll .topRow {
     flex-direction: column;
     justify-content: space-between;
     height: 30px;
-    }
+}
+
+.tip-links div button {
+    border-radius: none;
+}
 /* New Styles ----------- */
 
 input[type="password"], input[type="text"], input[type="email"], input[type="tel"], input[type="text"],
@@ -254,5 +267,10 @@ form {
         display: flex;
         flex-direction: column;
         align-items: start;
+    }
+
+    h6 {
+        color: #4D2F25;
+        text-align: center;
     }
 }
