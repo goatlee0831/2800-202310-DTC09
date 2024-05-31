@@ -240,7 +240,7 @@ app.post('/login-handler', async (req, res) => {
         return res.render('login', { message: "Invalid username or password" })
     }
 
-    
+
     let result = await userCollection.findOne({ username: username })
     let goferResult = await goferCollection.findOne({ username: username })
 
@@ -310,7 +310,7 @@ app.post('/reset-password-handler', async (req, res) => {
         })
 
     const validation = schema.validate({ username, password, secret_pin })
-    
+
 
 
     if (validation.error) {
@@ -342,83 +342,11 @@ app.post('/reset-password-handler', async (req, res) => {
 
 // main page
 app.get('/main', IsAuthenticated, (req, res) => {
+    // console.log("main page")
+    res.render('main', { message: "" })
 
-    console.log("main page")
-    let mode = req.query.mode
-
-
-    if (req.session.authenticated && req.session.usertype == 'user') {
-        res.render('main',
-            {
-                message: "",
-
-            })
-    }
-    else {
-        res.redirect('/login')
-    }
-    // console.log(req.session)
 })
 
-// Urgent Tasks Page
-app.get('/urgentTask', IsAuthenticated, (req, res) => {
-    if (req.session.authenticated) {
-        res.render('urgentTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
-    }
-    else {
-        res.redirect('/login')
-    }
-})
-
-// Pending Tasks Page
-app.get('/pendingTask', IsAuthenticated, (req, res) => {
-    if (req.session.authenticated) {
-        res.render('pendingTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
-    }
-    else {
-        res.redirect('/login')
-    }
-})
-
-// Tasks Page
-
-
-// Accepted Tasks Page
-app.get('/acceptedTask', IsAuthenticated, (req, res) => {
-    if (req.session.authenticated) {
-        res.render('acceptedTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
-    }
-    else {
-        res.redirect('/login')
-    }
-})
-
-// Completed Tasks Page
-app.get('/completedTask', IsAuthenticated, (req, res) => {
-    if (req.session.authenticated) {
-        res.render('completedTask', {
-            username: req.session.username,
-            auth: req.session.authenticated,
-            type: req.session.usertype
-        })
-    }
-    else {
-        res.redirect('/login')
-        return
-    }
-})
 
 // Recommended Tasks Page
 
@@ -426,7 +354,7 @@ app.get('/completedTask', IsAuthenticated, (req, res) => {
 // logout
 app.get('/logout', (req, res) => {
     req.session.destroy()
-    res.redirect('/login')
+    res.redirect('/')
 })
 
 // Display Create Task Form
@@ -434,13 +362,13 @@ app.get('/logout', (req, res) => {
 
 
 app.post('/createTask', IsAuthenticated, async (req, res) => {
-    
-    
-    
-    let { title, description, date, offer, location, skills, otherSkill} = req.body
+
+
+
+    let { title, description, date, offer, location, skills, otherSkill } = req.body
     // console.log(req.body)
     // console.log(skills)
-    if(!skills) skills = []
+    if (!skills) skills = []
 
 
     const schema = Joi.object({
@@ -454,16 +382,16 @@ app.post('/createTask', IsAuthenticated, async (req, res) => {
     });
 
     const validation = schema.validate({ title, description, date, offer, location, otherSkill });
-    
+
     if (validation.error) {
         var error = validation.error.details
         // console.log(error)
         return res.render('createTask', { message: error[0].message })
-         
-        }
+
+    }
 
     skills.push(otherSkill)
-    
+
     const task = {
         username: req.session.username,
         title,
@@ -495,8 +423,8 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
     try {
         const { username } = req.session // username is stored in session
         const user = await userCollection.findOne({ username });
-        const gofer = await goferCollection.findOne({ username})
-   
+        const gofer = await goferCollection.findOne({ username })
+
         if (!user && !gofer) {
             return res.status(404).send('User not found');
         } else if (user) {
@@ -514,7 +442,7 @@ app.get('/profile', IsAuthenticated, async (req, res) => {
 
 // --------------------------- THESE ARE THE SPECIFIC MIDDLEWARE FOR THE GOFER --------------------------------------
 
-app.get('/goferHome', IsAuthenticated , IsGofer, async (req, res) => {
+app.get('/goferHome', IsAuthenticated, IsGofer, async (req, res) => {
     const username = req.session.username
     console.log(`${username} has logged in.`)
     const jobs = await jobCollection.find({ acceptedby: username }).toArray()
@@ -524,7 +452,7 @@ app.get('/goferHome', IsAuthenticated , IsGofer, async (req, res) => {
 })
 
 
-app.get('/jobListings', IsAuthenticated ,IsGofer, async (req, res) => {
+app.get('/jobListings', IsAuthenticated, IsGofer, async (req, res) => {
 
     // let jobs = await jobCollection.find({ acceptedby: { $exists: false } }).toArray();
 
@@ -539,7 +467,7 @@ app.get('/jobListings', IsAuthenticated ,IsGofer, async (req, res) => {
     let gofer = req.session.username
     savedjobs = await goferCollection.findOne({ username: gofer }, { projection: { savedjobs: 1 } });
 
-    res.render('jobListings', { jobs: jobs, gofer: gofer , savedjobs: savedjobs.savedjobs });
+    res.render('jobListings', { jobs: jobs, gofer: gofer, savedjobs: savedjobs.savedjobs });
 
 })
 
@@ -549,7 +477,7 @@ app.get('/savedJobs', IsGofer, async (req, res) => {
     let user = req.session.username
     let querysavedjobs = await goferCollection.findOne({ username: user }, { projection: { savedjobs: 1 } });
 
-    const acceptedjobs = await jobCollection.find({ acceptedby: user, completed: false}).toArray();
+    const acceptedjobs = await jobCollection.find({ acceptedby: user, completed: false }).toArray();
 
     let savedjobs = querysavedjobs.savedjobs
 
@@ -563,7 +491,7 @@ app.get('/savedJobs', IsGofer, async (req, res) => {
 
     const savedJobs = await jobCollection.find(query).toArray();
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    return res.render('savedJobs', { savedjobs: savedJobs, acceptedjobs: acceptedjobs});
+    return res.render('savedJobs', { savedjobs: savedJobs, acceptedjobs: acceptedjobs });
 
 })
 
@@ -611,7 +539,7 @@ app.post('/saveremoveacceptjob', async (req, res) => {
     }
     if (req.body.canceljob) {
         try {
-            await jobCollection.updateOne({_id: new ObjectId(jobid) }, { $set : {acceptedby: null} })
+            await jobCollection.updateOne({ _id: new ObjectId(jobid) }, { $set: { acceptedby: null } })
             await goferCollection.updateOne({ username: user }, { $pull: { acceptedjobs: jobid } })
             console.log("Successfully removed from accepted jobs")
         }
@@ -621,15 +549,15 @@ app.post('/saveremoveacceptjob', async (req, res) => {
     }
 
     if (req.body.completejob) {
-        try {  
-            await jobCollection.updateOne({_id: new ObjectId(jobid) }, { $set : {completed: true} })
+        try {
+            await jobCollection.updateOne({ _id: new ObjectId(jobid) }, { $set: { completed: true } })
             console.log(`Successfully completed ${req.body.jobid}`)
         }
         catch (err) {
             console.log(err)
         }
     }
-    
+
 
     res.redirect('/jobListings');
     return
@@ -662,9 +590,9 @@ app.get('/createTask', IsAuthenticated, (req, res) => {
 app.get('/complete', IsAuthenticated, IsGofer, async (req, res) => {
 
     let user = req.session.username
-    let completedjobs = await jobCollection.find({ acceptedby: user }, { completed: true}).toArray();
+    let completedjobs = await jobCollection.find({ acceptedby: user }, { completed: true }).toArray();
 
-    res.render('completedjobs', {completedjobs: completedjobs})
+    res.render('completedjobs', { completedjobs: completedjobs })
 
 })
 
@@ -677,7 +605,7 @@ app.get('/recommend', IsAuthenticated, async (req, res) => {
     const username = req.session.username // username is stored in session
     const user = await userCollection.findOne({ username });
 
-    
+
 
 
     async function getTasks() {
@@ -699,9 +627,9 @@ app.get('/recommend', IsAuthenticated, async (req, res) => {
         return tasks
     }
 
-    
 
-    if (!req.session.tasks || req.session.tasks.length === 0){
+
+    if (!req.session.tasks || req.session.tasks.length === 0) {
         req.session.tasks = await getTasks()
     }
 
@@ -721,13 +649,13 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
 
     let objectId = new ObjectId(taskID)
     // console.log(objectId)
-  
+
 
     let task = await tasksCollection.findOne({ _id: objectId })
 
- 
+
     checkinjobcollection = await jobCollection.findOne({ id: taskID })
-   
+
 
 
     if (checkinjobcollection) {
@@ -736,13 +664,14 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
         return res.redirect('/recommend')
     } else {
 
-    insertResultinJobs = await jobCollection.insertOne(task).then(() => {
-        jobCollection.updateOne({ _id: objectId }, { $set: { status: 'open', username: username, id: taskID, acceptedby: null, date: "2054-05-31" } })
-        req.session.tasks = req.session.tasks.filter(task => task._id !== taskID);
-    })}
+        insertResultinJobs = await jobCollection.insertOne(task).then(() => {
+            jobCollection.updateOne({ _id: objectId }, { $set: { status: 'open', username: username, id: taskID, acceptedby: null, date: "2054-05-31" } })
+            req.session.tasks = req.session.tasks.filter(task => task._id !== taskID);
+        })
+    }
 
-    
-    
+
+
     return res.redirect('/tasks')
 })
 
@@ -750,13 +679,13 @@ app.get('/AcceptTaskHandler/:selectedtask', IsAuthenticated, async (req, res) =>
 
 app.get('/removefromsession/:selectedtask', (req, res) => {
     taskID = req.params.selectedtask;
- 
+
 
     req.session.tasks = req.session.tasks.filter(task => task._id !== taskID);
 
 
     res.render('recommendTasks', { tasks: req.session.tasks });
-}); 
+});
 
 
 
@@ -854,7 +783,7 @@ app.get('/admin', IsAuthenticated, async (req, res) => {
     const listOfGofers = await goferCollection.find().toArray()
     const listOfUsers = await userCollection.find().toArray()
 
-    res.render('admin', {Gofers: listOfGofers, Users: listOfUsers})
+    res.render('admin', { Gofers: listOfGofers, Users: listOfUsers })
 })
 
 // Change User Type to Admin From Gofers
@@ -862,9 +791,9 @@ app.get('/PromoteGoferToAdmin/:email', IsAuthenticated, IsAdmin, async (req, res
     var email = req.params.email;
 
     async function changeToAdmin(emailAddress) {
-        const gofer = await goferCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'admin' }});
-    res.redirect('/admin');
-}
+        const gofer = await goferCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'admin' } });
+        res.redirect('/admin');
+    }
     changeToAdmin(email);
 });
 
@@ -873,9 +802,9 @@ app.get('/DemoteGoferFromAdmin/:email', IsAuthenticated, IsAdmin, async (req, re
     var email = req.params.email;
 
     async function changeToGofer(emailAddress) {
-        const gofer = await goferCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'gofer' }})
-    res.redirect('/admin');
-}
+        const gofer = await goferCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'gofer' } })
+        res.redirect('/admin');
+    }
     changeToGofer(email);
 })
 
@@ -884,9 +813,9 @@ app.get('/PromoteUserToAdmin/:email', IsAuthenticated, IsAdmin, async (req, res)
     var email = req.params.email;
 
     async function changeToAdminUser(emailAddress) {
-        const user = await userCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'admin' }})
+        const user = await userCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'admin' } })
         res.redirect('/admin');
-}
+    }
     changeToAdminUser(email);
 })
 
@@ -895,9 +824,9 @@ app.get('/DemoteUserFromAdmin/:email', IsAuthenticated, IsAdmin, async (req, res
     var email = req.params.email;
 
     async function changeToUser(emailAddress) {
-        const user = await userCollection.updateOne({email: emailAddress}, { $set: { usertype: 'user' }})
-    res.redirect('/admin');
-}
+        const user = await userCollection.updateOne({ email: emailAddress }, { $set: { usertype: 'user' } })
+        res.redirect('/admin');
+    }
     changeToUser(email);
 })
 
