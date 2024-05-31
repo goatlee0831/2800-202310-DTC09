@@ -1,8 +1,8 @@
 <%- include('../templates/header') %>
     <%- include('../templates/nav_gofer') %>
      
-    <section id="acceptedJobs">
-        <h2 style="text-align: center;">Your accepted Jobs </h2>
+    <section id="acceptedJobs" class="card4">
+        <h2 class="left column2">Your accepted Jobs </h2>
         <% acceptedjobs.forEach((job)=> { %>
             <div class="listing acceptedjob" id=<%=job._id %>>
                 <div class="topRow">
@@ -72,8 +72,8 @@
 
 <!---------------------------------------------------------------------------------------------------------->
 
-        <section id="jobListings">
-            <h2 style="text-align: center;">Your Saved Jobs </h2>
+        <section id="jobListings" class="card4">
+            <h2 class="left column2">Your Saved Jobs </h2>
             <% savedjobs.forEach((job)=> { %>
                 <div class="listing joblisting" id=<%=job._id %>>
                     <div class="topRow">

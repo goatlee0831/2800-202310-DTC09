@@ -3,8 +3,8 @@
 
 
 
-        <section id="jobListings">
-            <h2 style="text-align: center;">Jobs Near you </h2>
+        <section id="jobListings" class="card4">
+            <h2 class="left column2">Jobs Near you </h2>
             <% jobs.forEach((job)=> { %>
                 <%- include('jobListing', {job: job, savedjobs:savedjobs, save: true})%>
                     <% }) %>

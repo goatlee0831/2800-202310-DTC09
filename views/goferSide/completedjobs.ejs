@@ -1,7 +1,7 @@
 <%- include('templates/header') %>
 <%- include('templates/nav') %>
-
-    <div>
+    <div class="card4">
+    <div class="left column2">
         <h2>Completed Jobs</h2>
     </div>
     <section id="completedtedJobs">
@@ -10,6 +10,7 @@
            <%- include('jobListing.ejs', {job: job, savedjobs:[''], save:false})%>
             <% }) %>
     </section>
+    </div>
 
 
 <%- include('templates/footer') %>
