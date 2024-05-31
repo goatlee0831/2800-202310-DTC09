@@ -1,10 +1,10 @@
 # COMP2800-DTC-09
 Gofer
 
-#Project Description
+# Project Description
 Our team, DTC - 09, is developing a web app to help the lone elderly with/by providing an AI interface that automatically detects their needs and requests services on their behalf.
 
-#Technologies used
+# Technologies used
 Frontend:
 HTML 5 (in EJS)
 CSS 3
@@ -15,7 +15,7 @@ Node.js
 Express.js
 MongoDB (Atlas)
 
-#Listing of File Contents of folder
+# Listing of File Contents of folder
 Main Folder:
 >Views (folder)
 >>About.ejs
@@ -97,12 +97,12 @@ Main Folder:
 >index.js
 >README.md
 
-#How to install or run the project
+# How to install or run the project
 In the package folder run npm install
 Run node ./index.js
 Open localhost/3000 in your browser
 
-#How to use the product
+# How to use the product
 
 	As a regular user start by making an account and logging in. Here you can browse the tasks that the futuristic AI is recommending or create one of your own and post it to the jobs board. The jobs that you have posted will be dynamically be generated under All Tasks. 
 
@@ -116,7 +116,7 @@ The login credentials for a Gofer (someone who can complete jobs) is:
 Username: soyoung
 Password: soyoung
 
-#Credits, References, and Licenses
+# Credits, References, and Licenses
 reset.css 
 	http://meyerweb.com/eric/tools/css/reset/ 
 v2.0 | 20110126
@@ -125,7 +125,7 @@ License: none (public domain)
 Tasks list
 	ChatGPT was used to generate our task list.
 
-#How did you use AI? Tell us exactly what AI services and products you used and how you used them. Be very specific:
+# How did you use AI? Tell us exactly what AI services and products you used and how you used them. Be very specific:
 
 We didn’t use chatgpt though we did use copilot and though it made writing code faster, it often suggested unwanted code. 
 We did use Chatgpt to generate lists of fake data for our database. We asked it to creat a list of fake jobs and we provided it with the schema that we wanted it in.
@@ -140,7 +140,6 @@ Annyn Matheson
 amatheson5@my.bcit.ca
 Abhi Bagai
 abagai@my.bcit.ca
-
 Rahul Sharma
 rsharma269@my.bcit.ca
 Omar Mohamed
